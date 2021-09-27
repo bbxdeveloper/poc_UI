@@ -1,0 +1,27 @@
+<nb-card class="card-stat">
+    <nb-card-header>Termékek</nb-card-header>
+    <nb-card-body>
+        <table tabindex="-1" [nbTreeGrid]="dataSource" [nbSort]="dataSource" (sort)="changeSort($event)" equalColumnsWidth>
+
+            <tr tabindex="-1" nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+            <tr tabindex="-1" nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+
+            <ng-container *ngFor="let it of colDefs; let position = index" [nbTreeGridColumnDef]="it.colKey">
+                <div tabindex="-1" [ngSwitch]="it.type">
+                    <div tabindex="-1" *ngSwitchCase="'string'">
+                        <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">
+                            {{it.label}}</th>
+                        <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row.data[it.objectKey] }}</td>
+                    </div>
+                    <div tabindex="-1" *ngSwitchDefault>
+                        <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">{{it.label}}</th>
+                        <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row.data[it.objectKey] }}</td>
+                    </div>
+                </div>
+                <!-- <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">{{it.label}}</th>
+                <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row[it.objectKey] }}</td> -->
+            </ng-container>
+
+        </table>
+    </nb-card-body>
+</nb-card>

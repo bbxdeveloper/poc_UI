@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NbIconConfig } from '@nebular/theme';
 import { ElectronService } from 'ngx-electron';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -7,12 +9,12 @@ import { ElectronService } from 'ngx-electron';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'BBX';
-
+  headerTitle = 'BBX';
   constructor(private es: ElectronService) {}
 
   ngOnInit() {
-    this.es.isElectronApp ?
-      this.title += " (desktop)" : this.title += " (web)";
+    environment.electron = this.es.isElectronApp;
+    environment.electron ?
+      this.headerTitle += " (desktop)" : this.headerTitle += " (web)";
   }
 }

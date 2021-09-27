@@ -1,0 +1,19 @@
+<nb-actions size="medium">
+    <nb-action tabIndex="-1" class="disable-select">{{title}}</nb-action>
+    <nb-action tabIndex="1" icon="home-outline" link="/"></nb-action>
+    <nb-action tabIndex="2" icon="person-outline"></nb-action>
+    <nb-action tabIndex="3" [icon]="settingsIconConfig" disabled></nb-action>
+    <nb-action tabIndex="4" disabled>Termékek</nb-action>
+    <nb-action tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom" [nbPopover]="templateRef">Számlázás</nb-action>
+    <nb-action tabIndex="6" disabled>Megrendelés</nb-action>
+    <nb-action tabIndex="7" disabled>Információ</nb-action>
+    <nb-action tabIndex="8" disabled>Listák</nb-action>
+    <nb-action tabIndex="9" disabled>Szolgáltatások</nb-action>
+    <nb-action tabIndex="10" icon="power-outline" *ngIf="!isElectron" (click)="quit($event)" (keydown.enter)="quit($event)">Kilépés</nb-action>
+</nb-actions>
+
+<ng-template #templateRef>
+    <nb-menu [items]="invoicingMenuItems"></nb-menu>
+</ng-template>
+
+<!-- nbContextMenuTrigger="focus" [nbContextMenu]="invoicingMenuItems" -->

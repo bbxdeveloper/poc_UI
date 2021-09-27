@@ -1,0 +1,14 @@
+.grid-cards-info {
+    display: grid;
+
+    //grid-auto-rows: max-content;
+    //grid-template-columns: 33% 33% 33%;
+    grid-template: 
+            "a b" auto
+            "a b" auto;
+
+    row-gap: 25px;
+    column-gap: 25px;
+    
+    justify-content: center;
+}
