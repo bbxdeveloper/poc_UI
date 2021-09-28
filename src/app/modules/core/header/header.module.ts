@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header.component';
-import { NbContextMenuModule, NbActionsModule, NbLayoutModule, NbMenuService, NbPopoverModule, NbCardModule, NbMenuModule } from '@nebular/theme';
+import { NbContextMenuModule, NbActionsModule, NbLayoutModule, NbMenuService, NbPopoverModule, NbCardModule, NbMenuModule, NbButtonModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 
@@ -18,7 +18,8 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
     NbEvaIconsModule,
     NbPopoverModule,
     NbCardModule,
-    NbMenuModule
+    NbMenuModule,
+    NbButtonModule
   ],
   exports: [
     HeaderComponent

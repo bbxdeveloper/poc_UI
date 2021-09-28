@@ -1,4 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NbDialogService, NbIconConfig } from '@nebular/theme';
 import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { Constants } from 'src/assets/util/Constants';
@@ -23,7 +24,9 @@ export class HeaderComponent implements OnInit {
   
   constructor(
     private dialogService: NbDialogService,
-    private kbS: KeyboardNavigationService) {
+    private kbS: KeyboardNavigationService,
+    private route: ActivatedRoute,
+    private router: Router) {
       this.kbS.selectCurrentTile();
     }
 
@@ -49,8 +52,17 @@ export class HeaderComponent implements OnInit {
         this.kbS.moveRight(true, event.altKey);
         break;
       }
+      case KeyBindings.edit: {
+        event.preventDefault();
+        this.kbS.clickCurrentTile();
+        break;
+      }
       default: {}
     }
+  }
+
+  goTo(link: string): void {
+    this.router.navigate([link]/*, { relativeTo: this.route }*/);
   }
 
   quit(event: any): void {

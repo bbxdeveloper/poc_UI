@@ -2,7 +2,7 @@
     
     <nb-action tabIndex="-1" class="disable-select">{{title}}</nb-action>
     
-    <nb-action id="header-home" tabIndex="1" icon="home-outline" link="/"></nb-action>
+    <nb-action id="header-home" tabIndex="1" icon="home-outline" link="/" (click)="goTo('/')"></nb-action>
     
     <nb-action id="header-user" tabIndex="2" icon="person-outline"></nb-action>
     
@@ -11,8 +11,14 @@
     <nb-action id="header-prod" tabIndex="4" disabled>Termékek</nb-action>
     
     <nb-action id="header-invo" tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom" [nbPopover]="sub_invoicing">Számlázás</nb-action>
-    <ng-template #sub_invoicing>
-        <nb-menu [items]="subInvoicingMenuItems"></nb-menu>
+    <ng-template #sub_invoicing let-data>
+        <nb-card>
+            <nb-card-body>
+                <button nbButton status="primary" id="invoicing-sub-1" link="invoicing/invoice" (click)="goTo('invoicing/invoice')">
+                    Számla
+                </button>
+            </nb-card-body>
+        </nb-card>
     </ng-template>
     
     <nb-action id="header-orde" tabIndex="6" disabled>Megrendelés</nb-action>
