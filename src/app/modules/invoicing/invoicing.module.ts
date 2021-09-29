@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InvoiceNavComponent } from './invoice-nav/invoice-nav.component';
-import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule } from '@nebular/theme';
+import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule, NbInputModule, NbFormFieldModule, NbThemeModule } from '@nebular/theme';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
@@ -12,12 +12,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     NbLayoutModule,
     NbButtonModule,
     NbCardModule,
     NbTreeGridModule,
-    FormsModule,
-    ReactiveFormsModule,
+    NbFormFieldModule,
+    NbInputModule,
+  ],
+  exports: [
   ]
 })
 export class InvoicingModule { }
