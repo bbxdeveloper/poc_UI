@@ -1,8 +1,8 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { NbSortDirection, NbSortRequest, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { ColDef } from 'src/assets/model/ColDef';
 import { Company } from 'src/assets/model/Company';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
@@ -14,7 +14,7 @@ import { KeyBindings } from 'src/assets/util/KeyBindings';
   templateUrl: './invoice-nav.component.html',
   styleUrls: ['./invoice-nav.component.scss']
 })
-export class InvoiceNavComponent implements OnInit, AfterViewInit {
+export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   senderData: Company;
   buyerData: Company;
 
@@ -31,9 +31,25 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit {
     { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'string' },
   ]
 
+  sortColumn: string = '';
+  sortDirection: NbSortDirection = NbSortDirection.NONE;
+
   exporterForm: FormGroup;
   metaForm: FormGroup;
   buyerForm: FormGroup;
+
+  readonly navigationMatrix: string[][] = [
+    ["l00", "m00", "r00"],
+    ["l01", "m01", "r01"],
+    ["l02", "m02", "r02"],
+    ["l03", "m03", "r03"],
+    ["l04", "m04", "r04"],
+    ["l05", "m05", "r05"],
+  ];
+
+  get isEditModeOff() {
+    return this.kbS.currentKeyboardMode != KeyboardModes.EDIT;
+  }
 
   constructor(
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
@@ -72,6 +88,8 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit {
       taxNum: new FormControl('', []),
       note: new FormControl('', []),
     });
+
+    this.kbS.attachNewMap(this.navigationMatrix);
   }
 
   refresh(): void {
@@ -83,6 +101,19 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit {
       this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
       this.productsDataSource.setData(this.productsData);
     });
+  }
+
+  changeSort(sortRequest: NbSortRequest): void {
+    this.productsDataSource.sort(sortRequest);
+    this.sortColumn = sortRequest.column;
+    this.sortDirection = sortRequest.direction;
+  }
+
+  getDirection(column: string): NbSortDirection {
+    if (column === this.sortColumn) {
+      return this.sortDirection;
+    }
+    return NbSortDirection.NONE;
   }
 
   ngAfterViewInit(): void {
@@ -98,31 +129,9 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit {
     // this.cdref.detectChanges();
   }
 
-  @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
-    switch (event.key) {
-      case KeyBindings.up: {
-        this.kbS.moveUp(true, event.altKey);
-        break;
-      }
-      case KeyBindings.down: {
-        this.kbS.moveDown(true, event.altKey);
-        break;
-      }
-      case KeyBindings.left: {
-        this.kbS.moveLeft(true, event.altKey);
-        break;
-      }
-      case KeyBindings.right: {
-        this.kbS.moveRight(true, event.altKey);
-        break;
-      }
-      case KeyBindings.edit: {
-        this.kbS.clickCurrentTile();
-        break;
-      }
-      default: { }
-    }
+  ngOnDestroy(): void {
+    console.log("Detach");
+    this.kbS.detachLastMap();
   }
 
 }

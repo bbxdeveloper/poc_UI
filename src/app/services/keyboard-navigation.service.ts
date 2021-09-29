@@ -11,6 +11,10 @@ interface MatrixToSubMatrixMapping {
   value: string[][];
 }
 
+export enum KeyboardModes {
+  NAVIGATION, EDIT
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +24,15 @@ export class KeyboardNavigationService {
   pos = { X: 0, Y: 0 } as MatrixCoordinate;
 
   activeSubKey: string = "";
+
+  private World: string[][][][] = [
+    [NM.HeaderNavMatrix]
+  ];
+
+  private _currentKeyboardMode: KeyboardModes = KeyboardModes.NAVIGATION;
+  get currentKeyboardMode() {
+    return this._currentKeyboardMode;
+  }
 
   constructor() { }
 
@@ -59,10 +72,10 @@ export class KeyboardNavigationService {
         return this.process(doSelect, true);
       }
     }
-    else if (this.pos.Y < NM.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
+    else if (this.pos.Y < this.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
       this.pos.Y++;
     }
-    else if (canJump && this.matrixPos.Y < NM.World.length - 1) {
+    else if (canJump && this.matrixPos.Y < this.World.length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
@@ -90,10 +103,10 @@ export class KeyboardNavigationService {
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
-    else if (this.pos.X < NM.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
+    else if (this.pos.X < this.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
       this.pos.X++;
     }
-    else if (canJump && this.matrixPos.X < NM.World[this.matrixPos.Y].length - 1) {
+    else if (canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
@@ -124,7 +137,7 @@ export class KeyboardNavigationService {
   }
 
   private getTile(mX: number, mY: number, x: number, y: number): string {
-    return NM.World[mY][mX][y][x];
+    return this.World[mY][mX][y][x];
   }
 
   private selectTile(tile: string) {
@@ -180,5 +193,15 @@ export class KeyboardNavigationService {
 
   getCurrentSubTile(): string {
     return this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
+  }
+
+  attachNewMap(map: string[][]): void {
+    this.World.push([map]);
+  }
+
+  detachLastMap(): void {
+    if (this.World.length > 1) {
+      this.World.splice(this.World.length - 1, 1);
+    }
   }
 }

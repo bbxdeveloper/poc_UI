@@ -29,10 +29,12 @@
     
     <nb-action id="header-serv" tabIndex="9" disabled>Szolgáltatások</nb-action>
     
-    <nb-action id="header-shut" tabIndex="10" icon="power-outline" *ngIf="!isElectron" (click)="quit($event)" (keydown.enter)="quit($event)">Kilépés</nb-action>
+    <nb-action id="header-shut" tabIndex="10" icon="power-outline" *ngIf="isElectron" (click)="quit($event)" (keydown.enter)="quit($event)">Kilépés</nb-action>
+
+    <nb-action disabled>
+        <nb-tag-list>
+            <nb-tag appearance="outline" [text]="keyboardMode" [status]="keyboardModeStatus"></nb-tag>
+        </nb-tag-list>
+    </nb-action>
 
 </nb-actions>
-
-
-
-<!-- nbContextMenuTrigger="focus" [nbContextMenu]="invoicingMenuItems" -->

@@ -14,3 +14,27 @@ body, html {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+.layout {
+  min-height: 10vh !important;
+  padding: 0px !important;
+}
+
+.card-header-txt-center {
+  text-align: center;
+  font-size: larger;
+  text-transform: uppercase;
+}
+
+.card-title {
+  // @extend .card-header-txt-center;
+
+  background: none !important;
+  border: none !important;
+
+  margin-bottom: 0px !important;
+
+  text-align: center;
+  font-size: larger !important;
+  text-transform: uppercase;
+}

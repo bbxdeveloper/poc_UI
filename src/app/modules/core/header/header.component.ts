@@ -1,7 +1,7 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbDialogService, NbIconConfig } from '@nebular/theme';
-import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { Constants } from 'src/assets/util/Constants';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
 import { environment } from 'src/environments/environment';
@@ -21,6 +21,36 @@ export class HeaderComponent implements OnInit {
   subInvoicingMenuItems = [
     { title: 'Számla', link: "invoicing/invoice", target: "invoicing-sub-1" }
   ];
+
+  get keyboardMode(): string {
+    var mode = this.kbS.currentKeyboardMode;
+    switch(mode) {
+      case KeyboardModes.NAVIGATION:
+        return "Mód: Navigáció";
+        break;
+      case KeyboardModes.EDIT:
+        return "Mód: Szerkesztés";
+        break;
+      default:
+        return "Mód: Ismeretlen";
+        break;
+    }
+  }
+
+  get keyboardModeStatus(): string {
+    var mode = this.kbS.currentKeyboardMode;
+    switch (mode) {
+      case KeyboardModes.NAVIGATION:
+        return "primary";
+        break;
+      case KeyboardModes.EDIT:
+        return "warning";
+        break;
+      default:
+        return "danger";
+        break;
+    }
+  }
   
   constructor(
     private dialogService: NbDialogService,
@@ -35,25 +65,29 @@ export class HeaderComponent implements OnInit {
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
     switch (event.key) {
       case KeyBindings.up: {
+        event.preventDefault();
         this.kbS.moveUp(true, event.altKey);
         break;
       }
       case KeyBindings.down: {
+        event.preventDefault();
         this.kbS.moveDown(true, event.altKey);
         break;
       }
       case KeyBindings.left: {
+        event.preventDefault();
         this.kbS.moveLeft(true, event.altKey);
         break;
       }
       case KeyBindings.right: {
+        event.preventDefault();
         this.kbS.moveRight(true, event.altKey);
         break;
       }
       case KeyBindings.edit: {
+        event.preventDefault();
         this.kbS.clickCurrentTile();
         break;
       }
