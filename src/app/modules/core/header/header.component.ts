@@ -35,6 +35,7 @@ export class HeaderComponent implements OnInit {
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
+    event.preventDefault();
     switch (event.key) {
       case KeyBindings.up: {
         this.kbS.moveUp(true, event.altKey);
@@ -53,7 +54,6 @@ export class HeaderComponent implements OnInit {
         break;
       }
       case KeyBindings.edit: {
-        event.preventDefault();
         this.kbS.clickCurrentTile();
         break;
       }

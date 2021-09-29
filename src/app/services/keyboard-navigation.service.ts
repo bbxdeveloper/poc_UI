@@ -1,18 +1,5 @@
 import { Injectable } from '@angular/core';
-
-const HeaderNavMatrix = [
-  [ "header-home", "header-user", "header-sett", "header-prod", "header-invo", "header-orde", "header-info", "header-list", "header-serv", "header-shut" ]
-];
-const headerInvoSub = [
-  ["invoicing-sub-1"],
-];
-
-const World: string[][][][] = [
-  [HeaderNavMatrix]
-];
-
-const SubMapping: { [id: string]: string[][]; } = {};
-SubMapping["header-invo"] = headerInvoSub;
+import { NM } from '../../assets/util/NavigationMatrices';
 
 interface MatrixCoordinate {
   X: number;
@@ -37,7 +24,7 @@ export class KeyboardNavigationService {
   constructor() { }
 
   moveUp(doSelect: boolean = true, canJump: boolean = false): string {
-    if (!canJump && this.pos.Y == 1 && !!this.activeSubKey && !!SubMapping[this.activeSubKey]) {
+    if (!canJump && this.pos.Y == 1 && !!this.activeSubKey && !!NM.SubMapping[this.activeSubKey]) {
       this.activeSubKey = "";
       this.pos.Y--;
     }
@@ -59,23 +46,23 @@ export class KeyboardNavigationService {
   moveDown(doSelect: boolean = true, canJump: boolean = false): string {
     var tile = this.getCurrentTile();
     
-    if (!canJump && this.pos.Y == 0 && !!SubMapping[tile]) {
+    if (!canJump && this.pos.Y == 0 && !!NM.SubMapping[tile]) {
       this.activeSubKey = tile;
       this.pos.Y++;
       return this.process(doSelect, true);
     }
     else if (!!this.activeSubKey) {
-      if (this.pos.Y < SubMapping[tile].length - 1) {
+      if (this.pos.Y < NM.SubMapping[tile].length - 1) {
         this.pos.Y++;
         return this.process(doSelect, true);
       } else {
         return this.process(doSelect, true);
       }
     }
-    else if (this.pos.Y < World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
+    else if (this.pos.Y < NM.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
       this.pos.Y++;
     }
-    else if (canJump && this.matrixPos.Y < World.length - 1) {
+    else if (canJump && this.matrixPos.Y < NM.World.length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
@@ -103,10 +90,10 @@ export class KeyboardNavigationService {
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
-    else if (this.pos.X < World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
+    else if (this.pos.X < NM.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
       this.pos.X++;
     }
-    else if (canJump && this.matrixPos.X < World[this.matrixPos.Y].length - 1) {
+    else if (canJump && this.matrixPos.X < NM.World[this.matrixPos.Y].length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
@@ -120,7 +107,7 @@ export class KeyboardNavigationService {
     var tile = "";
 
     if (sub) {
-      tile = this.getTileFromSub(this.pos.Y, SubMapping[this.activeSubKey]);
+      tile = this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
     } else {
       tile = this.getTile(this.matrixPos.X, this.matrixPos.Y, this.pos.X, this.pos.Y);
     }
@@ -137,7 +124,7 @@ export class KeyboardNavigationService {
   }
 
   private getTile(mX: number, mY: number, x: number, y: number): string {
-    return World[mY][mX][y][x];
+    return NM.World[mY][mX][y][x];
   }
 
   private selectTile(tile: string) {
@@ -188,10 +175,10 @@ export class KeyboardNavigationService {
   }
 
   selectCurrentSubTile() {
-    this.selectTile(this.getTileFromSub(this.pos.Y, SubMapping[this.activeSubKey]));
+    this.selectTile(this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]));
   }
 
   getCurrentSubTile(): string {
-    return this.getTileFromSub(this.pos.Y, SubMapping[this.activeSubKey]);
+    return this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
   }
 }
