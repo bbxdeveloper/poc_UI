@@ -199,9 +199,11 @@ export class KeyboardNavigationService {
     this.World.push([map]);
   }
 
-  detachLastMap(): void {
-    if (this.World.length > 1) {
-      this.World.splice(this.World.length - 1, 1);
+  detachLastMap(top: number = 1): void {
+    for (let i = 0; i < top; i++) {
+      if (this.World.length > 1) {
+        this.World.splice(this.World.length - 1, 1);
+      }
     }
   }
 }

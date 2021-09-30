@@ -75,21 +75,24 @@
                     <nb-form-field>
                         <div class="div-wrapper-input">
                             <label>Telj. időpont</label>
-                            <input nbInput type="datetime" formControlName='finishTimeStamp' required="true" [readonly]="isEditModeOff" id="m01">
+                            <input nbInput type="datetime" formControlName='finishTimeStamp' required="true" [readonly]="isEditModeOff" id="m01"
+                                    mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                         </div>
                     </nb-form-field>
                     
                     <nb-form-field>
                         <div class="div-wrapper-input">
                             <label>Számla kelte</label>
-                            <input nbInput type="datetime" formControlName='invoiceCreation' required="true" [readonly]="isEditModeOff" id="m02">
+                            <input nbInput type="datetime" formControlName='invoiceCreation' required="true" [readonly]="isEditModeOff" id="m02"
+                                    mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                         </div>
                     </nb-form-field>
 
                     <nb-form-field>
                         <div class="div-wrapper-input">
                             <label>Fiz.hat.idő</label>
-                            <input nbInput type="datetime" formControlName='paymentDeadline' required="true" [readonly]="isEditModeOff" id="m03">
+                            <input nbInput type="datetime" formControlName='paymentDeadline' required="true" id="m03"
+                                    mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                         </div>
                     </nb-form-field>
                     
@@ -166,31 +169,28 @@
 </nb-layout>
 
 <nb-card>
+    <nb-card-header class="card-header-txt-center">
+        Termékek
+    </nb-card-header>
     <nb-card-body>
-        <table tabindex="-1" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource" (sort)="changeSort($event)"
-            equalColumnsWidth>
-        
-            <tr tabindex="-1" nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
-            <tr tabindex="-1" nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
-        
-            <ng-container *ngFor="let it of colDefs; let position = index" [nbTreeGridColumnDef]="it.colKey">
-                <div tabindex="-1" [ngSwitch]="it.type">
-                    <div tabindex="-1" *ngSwitchCase="'string'">
-                        <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef
-                            [nbSortHeader]="getDirection(it.colKey)">
-                            {{it.label}}</th>
-                        <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row.data[it.objectKey] }}</td>
+        <form [formGroup]="productForms">
+            <table [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource" [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
+            
+                <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+                <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+            
+                <ng-container *ngFor="let it of colDefs; let colPos = index" [nbTreeGridColumnDef]="it.colKey">
+                    <div [ngSwitch]="it.type">
+                        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">
+                            {{it.label}}
+                        </th>
+                        <td nbTreeGridCell *nbTreeGridCellDef="let row; let rowPos = index">
+                            <input nbInput [type]="it.type" [formControlName]="it.objectKey + rowPos" id="{{'PRODUCT-' + colPos + '-' + rowPos}}"
+                                    [mask]="it.mask" [showMaskTyped]="true" [validation]="true"/>
+                        </td>
                     </div>
-                    <div tabindex="-1" *ngSwitchDefault>
-                        <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef
-                            [nbSortHeader]="getDirection(it.colKey)">{{it.label}}</th>
-                        <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row.data[it.objectKey] }}</td>
-                    </div>
-                </div>
-                <!-- <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">{{it.label}}</th>
-                                    <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row[it.objectKey] }}</td> -->
-            </ng-container>
-        
-        </table>
+                </ng-container>
+            </table>
+        </form>
     </nb-card-body>
 </nb-card>

@@ -11,6 +11,11 @@ import { CoreModule } from './modules/core/core.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { InvoicingModule } from './modules/invoicing/invoicing.module';
+import { NgxMaskModule, IConfig } from 'ngx-mask'
+
+const maskConfig: Partial<IConfig> = {
+  validation: true,
+};
 
 @NgModule({
   declarations: [
@@ -23,6 +28,8 @@ import { InvoicingModule } from './modules/invoicing/invoicing.module';
     NgxElectronModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    // Misc
+    NgxMaskModule.forRoot(maskConfig),
     // Nebular
     NbLayoutModule,
     NbMenuModule.forRoot(),
@@ -35,7 +42,8 @@ import { InvoicingModule } from './modules/invoicing/invoicing.module';
     InvoicingModule
   ],
   exports: [
-    NbLayoutModule
+    NbLayoutModule,
+    NgxMaskModule
   ],
   providers: [
     NbSidebarService

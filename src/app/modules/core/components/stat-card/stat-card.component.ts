@@ -13,12 +13,12 @@ import { TreeGridNode } from 'src/assets/model/TreeGridNode';
 export class StatCardComponent implements OnInit, AfterViewInit {
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
-    { label: 'Kód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string' },
-    { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string' },
-    { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string' },
-    { label: 'Mennyiség', objectKey: 'Amount', colKey: 'Amount', defaultValue: '', type: 'string' },
-    { label: 'Ár', objectKey: 'Price', colKey: 'Price', defaultValue: '', type: 'string' },
-    { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'string' },
+    { label: 'Kód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: '' },
+    { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: '' },
+    { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string', mask: '' },
+    { label: 'Mennyiség', objectKey: 'Amount', colKey: 'Amount', defaultValue: '', type: 'string', mask: '' },
+    { label: 'Ár', objectKey: 'Price', colKey: 'Price', defaultValue: '', type: 'string', mask: '' },
+    { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'string', mask: '' },
   ]
   dataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
   data: TreeGridNode<InvoiceProduct>[];
@@ -38,7 +38,7 @@ export class StatCardComponent implements OnInit, AfterViewInit {
   refresh(): void {
     this.seInv.getMockData("").subscribe(d => {
       console.log(d.Products);
-      this.data = d.Products.map(x => {return {data: x};});
+      this.data = d.Products.map(x => {return {data: x, uid: 0};});
       this.dataSource = this.dataSourceBuilder.create(this.data);
       this.dataSource.setData(this.data);
     });

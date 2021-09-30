@@ -4,4 +4,5 @@ export interface ColDef {
     objectKey: string;
     colKey: string;
     type?: string;
+    mask: string;
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { InvoiceNavComponent } from './invoice-nav/invoice-nav.component';
 import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule, NbInputModule, NbFormFieldModule, NbThemeModule } from '@nebular/theme';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxMaskModule } from 'ngx-mask'
 
 
 
@@ -20,6 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NbTreeGridModule,
     NbFormFieldModule,
     NbInputModule,
+    NgxMaskModule.forChild()
   ],
   exports: [
   ]
