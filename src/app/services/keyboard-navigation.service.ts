@@ -37,10 +37,17 @@ export class KeyboardNavigationService {
     return this._currentKeyboardMode === KeyboardModes.EDIT;
   }
 
+  lockedUp: boolean = false;
+  lockedDown: boolean = false;
+  lockedLeft: boolean = false;
+  lockedRight: boolean = false;
+
+  posCache?: number[];
+
   constructor() { }
 
   moveUp(doSelect: boolean = true, canJump: boolean = false): string {
-    if (this.isEditModeActivated) {
+    if (this.lockedUp || this.isEditModeActivated) {
       return this.getCurrentTile();
     }
 
@@ -64,7 +71,7 @@ export class KeyboardNavigationService {
   }
 
   moveDown(doSelect: boolean = true, canJump: boolean = false): string {
-    if (this.isEditModeActivated) {
+    if (this.lockedDown || this.isEditModeActivated) {
       return this.getCurrentTile();
     }
 
@@ -96,7 +103,7 @@ export class KeyboardNavigationService {
   }
 
   moveLeft(doSelect: boolean = true, canJump: boolean = false): string {
-    if (this.isEditModeActivated) {
+    if (this.lockedLeft || this.isEditModeActivated) {
       return this.getCurrentTile();
     }
 
@@ -115,7 +122,7 @@ export class KeyboardNavigationService {
   }
 
   moveRight(doSelect: boolean = true, canJump: boolean = false): string {
-    if (this.isEditModeActivated) {
+    if (this.lockedRight || this.isEditModeActivated) {
       return this.getCurrentTile();
     }
 
@@ -244,15 +251,37 @@ export class KeyboardNavigationService {
     return this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
   }
 
-  attachNewMap(map: string[][]): void {
+  attachNewMap(map: string[][], navigateThere: boolean = false): void {
+    this.posCache = [this.matrixPos.X, this.matrixPos.Y, this.pos.X, this.pos.Y];
     this.World.push([map]);
+    if (navigateThere) {
+      this.matrixPos.Y = this.World.length - 1;
+      this.matrixPos.X = 0;
+      this.pos.X = 0;
+      this.pos.Y = 0;
+      this.selectCurrentTile();
+    }
   }
 
-  detachLastMap(top: number = 1): void {
+  lockDirections(up: boolean = false, right: boolean = false, down: boolean = false, left: boolean = false): void {
+    this.lockedUp = up;
+    this.lockedRight = right;
+    this.lockedDown = down;
+    this.lockedLeft = left;
+  }
+
+  detachLastMap(top: number = 1, navToPosCache: boolean = false): void {
     for (let i = 0; i < top; i++) {
       if (this.World.length > 1) {
         this.World.splice(this.World.length - 1, 1);
       }
+    }
+    if (!!this.posCache) {
+      this.matrixPos.X = this.posCache[0];
+      this.matrixPos.Y = this.posCache[1];
+      this.pos.X = this.posCache[2];
+      this.pos.Y = this.posCache[3];
+      this.clearPosCache();
     }
   }
 
@@ -265,5 +294,9 @@ export class KeyboardNavigationService {
 
   toggleEdit(): void {
     this._currentKeyboardMode = this._currentKeyboardMode == KeyboardModes.EDIT ? KeyboardModes.NAVIGATION : KeyboardModes.EDIT;
+  }
+
+  clearPosCache(): void {
+    this.posCache = undefined;
   }
 }

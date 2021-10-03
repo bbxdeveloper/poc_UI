@@ -1,6 +1,7 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbDialogService, NbIconConfig } from '@nebular/theme';
+import { windowsStore } from 'process';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { Constants } from 'src/assets/util/Constants';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
@@ -114,6 +115,9 @@ export class HeaderComponent implements OnInit {
 
   quit(event: any): void {
     event.preventDefault();
+    if (!this.isElectron) {
+      return;
+    }
     const dialogRef = this.dialogService.open(ConfirmationDialogComponent, { context: { msg: Constants.MSG_CONFIRMATION_QUIT } });
     dialogRef.onClose.subscribe(res => {
       if (res) {
