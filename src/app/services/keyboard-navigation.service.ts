@@ -6,11 +6,6 @@ interface MatrixCoordinate {
   Y: number;
 }
 
-interface MatrixToSubMatrixMapping {
-  key: string;
-  value: string[][];
-}
-
 export enum KeyboardModes {
   NAVIGATION, EDIT
 }
@@ -23,6 +18,7 @@ export class KeyboardNavigationService {
   matrixPos = {X: 0, Y: 0} as MatrixCoordinate;
   pos = { X: 0, Y: 0 } as MatrixCoordinate;
 
+  /** Active submap key, if there is a focused submap tile. */
   activeSubKey: string = "";
 
   private World: string[][][][] = [
@@ -30,22 +26,35 @@ export class KeyboardNavigationService {
   ];
 
   private _currentKeyboardMode: KeyboardModes = KeyboardModes.NAVIGATION;
+  
   get currentKeyboardMode() {
     return this._currentKeyboardMode;
   }
+  
   get isEditModeActivated() {
     return this._currentKeyboardMode === KeyboardModes.EDIT;
   }
 
+  /** UP direction is locked and not usable. */
   lockedUp: boolean = false;
+  /** DOWN direction is locked and not usable. */
   lockedDown: boolean = false;
+  /** LEFT direction is locked and not usable. */
   lockedLeft: boolean = false;
+  /** RIGHT direction is locked and not usable. */
   lockedRight: boolean = false;
 
+  /** Cache for position, order: World X, World Y, Matrix X, Matrix Y. */
   posCache?: number[];
 
   constructor() { }
 
+  /**
+   * Moves up in the current matrix or submatrix.
+   * @param doSelect Focusing the tile on the current (aftermove) position.
+   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @returns Tile on the current (aftermove) position.
+   */
   moveUp(doSelect: boolean = true, canJump: boolean = false): string {
     if (this.lockedUp || this.isEditModeActivated) {
       return this.getCurrentTile();
@@ -70,6 +79,12 @@ export class KeyboardNavigationService {
     return this.process(doSelect);
   }
 
+  /**
+   * Moves down in the current matrix or submatrix.
+   * @param doSelect Focusing the tile on the current (aftermove) position.
+   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @returns Tile on the current (aftermove) position.
+   */
   moveDown(doSelect: boolean = true, canJump: boolean = false): string {
     if (this.lockedDown || this.isEditModeActivated) {
       return this.getCurrentTile();
@@ -102,6 +117,12 @@ export class KeyboardNavigationService {
     return this.process(doSelect);
   }
 
+  /**
+   * Moves left in the current matrix or submatrix.
+   * @param doSelect Focusing the tile on the current (aftermove) position.
+   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @returns Tile on the current (aftermove) position.
+   */
   moveLeft(doSelect: boolean = true, canJump: boolean = false): string {
     if (this.lockedLeft || this.isEditModeActivated) {
       return this.getCurrentTile();
@@ -121,6 +142,12 @@ export class KeyboardNavigationService {
     return this.process(doSelect);
   }
 
+  /**
+   * Moves right in the current matrix or submatrix.
+   * @param doSelect Focusing the tile on the current (aftermove) position.
+   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @returns Tile on the current (aftermove) position.
+   */
   moveRight(doSelect: boolean = true, canJump: boolean = false): string {
     if (this.lockedRight || this.isEditModeActivated) {
       return this.getCurrentTile();
@@ -140,6 +167,12 @@ export class KeyboardNavigationService {
     return this.process(doSelect);
   }
 
+  /**
+   * Moves to the top edge of the current matrix.
+   * If the pos is in a submatrix, then escapes it.
+   * @param doSelect Selects the tile under the new position.
+   * @returns Tile on the current (aftermove) position.
+   */
   moveTopInCurrentArea(doSelect: boolean = true): string {
     if (this.isEditModeActivated) {
       return this.getCurrentTile();
@@ -155,6 +188,10 @@ export class KeyboardNavigationService {
     return doSelect ? this.process(doSelect) : this.getCurrentTile();
   }
 
+  /**
+   * Moves one step down if possible, if not, tries to move one step right then to the top edge of the matrix.
+   * @returns Tile on the current (aftermove) position.
+   */
   moveNextInForm(): string {
     let tile = this.getCurrentTile();
     var res = this.moveDown(true, false);
@@ -165,6 +202,12 @@ export class KeyboardNavigationService {
     return res;
   }
 
+  /**
+   * Called at the and of the basic 4 move methods. Returns the new tile and selects it depending on the parameters.
+   * @param doSelect Select tile on new position.
+   * @param sub Submatrix movement.
+   * @returns Tile on the current (aftermove) position.
+   */
   private process(doSelect: boolean, sub: boolean = false): string {
     console.log("Pos: ", this.matrixPos.X, ", ", this.matrixPos.Y, ", ", this.pos.X, ", ", this.pos.Y);
 
@@ -183,6 +226,12 @@ export class KeyboardNavigationService {
     return tile;
   }
 
+  /**
+   * Gets tile from the given submatrix on the given Y coordinate (X is zero).
+   * @param y 
+   * @param sub 
+   * @returns 
+   */
   private getTileFromSub(y: number, sub: string[][]): string {
     return sub[y-1][0];
   }
