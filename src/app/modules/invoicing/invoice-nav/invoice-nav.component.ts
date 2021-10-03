@@ -1,14 +1,14 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
-import { TouchBarScrubber } from 'electron';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NbOptionComponent, NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { Observable, of } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { ColDef } from 'src/assets/model/ColDef';
 import { Company } from 'src/assets/model/Company';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
-import { KeyBindings } from 'src/assets/util/KeyBindings';
 
 @Component({
   selector: 'app-invoice-nav',
@@ -16,14 +16,16 @@ import { KeyBindings } from 'src/assets/util/KeyBindings';
   styleUrls: ['./invoice-nav.component.scss']
 })
 export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('table') table?: NbTable<any>;
+
   senderData: Company;
   buyerData: Company;
-
-  @ViewChild('table') table?: NbTable<any>;
+  buyersData: Company[] = [];
 
   productCreatorRow: TreeGridNode<InvoiceProduct>;
   productsData: TreeGridNode<InvoiceProduct>[];
   productsDataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
+  filteredBuyerOptions$: Observable<string[]> = of([]);
 
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
@@ -35,12 +37,8 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'number', mask: "" },
   ]
   customMaskPatterns = {
-    A: {
-      pattern: new RegExp('[a-zA-Z0-9]'), symbol: 'X'
-    },
-    C: {
-      pattern: new RegExp('[a-zA-Z0-9]'), optional: true, symbol: 'X'
-    }
+    A: { pattern: new RegExp('[a-zA-Z0-9]') },
+    C: { pattern: new RegExp('[a-zA-Z0-9]') }
   };
 
   sortColumn: string = '';
@@ -65,16 +63,16 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   readonly navigationMatrix: string[][] = [
-    ["l00", "m00", "r00"],
-    ["l01", "m01", "r01"],
-    ["l02", "m02", "r02"],
-    ["l03", "m03", "r03"],
-    ["l04", "m04", "r04"],
-    ["l05", "m05", "r05"],
+    ["l00", "r00", "m00"],
+    ["l01", "r01", "m01"],
+    ["l02", "r02", "m02"],
+    ["l03", "r03", "m03"],
+    ["l04", "r04", "m04"],
+    ["l05", "r05", "m05"],
   ];
 
   get isEditModeOff() {
-    return this.kbS.currentKeyboardMode != KeyboardModes.EDIT;
+    return this.kbS.currentKeyboardMode !== KeyboardModes.EDIT;
   }
 
   constructor(
@@ -85,10 +83,10 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private kbS: KeyboardNavigationService,
     private fb: FormBuilder
   ) {
-    this.productsData = [];
     this.senderData = {} as Company;
     this.buyerData = {} as Company;
-
+    
+    this.productsData = [];
     this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
 
     this.exporterForm = new FormGroup({
@@ -119,6 +117,12 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.productForm = new FormGroup({});
     this.productCreatorRow = this.GenerateCreatorRow;
 
+    this.filteredBuyerOptions$ = this.buyerForm.controls["name"].valueChanges
+      .pipe(
+        startWith(''),
+        map((filterString: any) => this.filter(filterString)),
+      );
+
     this.refresh();
   }
 
@@ -128,8 +132,12 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // console.log(d.Products);
       
-      this.buyerData = d.Buyer;
+      // this.buyerData = d.Buyer;
       this.senderData = d.Sender;
+
+      this.seInv.getMockBuyers().subscribe(b => {
+        this.buyersData = b;
+      });
       
       this.productCreatorRow = this.GenerateCreatorRow;
       this.productsData = [this.productCreatorRow].concat(d.Products.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; }));
@@ -144,14 +152,14 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         taxNum: new FormControl(this.senderData.TaxNumber, []),
         note: new FormControl(this.senderData.Note, []),
       });
-      this.buyerForm = new FormGroup({
-        name: new FormControl(this.buyerData.Name, []),
-        zipCodeCity: new FormControl(this.buyerData.ZipCodeCity, []),
-        street: new FormControl(this.buyerData.Address, []),
-        invoiceNum: new FormControl(this.buyerData.InvoiceAddress, []),
-        taxNum: new FormControl(this.buyerData.TaxNumber, []),
-        note: new FormControl(this.buyerData.Note, []),
-      });
+      // this.buyerForm = new FormGroup({
+      //   name: new FormControl(this.buyerData.Name, []),
+      //   zipCodeCity: new FormControl(this.buyerData.ZipCodeCity, []),
+      //   street: new FormControl(this.buyerData.Address, []),
+      //   invoiceNum: new FormControl(this.buyerData.InvoiceAddress, []),
+      //   taxNum: new FormControl(this.buyerData.TaxNumber, []),
+      //   note: new FormControl(this.buyerData.Note, []),
+      // });
 
       this.resetEdit();
 
@@ -162,6 +170,14 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.table?.renderRows();
     });
+  }
+
+  private filter(value: string): string[] {
+    if (this.isEditModeOff) {
+      return [];
+    }
+    const filterValue = value.toLowerCase();
+    return [""].concat(this.buyersData.map(x => x.Name).filter(optionValue => optionValue.toLowerCase().includes(filterValue)));
   }
 
   private generateAndAttachTableMap(): void {
@@ -233,7 +249,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editedRowPos = undefined;
   }
 
-  handleEnter(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
+  handleGridEnter(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
     // Switch between nav and edit mode
     this.kbS.toggleEdit();
 
@@ -268,7 +284,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log((this.productsData[rowPos].data as any)[col]);
   }
 
-  handleDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
+  handleGridDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
     if (rowPos !== 0 && !this.kbS.isEditModeActivated) {
       this.productsData.splice(rowPos, 1);
       this.productsDataSource.setData(this.productsData);
@@ -281,4 +297,44 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log((this.productsData[rowPos].data as any)[col]);
   }
 
+  handleFormEnter(event: Event, jumpNext: boolean = true, toggleEditMode: boolean = true): void {
+    console.log("FORM HANDLING KEYBOARD ACTION");
+    if (toggleEditMode) {
+      this.kbS.toggleEdit();
+    }
+    if (jumpNext) {
+      this.kbS.moveNextInForm();
+    }
+  }
+
+  handleAutoCompleteSelect(event: any): void {
+    if (event === "") {
+      // this.buyerForm.controls["name"].setValue("");
+      this.buyerForm.controls["zipCodeCity"].setValue("");
+      this.buyerForm.controls["street"].setValue("");
+      this.buyerForm.controls["invoiceNum"].setValue("");
+      this.buyerForm.controls["taxNum"].setValue("");
+      this.buyerForm.controls["note"].setValue("");
+    } else {
+      this.feelBuyerForm(event);
+    }
+    if (this.isEditModeOff) {
+      this.kbS.moveNextInForm();
+    }
+  }
+
+  handleAutoCompleteOptionFocused(event: any): void {
+    console.log(event);
+  }
+
+  private feelBuyerForm(name: string) {
+    let buyer = this.buyersData.find(b => b.Name === name);
+    if (!!buyer) {
+      this.buyerForm.controls["zipCodeCity"].setValue(buyer.ZipCodeCity);
+      this.buyerForm.controls["street"].setValue(buyer.Address);
+      this.buyerForm.controls["invoiceNum"].setValue(buyer.InvoiceAddress);
+      this.buyerForm.controls["taxNum"].setValue(buyer.TaxNumber);
+      this.buyerForm.controls["note"].setValue(buyer.Note);
+    }
+  }
 }

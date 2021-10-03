@@ -133,6 +133,25 @@ export class KeyboardNavigationService {
     return this.process(doSelect);
   }
 
+  moveTopInCurrentArea(doSelect: boolean = true): string {
+    if (this.isEditModeActivated) {
+      return this.getCurrentTile();
+    } else {
+      this.pos.Y = 0;
+    }
+    return doSelect ? this.process(doSelect) : this.getCurrentTile();
+  }
+
+  moveNextInForm(): string {
+    let tile = this.getCurrentTile();
+    var res = this.moveDown(true, false);
+    if (tile === res) {
+      this.moveRight(true, false);
+      res = this.moveTopInCurrentArea();
+    }
+    return res;
+  }
+
   private process(doSelect: boolean, sub: boolean = false): string {
     console.log("Pos: ", this.matrixPos.X, ", ", this.matrixPos.Y, ", ", this.pos.X, ", ", this.pos.Y);
 

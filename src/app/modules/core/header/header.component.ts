@@ -95,7 +95,10 @@ export class HeaderComponent implements OnInit {
         break;
       }
       case KeyBindings.edit: {
-        event.preventDefault();
+        console.log("HEADER HANDLING KEYBOARD ACTION");
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+        }
         this.kbS.clickCurrentTile();
         break;
       }

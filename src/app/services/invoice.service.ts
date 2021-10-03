@@ -68,4 +68,63 @@ export class InvoiceService {
       ]
     } as Invoice);
   }
+
+  getMockBuyers(): Observable<Company[]> {
+    return of([
+      {
+        Name: 'ABC',
+        SecondaryName: 'Kiegészítő Megnevezés',
+        ZipCodeCity: '2222 Valahol',
+        Address: 'Vala utca. 22',
+        InvoiceAddress: '444444-22222222-33333333',
+        TaxNumber: '12332123-2-34',
+        Note: 'Semmi.'
+      } as Company,
+      {
+        Name: 'Teszt',
+        SecondaryName: 'Kiegészítő Megnevezés',
+        ZipCodeCity: '2222 Valahol',
+        Address: 'Vala utca. 22',
+        InvoiceAddress: '444444-22222222-33333333',
+        TaxNumber: '12332123-2-34',
+        Note: 'Semmi.'
+      } as Company,
+      {
+        Name: 'Co',
+        SecondaryName: 'Kiegészítő Megnevezés',
+        ZipCodeCity: '2222 Valahol',
+        Address: 'Vala utca. 22',
+        InvoiceAddress: '444444-22222222-33333333',
+        TaxNumber: '12332123-2-34',
+        Note: 'Semmi.'
+      } as Company,
+      {
+        Name: 'Partner 1',
+        SecondaryName: 'Kiegészítő Megnevezés',
+        ZipCodeCity: '2222 Valahol',
+        Address: 'Vala utca. 22',
+        InvoiceAddress: '444444-22222222-33333333',
+        TaxNumber: '12332123-2-34',
+        Note: 'Semmi.'
+      } as Company,
+      {
+        Name: 'Partner 2',
+        SecondaryName: 'Kiegészítő Megnevezés',
+        ZipCodeCity: '2222 Valahol',
+        Address: 'Vala utca. 22',
+        InvoiceAddress: '444444-22222222-33333333',
+        TaxNumber: '12332123-2-34',
+        Note: 'Semmi.'
+      } as Company,
+      {
+        Name: 'Teszt Partner',
+        SecondaryName: 'Kiegészítő Megnevezés',
+        ZipCodeCity: '2222 Valahol',
+        Address: 'Vala utca. 22',
+        InvoiceAddress: '444444-22222222-33333333',
+        TaxNumber: '12332123-2-34',
+        Note: 'Semmi.'
+      } as Company,
+    ]);
+  }
  }
