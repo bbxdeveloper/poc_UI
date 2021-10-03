@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NbDialogService, NbIconConfig } from '@nebular/theme';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { Constants } from 'src/assets/util/Constants';
@@ -55,7 +55,6 @@ export class HeaderComponent implements OnInit {
   constructor(
     private dialogService: NbDialogService,
     private kbS: KeyboardNavigationService,
-    private route: ActivatedRoute,
     private router: Router) {
       this.kbS.selectCurrentTile();
     }

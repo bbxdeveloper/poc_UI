@@ -22,7 +22,10 @@ function createWindow() {
 	);
 	
 	// Open the devtools
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
+
+	mainWindow.maximize();
+	mainWindow.setMinimumSize(1366, 768);
 	
 	mainWindow.on('closed', function () {
 		mainWindow = null;

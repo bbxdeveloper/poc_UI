@@ -48,3 +48,14 @@ body, html {
   flex: 1 0 calc(30% - 1rem);
   margin: 0;
 }
+
+tr:nth-child(even) {
+    background-color: #493668 !important;
+}
+
+th {
+    background: rgb(35, 35, 75);
+    text-align: center;
+    font-weight: bold;
+    font-variant: small-caps;
+}
