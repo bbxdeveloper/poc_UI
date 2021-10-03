@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron')
 const url = require('url')
 const path = require('path')
 
+// let splash;
 let mainWindow;
 
 function createWindow() {
@@ -13,6 +14,16 @@ function createWindow() {
 		}
 	});
 	
+	// Splashscreen
+  	// splash = new BrowserWindow({width: 90, height: 35, transparent: true, frame: false, alwaysOnTop: true});
+  	// splash.loadURL(
+	// 	url.format({
+	// 		pathname: path.join(__dirname, '/dist/bbx/static/splash.html'),
+	// 		protocol: 'file:',
+	// 		slashes: true
+	// 	})
+	// );
+
 	mainWindow.loadURL(
 		url.format({
 			pathname: path.join(__dirname, '/dist/bbx/index.html'),
@@ -24,8 +35,11 @@ function createWindow() {
 	// Open the devtools
 	// mainWindow.webContents.openDevTools();
 
-	mainWindow.maximize();
-	mainWindow.setMinimumSize(1366, 768);
+	mainWindow.once('ready-to-show', () => {
+		mainWindow.setMinimumSize(1366, 768);
+		mainWindow.maximize();
+		// splash.destroy();
+  	});
 	
 	mainWindow.on('closed', function () {
 		mainWindow = null;
