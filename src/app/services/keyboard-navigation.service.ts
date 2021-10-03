@@ -48,16 +48,16 @@ export class KeyboardNavigationService {
       this.activeSubKey = "";
       this.pos.Y--;
     }
+    else if (canJump && this.matrixPos.Y > 0) {
+      this.matrixPos.Y--;
+      this.pos.X = 0;
+      this.pos.Y = 0;
+    }
     else if (!canJump && this.pos.Y > 0) {
       this.pos.Y--;
       if (!!this.activeSubKey) {
         return this.process(doSelect, true);
       }
-    }
-    else if (canJump && this.matrixPos.Y > 0) {
-      this.matrixPos.Y--;
-      this.pos.X = 0;
-      this.pos.Y = 0;
     }
 
     return this.process(doSelect);
@@ -83,13 +83,13 @@ export class KeyboardNavigationService {
         return this.process(doSelect, true);
       }
     }
-    else if (this.pos.Y < this.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
-      this.pos.Y++;
-    }
     else if (canJump && this.matrixPos.Y < this.World.length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
+    }
+    else if (this.pos.Y < this.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
+      this.pos.Y++;
     }
 
     return this.process(doSelect);
@@ -118,7 +118,7 @@ export class KeyboardNavigationService {
     if (this.isEditModeActivated) {
       return this.getCurrentTile();
     }
-    
+
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
