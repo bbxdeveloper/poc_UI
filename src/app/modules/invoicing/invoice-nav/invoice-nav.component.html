@@ -173,22 +173,25 @@
         Termékek
     </nb-card-header>
     <nb-card-body>
-        <form [formGroup]="productForms">
-            <table [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource" [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
+        <form> <!--[formGroup]="productForm"-->
+            <table class="card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource" [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
             
                 <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
                 <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
             
                 <ng-container *ngFor="let it of colDefs; let colPos = index" [nbTreeGridColumnDef]="it.colKey">
-                    <div [ngSwitch]="it.type">
+                    <ng-container [ngSwitch]="it.type">
                         <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">
                             {{it.label}}
                         </th>
-                        <td nbTreeGridCell *nbTreeGridCellDef="let row; let rowPos = index">
-                            <input nbInput [type]="it.type" [formControlName]="it.objectKey + rowPos" id="{{'PRODUCT-' + colPos + '-' + rowPos}}"
-                                    [mask]="it.mask" [showMaskTyped]="true" [validation]="true"/>
+                        <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell *nbTreeGridCellDef="let row; let rowPos = index" (keydown.enter)="handleEnter($event, row, rowPos, it.objectKey)" id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
+                            <input *ngIf="editedRowPos == rowPos && editedProperty == it.objectKey" nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]" id="PRODUCT-EDIT"
+                                    [mask]="it.mask" [patterns]="customMaskPatterns" [showMaskTyped]="true"/> <!--formControlName="edited"-->
+                            <div *ngIf="editedRowPos !== rowPos || editedProperty !== it.objectKey">
+                                {{ row.data[it.objectKey] }}
+                            </div>
                         </td>
-                    </div>
+                    </ng-container>
                 </ng-container>
             </table>
         </form>

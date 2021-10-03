@@ -33,10 +33,17 @@ export class KeyboardNavigationService {
   get currentKeyboardMode() {
     return this._currentKeyboardMode;
   }
+  get isEditModeActivated() {
+    return this._currentKeyboardMode === KeyboardModes.EDIT;
+  }
 
   constructor() { }
 
   moveUp(doSelect: boolean = true, canJump: boolean = false): string {
+    if (this.isEditModeActivated) {
+      return this.getCurrentTile();
+    }
+
     if (!canJump && this.pos.Y == 1 && !!this.activeSubKey && !!NM.SubMapping[this.activeSubKey]) {
       this.activeSubKey = "";
       this.pos.Y--;
@@ -57,6 +64,10 @@ export class KeyboardNavigationService {
   }
 
   moveDown(doSelect: boolean = true, canJump: boolean = false): string {
+    if (this.isEditModeActivated) {
+      return this.getCurrentTile();
+    }
+
     var tile = this.getCurrentTile();
     
     if (!canJump && this.pos.Y == 0 && !!NM.SubMapping[tile]) {
@@ -85,6 +96,10 @@ export class KeyboardNavigationService {
   }
 
   moveLeft(doSelect: boolean = true, canJump: boolean = false): string {
+    if (this.isEditModeActivated) {
+      return this.getCurrentTile();
+    }
+
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
@@ -100,6 +115,10 @@ export class KeyboardNavigationService {
   }
 
   moveRight(doSelect: boolean = true, canJump: boolean = false): string {
+    if (this.isEditModeActivated) {
+      return this.getCurrentTile();
+    }
+    
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
@@ -144,7 +163,7 @@ export class KeyboardNavigationService {
     var tileRef = document.getElementById(tile);
     if (!!tileRef) {
       tileRef.focus();
-      console.log(tileRef);
+      // console.log(tileRef);
     } else {
       var element = document.querySelector('[target="' + tile + '"]');
       if (!!element) {
@@ -164,7 +183,7 @@ export class KeyboardNavigationService {
     var tileRef = document.getElementById(tile);
     if (!!tileRef) {
       tileRef.click();
-      console.log(this.activeSubKey, tileRef);
+      // console.log(this.activeSubKey, tileRef);
     } else {
       var element = document.querySelector('[target="' + tile + '"]');
       if (!!element) {
@@ -205,5 +224,16 @@ export class KeyboardNavigationService {
         this.World.splice(this.World.length - 1, 1);
       }
     }
+  }
+
+  focusById(id: string) {
+    var tileRef = document.getElementById(id);
+    if (!!tileRef) {
+      tileRef.focus();
+    }
+  }
+
+  toggleEdit(): void {
+    this._currentKeyboardMode = this._currentKeyboardMode == KeyboardModes.EDIT ? KeyboardModes.NAVIGATION : KeyboardModes.EDIT;
   }
 }

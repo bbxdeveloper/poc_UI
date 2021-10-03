@@ -67,22 +67,30 @@ export class HeaderComponent implements OnInit {
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
     switch (event.key) {
       case KeyBindings.up: {
-        event.preventDefault();
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+        }
         this.kbS.moveUp(true, event.altKey);
         break;
       }
       case KeyBindings.down: {
-        event.preventDefault();
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+        }
         this.kbS.moveDown(true, event.altKey);
         break;
       }
       case KeyBindings.left: {
-        event.preventDefault();
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+        }
         this.kbS.moveLeft(true, event.altKey);
         break;
       }
       case KeyBindings.right: {
-        event.preventDefault();
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+        }
         this.kbS.moveRight(true, event.altKey);
         break;
       }

@@ -1,6 +1,7 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { NbSortDirection, NbSortRequest, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { TouchBarScrubber } from 'electron';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { ColDef } from 'src/assets/model/ColDef';
@@ -18,18 +19,29 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   senderData: Company;
   buyerData: Company;
 
+  @ViewChild('table') table?: NbTable<any>;
+
+  productCreatorRow: TreeGridNode<InvoiceProduct>;
   productsData: TreeGridNode<InvoiceProduct>[];
   productsDataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
 
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
-    { label: 'Kód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "000-0*" },
+    { label: 'Kód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" },
     { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: "" },
     { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string', mask: "" },
     { label: 'Mennyiség', objectKey: 'Amount', colKey: 'Amount', defaultValue: '', type: 'string', mask: "" },
     { label: 'Ár', objectKey: 'Price', colKey: 'Price', defaultValue: '', type: 'number', mask: "" },
     { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'number', mask: "" },
   ]
+  customMaskPatterns = {
+    A: {
+      pattern: new RegExp('[a-zA-Z0-9]'), symbol: 'X'
+    },
+    C: {
+      pattern: new RegExp('[a-zA-Z0-9]'), optional: true, symbol: 'X'
+    }
+  };
 
   sortColumn: string = '';
   sortDirection: NbSortDirection = NbSortDirection.NONE;
@@ -38,8 +50,19 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   metaForm: FormGroup;
   buyerForm: FormGroup;
 
-  productForms: FormGroup;
+  productForm: FormGroup;
+  editedRow?: TreeGridNode<InvoiceProduct>;
+  editedProperty?: string;
+  editedRowPos?: number;
+
   private uid = 0;
+  private tabIndex = 10000;
+  get NextTabIndex() { return this.tabIndex++; }
+  get GenerateCreatorRow(): TreeGridNode<InvoiceProduct> {
+    return {
+      data: { Code: '', Measure: '', Amount: 0, Price: 0, Value: 0, Name: '' } as InvoiceProduct
+    };
+  }
 
   readonly navigationMatrix: string[][] = [
     ["l00", "m00", "r00"],
@@ -52,10 +75,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get isEditModeOff() {
     return this.kbS.currentKeyboardMode != KeyboardModes.EDIT;
-  }
-
-  get productControlArray() {
-    return this.productForms.get('products') as FormArray;
   }
 
   constructor(
@@ -97,76 +116,24 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       note: new FormControl('', []),
     });
 
-    this.productForms = this.fb.group({
-      products: this.fb.array([]),
-    });
+    this.productForm = new FormGroup({});
+    this.productCreatorRow = this.GenerateCreatorRow;
 
     this.refresh();
-
-    //this.generateProductFormFields();
-    //this.kbS.attachNewMap(this.navigationMatrix);
-  }
-
-  private generateProductFormFields(): void {
-    const rows = this.productControlArray;
-
-    // Generate new product form
-    let newProductForm = new FormGroup({});
-    this.colDefs.forEach(col => {
-      let ctrl = new FormControl('', []);
-      newProductForm.addControl(col.objectKey + '0', ctrl);
-    });
-
-    rows.push(this.fb.group(newProductForm));
-
-    // Generate filled product forms
-    for (let i = 0; i < this.productsData.length; i++) {
-      let _form = new FormGroup({});
-      this.colDefs.forEach(col => {
-        let val = (this.productsData[i].data as any)[col.objectKey];
-        let ctrl = new FormControl(val, []);
-        _form.addControl(col.objectKey + (i + 1), ctrl);
-        console.log(col.objectKey + (i + 1));
-      });
-      rows.push(this.fb.group({}));
-    }
-/*
- // Generate new product form
-    rows.push(this.fb.group({
-      Code: new FormControl('', []),
-      Name: new FormControl('', []),
-      Measure: new FormControl('', []),
-      Amount: new FormControl('', []),
-      Price: new FormControl('', []),
-      Value: new FormControl('', [])
-    }));
-
-      // Generate filled product forms
-      this.productsData.forEach((p, index) => {
-        rows.push(this.fb.group({
-          Code: new FormControl(p.data.Code, []),
-          Name: new FormControl(p.data.Name, []),
-          Measure: new FormControl(p.data.Measure, []),
-          Amount: new FormControl(p.data.Amount, []),
-          Price: new FormControl(p.data.Price, []),
-          Value: new FormControl(p.data.Value, [])
-        }));
-      });
-      */
   }
 
   refresh(): void {
     this.seInv.getMockData("").subscribe(d => {
       this.kbS.detachLastMap(2);
 
-      console.log(d.Products);
+      // console.log(d.Products);
       
       this.buyerData = d.Buyer;
       this.senderData = d.Sender;
       
-      this.productsData = d.Products.map(x => { return { data: x, uid: this.nextUid() }; });
+      this.productCreatorRow = this.GenerateCreatorRow;
+      this.productsData = [this.productCreatorRow].concat(d.Products.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; }));
       
-      this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
       this.productsDataSource.setData(this.productsData);
 
       this.exporterForm = new FormGroup({
@@ -186,9 +153,14 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         note: new FormControl(this.buyerData.Note, []),
       });
 
-      this.generateProductFormFields();
+      this.resetEdit();
+
       this.kbS.attachNewMap(this.navigationMatrix);
       this.generateAndAttachTableMap();
+
+      // console.log(this.productForms);
+
+      this.table?.renderRows();
     });
   }
 
@@ -201,7 +173,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       tableNavMap.push(row);
     }
-    console.log(tableNavMap);
+    // console.log(tableNavMap);
     this.kbS.attachNewMap(tableNavMap);
   }
 
@@ -243,6 +215,52 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     console.log("Detach");
     this.kbS.detachLastMap(2);
+  }
+
+  edit(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string) {
+    this.productForm = new FormGroup({
+      edited: new FormControl((row.data as any)[col])
+    });
+    this.editedProperty = col;
+    this.editedRow = row;
+    this.editedRowPos = rowPos;
+  }
+
+  resetEdit(): void {
+    this.productForm = new FormGroup({});
+    this.editedProperty = undefined;
+    this.editedRow = undefined;
+    this.editedRowPos = undefined;
+  }
+
+  handleEnter(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
+    // Switch between nav and edit mode
+    this.kbS.toggleEdit();
+
+    // Already in Edit mode
+    if (!!this.editedRow) {
+
+      // Creator row edited
+      if (rowPos === 0 && col === 'Code') {
+        this.productCreatorRow = this.GenerateCreatorRow;
+        this.productsData = [this.productCreatorRow].concat(this.productsData);
+        this.productsDataSource.setData(this.productsData);
+        this.kbS.moveDown();
+      }
+
+      // Close edit mode
+      this.resetEdit();
+      this.kbS.moveRight();
+      this.cdref.detectChanges();
+      
+    } else {
+      // Entering edit mode
+      this.edit(row, rowPos, col);
+      this.cdref.detectChanges();
+      this.kbS.focusById("PRODUCT-EDIT");
+    }
+
+    console.log((this.productsData[rowPos].data as any)[col]);
   }
 
 }

@@ -38,7 +38,7 @@ export class StatCardComponent implements OnInit, AfterViewInit {
   refresh(): void {
     this.seInv.getMockData("").subscribe(d => {
       console.log(d.Products);
-      this.data = d.Products.map(x => {return {data: x, uid: 0};});
+      this.data = d.Products.map(x => {return {data: x, uid: 0, tabIndex: 0};});
       this.dataSource = this.dataSourceBuilder.create(this.data);
       this.dataSource.setData(this.data);
     });
