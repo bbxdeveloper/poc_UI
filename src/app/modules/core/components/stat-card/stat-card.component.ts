@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit } from '@angular/core';
 import { NbTreeGridDataSource, NbSortDirection, NbTreeGridDataSourceBuilder, NbSortRequest } from '@nebular/theme';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { ColDef } from 'src/assets/model/ColDef';
@@ -11,6 +11,11 @@ import { TreeGridNode } from 'src/assets/model/TreeGridNode';
   styleUrls: ['./stat-card.component.scss']
 })
 export class StatCardComponent implements OnInit, AfterViewInit {
+  @Input() title: string = "";
+  @Input() col: string = "";
+  @Input() data: TreeGridNode<InvoiceProduct>[];
+  @Input() predicate: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a,b) => 0;
+
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
     { label: 'Kód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: '' },
@@ -21,7 +26,6 @@ export class StatCardComponent implements OnInit, AfterViewInit {
     { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'string', mask: '' },
   ]
   dataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
-  data: TreeGridNode<InvoiceProduct>[];
 
   sortColumn: string = '';
   sortDirection: NbSortDirection = NbSortDirection.NONE;
@@ -36,26 +40,25 @@ export class StatCardComponent implements OnInit, AfterViewInit {
   }
 
   refresh(): void {
-    this.seInv.getMockData("").subscribe(d => {
-      console.log(d.Products);
-      this.data = d.Products.map(x => {return {data: x, uid: 0, tabIndex: 0};});
-      this.dataSource = this.dataSourceBuilder.create(this.data);
-      this.dataSource.setData(this.data);
-    });
+    this.dataSource.setData(
+      this.data.sort(this.predicate).sort().slice(0, 5)
+    );
   }
   
   ngAfterViewInit(): void {
-    var tmp = this.elem.nativeElement.querySelectorAll('.nb-tree-grid-header-change-sort-button');
-    for (let item of tmp) {
-      // console.log(item);
-      item.tabIndex = -1;
-    }
+    this.dataSource = this.dataSourceBuilder.create(
+      this.data.sort(this.predicate).sort().slice(0, 5)
+    );
+    // var tmp = this.elem.nativeElement.querySelectorAll('.nb-tree-grid-header-change-sort-button');
+    // for (let item of tmp) {
+    //   // console.log(item);
+    //   item.tabIndex = -1;
+    // }
   }
   
   ngOnInit(): void {
     this.refresh();
     this.cdref.detectChanges();
-    console.log(this.dataSource);
   }
 
   changeSort(sortRequest: NbSortRequest): void {

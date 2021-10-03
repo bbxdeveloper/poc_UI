@@ -1,5 +1,5 @@
 <nb-card class="card-stat">
-    <nb-card-header>Termékek</nb-card-header>
+    <nb-card-header>{{title}}</nb-card-header>
     <nb-card-body>
         <table tabindex="-1" [nbTreeGrid]="dataSource" [nbSort]="dataSource" (sort)="changeSort($event)" equalColumnsWidth>
 
@@ -11,7 +11,9 @@
                     <div tabindex="-1" *ngSwitchCase="'string'">
                         <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">
                             {{it.label}}</th>
-                        <td tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">{{ row.data[it.objectKey] }}</td>
+                        <td [class.bold-column]="col === it.objectKey" tabindex="-1" nbTreeGridCell *nbTreeGridCellDef="let row">
+                            {{ row.data[it.objectKey] }}
+                        </td>
                     </div>
                     <div tabindex="-1" *ngSwitchDefault>
                         <th tabindex="-1" nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">{{it.label}}</th>
