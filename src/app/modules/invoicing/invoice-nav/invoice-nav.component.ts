@@ -180,7 +180,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     return [""].concat(this.buyersData.map(x => x.Name).filter(optionValue => optionValue.toLowerCase().includes(filterValue)));
   }
 
-  private generateAndAttachTableMap(): void {
+  private generateAndAttachTableMap(nav: boolean = false): void {
     let tableNavMap: string[][] = [];
     for(let y = 0; y < this.productsData.length; y++) {
       let row = [];
@@ -190,7 +190,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       tableNavMap.push(row);
     }
     // console.log(tableNavMap);
-    this.kbS.attachNewMap(tableNavMap);
+    this.kbS.attachNewMap(tableNavMap, nav);
   }
 
   changeSort(sortRequest: NbSortRequest): void {
@@ -262,11 +262,11 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         this.productsData = [this.productCreatorRow].concat(this.productsData);
         
         this.productsDataSource.setData(this.productsData);
-        
-        this.kbS.moveDown();
 
         this.kbS.detachLastMap(1);
-        this.generateAndAttachTableMap();
+        this.generateAndAttachTableMap(true);
+
+        this.kbS.moveDown();
       }
 
       // Close edit mode

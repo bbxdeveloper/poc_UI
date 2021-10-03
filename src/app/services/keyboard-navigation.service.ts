@@ -276,7 +276,7 @@ export class KeyboardNavigationService {
         this.World.splice(this.World.length - 1, 1);
       }
     }
-    if (!!this.posCache) {
+    if (navToPosCache && !!this.posCache) {
       this.matrixPos.X = this.posCache[0];
       this.matrixPos.Y = this.posCache[1];
       this.pos.X = this.posCache[2];
