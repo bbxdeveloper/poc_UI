@@ -184,7 +184,10 @@
                         <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">
                             {{it.label}}
                         </th>
-                        <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell *nbTreeGridCellDef="let row; let rowPos = index" (keydown.enter)="handleEnter($event, row, rowPos, it.objectKey)" id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
+                        <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell *nbTreeGridCellDef="let row; let rowPos = index"
+                            (keydown.enter)="handleEnter($event, row, rowPos, it.objectKey)"
+                            (keydown.delete)="handleDelete($event, row, rowPos, it.objectKey)"
+                            id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
                             <input *ngIf="editedRowPos == rowPos && editedProperty == it.objectKey" nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]" id="PRODUCT-EDIT"
                                     [mask]="it.mask" [patterns]="customMaskPatterns" [showMaskTyped]="true"/> <!--formControlName="edited"-->
                             <div *ngIf="editedRowPos !== rowPos || editedProperty !== it.objectKey">

@@ -244,8 +244,13 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       if (rowPos === 0 && col === 'Code') {
         this.productCreatorRow = this.GenerateCreatorRow;
         this.productsData = [this.productCreatorRow].concat(this.productsData);
+        
         this.productsDataSource.setData(this.productsData);
+        
         this.kbS.moveDown();
+
+        this.kbS.detachLastMap(1);
+        this.generateAndAttachTableMap();
       }
 
       // Close edit mode
@@ -258,6 +263,19 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       this.edit(row, rowPos, col);
       this.cdref.detectChanges();
       this.kbS.focusById("PRODUCT-EDIT");
+    }
+
+    console.log((this.productsData[rowPos].data as any)[col]);
+  }
+
+  handleDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
+    if (rowPos !== 0 && !this.kbS.isEditModeActivated) {
+      this.productsData.splice(rowPos, 1);
+      this.productsDataSource.setData(this.productsData);
+      
+      this.kbS.moveUp();
+      this.kbS.detachLastMap(1);
+      this.generateAndAttachTableMap();
     }
 
     console.log((this.productsData[rowPos].data as any)[col]);
