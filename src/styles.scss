@@ -38,3 +38,13 @@ body, html {
   font-size: larger !important;
   text-transform: uppercase;
 }
+
+.card-row {
+  display: flex;
+  margin: 0;
+}
+
+.card-col {
+  flex: 1 0 calc(30% - 1rem);
+  margin: 0;
+}

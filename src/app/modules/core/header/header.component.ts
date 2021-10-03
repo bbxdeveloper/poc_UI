@@ -65,6 +65,9 @@ export class HeaderComponent implements OnInit {
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Tab') {
+      event.preventDefault();
+    }
     switch (event.key) {
       case KeyBindings.up: {
         if (!this.kbS.isEditModeActivated) {

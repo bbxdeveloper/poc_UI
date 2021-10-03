@@ -137,7 +137,13 @@ export class KeyboardNavigationService {
     if (this.isEditModeActivated) {
       return this.getCurrentTile();
     } else {
-      this.pos.Y = 0;
+      if (!!this.activeSubKey) {
+        this.activeSubKey = "";
+        this.pos.Y = 0;
+        this.selectCurrentTile();
+      } else {
+        this.pos.Y = 0;
+      }
     }
     return doSelect ? this.process(doSelect) : this.getCurrentTile();
   }
@@ -203,6 +209,11 @@ export class KeyboardNavigationService {
     if (!!tileRef) {
       tileRef.click();
       // console.log(this.activeSubKey, tileRef);
+      if (!!this.activeSubKey) {
+        this.activeSubKey = "";
+        this.pos.Y = 0;
+        this.selectCurrentTile();
+      }
     } else {
       var element = document.querySelector('[target="' + tile + '"]');
       if (!!element) {

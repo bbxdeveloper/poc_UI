@@ -4,8 +4,8 @@
     </nb-card-body>
 </nb-card>
 
-<nb-layout>
-    <nb-layout-column (keydown.enter)="handleFormEnter($event)">
+<div class="card-row">
+    <div class="card-col" (keydown.enter)="handleFormEnter($event)">
         <nb-card>
             <nb-card-header class="card-header-txt-center">
                 Szállító
@@ -56,9 +56,9 @@
                 </form>
             </nb-card-body>
         </nb-card>
-    </nb-layout-column>
+    </div>
 
-    <nb-layout-column (keydown.enter)="handleFormEnter($event, false)">
+    <div class="card-col" (keydown.enter)="handleFormEnter($event, false)">
         <nb-card>
             <nb-card-header class="card-header-txt-center">
                 Vevő
@@ -115,9 +115,9 @@
                 </form>
             </nb-card-body>
         </nb-card>
-    </nb-layout-column>
+    </div>
     
-    <nb-layout-column (keydown.enter)="handleFormEnter($event)">
+    <div class="card-col" (keydown.enter)="handleFormEnter($event)">
         <nb-card>
             <nb-card-header class="card-header-txt-center">
                 Számla
@@ -177,8 +177,8 @@
                 </form>
             </nb-card-body>
         </nb-card>
-    </nb-layout-column>
-</nb-layout>
+    </div>
+</div>
 
 <nb-card>
     <nb-card-header class="card-header-txt-center">

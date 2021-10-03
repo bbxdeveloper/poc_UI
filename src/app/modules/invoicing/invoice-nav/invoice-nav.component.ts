@@ -216,11 +216,11 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    var tmp = this.elem.nativeElement.querySelectorAll('.nb-tree-grid-header-change-sort-button');
-    for (let item of tmp) {
-      // console.log(item);
-      item.tabIndex = -1;
-    }
+    // var tmp = this.elem.nativeElement.querySelectorAll('.nb-tree-grid-header-change-sort-button');
+    // for (let item of tmp) {
+    //   item.tabIndex = -1;
+    // }
+    this.kbS.moveTopInCurrentArea();
   }
 
   ngOnInit(): void {
