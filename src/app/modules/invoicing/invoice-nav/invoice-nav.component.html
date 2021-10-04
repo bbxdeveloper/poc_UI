@@ -1,10 +1,18 @@
-<nb-card class="card-title">
-    <nb-card-body>
-        001 Központi Raktár
-    </nb-card-body>
-</nb-card>
-
 <div class="card-row">
+    <div class="card-col">
+        <nb-card>
+            <nb-card-header class="card-header-txt-center header-blank">-</nb-card-header>
+            <nb-card-body class="form-col-1 card-labels-right">
+                <label>Név</label>
+                <label>Irányítószám és Város</label>
+                <label>Utca, házszám</label>
+                <label>Számlaszám</label>
+                <label>Adószám</label>
+                <label>Megjegyzés</label>
+            </nb-card-body>
+        </nb-card>
+    </div>
+
     <div class="card-col" (keydown.enter)="handleFormEnter($event)">
         <nb-card>
             <nb-card-header class="card-header-txt-center">
@@ -13,45 +21,27 @@
             <nb-card-body class="form-col-1">
                 <form [formGroup]="exporterForm" (keydown.enter)="$event.preventDefault()" #formDirective="ngForm">
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Név</label>
-                            <input nbInput type="text" formControlName='name' required="true" readonly id="l00">
-                        </div>
+                        <input nbInput type="text" formControlName='name' required="true" readonly id="l00">
                     </nb-form-field>
 
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Irsz.Város</label>
-                            <input nbInput type="text" formControlName='zipCodeCity' required="true" readonly id="l01">
-                        </div>
+                        <input nbInput type="text" formControlName='zipCodeCity' required="true" readonly id="l01">
                     </nb-form-field>
 
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Utca házszám</label>
-                            <input nbInput type="text" formControlName='street' required="true" readonly id="l02">
-                        </div>
+                        <input nbInput type="text" formControlName='street' required="true" readonly id="l02">
                     </nb-form-field>
 
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Számlaszám</label>
-                            <input nbInput type="text" formControlName='invoiceNum' required="true" readonly id="l03">
-                        </div>
+                        <input nbInput type="text" formControlName='invoiceNum' required="true" readonly id="l03">
                     </nb-form-field>
 
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Adószám</label>
-                            <input nbInput type="text" formControlName='taxNum' required="true" readonly id="l04">
-                        </div>
+                        <input nbInput type="text" formControlName='taxNum' required="true" readonly id="l04">
                     </nb-form-field>
 
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Megjegyzés</label>
-                            <input nbInput type="text" formControlName='note' required="false" readonly id="l05">
-                        </div>
+                        <input nbInput type="text" formControlName='note' required="false" readonly id="l05">
                     </nb-form-field>
                 </form>
             </nb-card-body>
@@ -66,126 +56,97 @@
             <nb-card-body class="form-col-2">
                 <form [formGroup]="buyerForm" #formDirective="ngForm">
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Név</label>
-                            <input formControlName="name" nbInput type="text" [nbAutocomplete]="auto" [readonly]="isEditModeOff" autocomplete="off" id="r00" /> <!--  (keyup)="handleAutoCompleteOptionFocused($event)"-->
-                            <!-- AUTOCOMPLETE -->
-                            <nb-autocomplete #auto [activeFirst]="false" (selectedChange)="handleAutoCompleteSelect($event)">
-                                <nb-option *ngFor="let option of filteredBuyerOptions$ | async; let i = index" [value]="option">
-                                    {{ option }}
-                                </nb-option>
-                            </nb-autocomplete>
-                        </div>
+                        <input formControlName="name" nbInput type="text" [nbAutocomplete]="auto" [readonly]="isEditModeOff" autocomplete="off"
+                            id="r00" /> <!--  (keyup)="handleAutoCompleteOptionFocused($event)"-->
+                        <!-- AUTOCOMPLETE -->
+                        <nb-autocomplete #auto [activeFirst]="false" (selectedChange)="handleAutoCompleteSelect($event)">
+                            <nb-option *ngFor="let option of filteredBuyerOptions$ | async; let i = index" [value]="option">
+                                {{ option }}
+                            </nb-option>
+                        </nb-autocomplete>
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Irsz.Város</label>
-                            <input nbInput type="text" formControlName='zipCodeCity' required="true" readonly id="r01">
-                        </div>
+                        <input nbInput type="text" formControlName='zipCodeCity' required="true" readonly id="r01">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Utca házszám</label>
-                            <input nbInput type="text" formControlName='street' required="true" readonly id="r02">
-                        </div>
+                        <input nbInput type="text" formControlName='street' required="true" readonly id="r02">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Számlaszám</label>
-                            <input nbInput type="text" formControlName='invoiceNum' required="true" readonly id="r03">
-                        </div>
+                        <input nbInput type="text" formControlName='invoiceNum' required="true" readonly id="r03">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Adószám</label>
-                            <input nbInput type="text" formControlName='taxNum' required="true" readonly id="r04">
-                        </div>
+                        <input nbInput type="text" formControlName='taxNum' required="true" readonly id="r04">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Megjegyzés</label>
-                            <input nbInput type="text" formControlName='note' required="false" readonly id="r05">
-                        </div>
+                        <input nbInput type="text" formControlName='note' required="false" readonly id="r05">
                     </nb-form-field>
                 </form>
             </nb-card-body>
         </nb-card>
     </div>
-    
-    <div class="card-col" (keydown.enter)="handleFormEnter($event)">
+
+    <div class="card-col separator-vertical"></div>
+
+    <div class="card-col card-cols" (keydown.enter)="handleFormEnter($event, false)">
         <nb-card>
             <nb-card-header class="card-header-txt-center">
-                Számla
+                Fizetési Adatok
             </nb-card-header>
             <nb-card-body class="form-col-1">
                 <form [formGroup]="metaForm" #formDirective="ngForm">
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Fizetési mód</label>
-                            <input nbInput type="text" formControlName='paymentMethod' required="true"
-                                [readonly]="isEditModeOff" id="m00">
-                        </div>
+                        <input nbInput type="text" formControlName='paymentMethod' required="true" [readonly]="isEditModeOff" id="m00">
                     </nb-form-field>
-    
+        
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Telj. időpont</label>
-                            <input nbInput type="datetime" formControlName='finishTimeStamp' required="true"
-                                [readonly]="isEditModeOff" id="m01" mask="0000-00-00" [showMaskTyped]="true"
-                                [validation]="true">
-                        </div>
+                        <input nbInput type="datetime" formControlName='finishTimeStamp' required="true" [readonly]="isEditModeOff" id="m01"
+                            mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                     </nb-form-field>
-    
+        
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Számla kelte</label>
-                            <input nbInput type="datetime" formControlName='invoiceCreation' required="true"
-                                [readonly]="isEditModeOff" id="m02" mask="0000-00-00" [showMaskTyped]="true"
-                                [validation]="true">
-                        </div>
+                        <input nbInput type="datetime" formControlName='invoiceCreation' required="true" [readonly]="isEditModeOff" id="m02"
+                            mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                     </nb-form-field>
-    
+        
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Fiz.hat.idő</label>
-                            <input nbInput type="datetime" formControlName='paymentDeadline' required="true"
-                                [readonly]="isEditModeOff" id="m03" mask="0000-00-00" [showMaskTyped]="true"
-                                [validation]="true">
-                        </div>
+                        <input nbInput type="datetime" formControlName='paymentDeadline' required="true" [readonly]="isEditModeOff" id="m03"
+                            mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                     </nb-form-field>
-    
+        
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Számla sorsz.</label>
-                            <input nbInput type="text" formControlName='invoiceOrdinal' required="true"
-                                [readonly]="isEditModeOff" id="m04">
-                        </div>
+                        <input nbInput type="text" formControlName='invoiceOrdinal' required="true" [readonly]="isEditModeOff" id="m04">
                     </nb-form-field>
-    
+        
                     <nb-form-field>
-                        <div class="div-wrapper-input">
-                            <label>Egyéb adatok</label>
-                            <textarea rows="1" nbInput type="text" formControlName='misc' required="true"
-                                [readonly]="isEditModeOff" id="m05"></textarea>
-                        </div>
+                        <textarea rows="1" nbInput type="text" formControlName='misc' required="true" [readonly]="isEditModeOff" id="m05">
+                        </textarea>
                     </nb-form-field>
                 </form>
+            </nb-card-body>
+        </nb-card>
+
+        <nb-card>
+            <nb-card-header class="card-header-txt-center header-blank">-</nb-card-header>
+            <nb-card-body class="form-col-1 card-labels-left">
+                <label>Fizetési mód</label>
+                <label>Teljesítési időpont</label>
+                <label>Számla keltezése</label>
+                <label>Fizetési határidő</label>
+                <label>Számla sorszáma</label>
+                <label>Egyéb adatok</label>
             </nb-card-body>
         </nb-card>
     </div>
 </div>
 
 <nb-card>
-    <nb-card-header class="card-header-txt-center">
-        Termékek
-    </nb-card-header>
     <nb-card-body>
-        <form> <!--[formGroup]="productForm"-->
+        <form>
             <table class="card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource" [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
             
                 <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>

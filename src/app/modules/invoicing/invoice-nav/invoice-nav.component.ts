@@ -29,7 +29,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
-    { label: 'Kód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" },
+    { label: 'Termékkód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" },
     { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: "" },
     { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string', mask: "" },
     { label: 'Mennyiség', objectKey: 'Amount', colKey: 'Amount', defaultValue: '', type: 'number', mask: "" },
@@ -140,7 +140,8 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       
       this.productCreatorRow = this.GenerateCreatorRow;
-      this.productsData = [this.productCreatorRow].concat(d.Products.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; }));
+      this.productsData = d.Products.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+      this.productsData.push(this.productCreatorRow);
       
       this.productsDataSource.setData(this.productsData);
 
@@ -257,16 +258,16 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!!this.editedRow) {
 
       // Creator row edited
-      if (rowPos === 0 && col === 'Code') {
+      if (rowPos === this.productsData.length - 1 && col === 'Code') {
         this.productCreatorRow = this.GenerateCreatorRow;
-        this.productsData = [this.productCreatorRow].concat(this.productsData);
+        this.productsData.push(this.productCreatorRow);
         
         this.productsDataSource.setData(this.productsData);
 
         this.kbS.detachLastMap(1);
         this.generateAndAttachTableMap(true);
 
-        this.kbS.moveDown();
+        this.kbS.moveUp();
       }
 
       // Close edit mode
@@ -285,7 +286,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleGridDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
-    if (rowPos !== 0 && !this.kbS.isEditModeActivated) {
+    if (rowPos !== this.productsData.length - 1 && !this.kbS.isEditModeActivated) {
       this.productsData.splice(rowPos, 1);
       this.productsDataSource.setData(this.productsData);
       
