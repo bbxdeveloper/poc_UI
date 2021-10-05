@@ -56,7 +56,7 @@
             <nb-card-body class="form-col-2">
                 <form [formGroup]="buyerForm" #formDirective="ngForm">
                     <nb-form-field>
-                        <input formControlName="name" nbInput type="text" [nbAutocomplete]="auto" [readonly]="isEditModeOff" autocomplete="off"
+                        <input formControlName="name" nbInput type="text" [nbAutocomplete]="auto" [readonly]="isEditModeOff" placeholder="Név" autocomplete="off"
                             id="r00" /> <!--  (keyup)="handleAutoCompleteOptionFocused($event)"-->
                         <!-- AUTOCOMPLETE -->
                         <nb-autocomplete #auto [activeFirst]="false" (selectedChange)="handleAutoCompleteSelect($event)">
@@ -67,23 +67,23 @@
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='zipCodeCity' required="true" readonly id="r01">
+                        <input nbInput type="text" formControlName='zipCodeCity' required="true" placeholder="Irányítószám és Város" readonly id="r01">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='street' required="true" readonly id="r02">
+                        <input nbInput type="text" formControlName='street' required="true" placeholder="Utca, házszám" readonly id="r02">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='invoiceNum' required="true" readonly id="r03">
+                        <input nbInput type="text" formControlName='invoiceNum' required="true" placeholder="Számlaszám" readonly id="r03">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='taxNum' required="true" readonly id="r04">
+                        <input nbInput type="text" formControlName='taxNum' required="true" placeholder="Adószám" readonly id="r04">
                     </nb-form-field>
                     
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='note' required="false" readonly id="r05">
+                        <input nbInput type="text" formControlName='note' required="false" placeholder="Megjegyzés" readonly id="r05">
                     </nb-form-field>
                 </form>
             </nb-card-body>
@@ -100,30 +100,30 @@
             <nb-card-body class="form-col-1">
                 <form [formGroup]="metaForm" #formDirective="ngForm">
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='paymentMethod' required="true" [readonly]="isEditModeOff" id="m00">
+                        <input nbInput type="text" formControlName='paymentMethod' required="true" [readonly]="isEditModeOff" placeholder="Fizetési mód" id="m00">
                     </nb-form-field>
         
                     <nb-form-field>
-                        <input nbInput type="datetime" formControlName='finishTimeStamp' required="true" [readonly]="isEditModeOff" id="m01"
+                        <input nbInput type="datetime" formControlName='finishTimeStamp' required="true" [readonly]="isEditModeOff" placeholder="Teljesítési időpont" id="m01"
                             mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                     </nb-form-field>
         
                     <nb-form-field>
-                        <input nbInput type="datetime" formControlName='invoiceCreation' required="true" [readonly]="isEditModeOff" id="m02"
+                        <input nbInput type="datetime" formControlName='invoiceCreation' required="true" [readonly]="isEditModeOff" placeholder="Számla keltezése" id="m02"
                             mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                     </nb-form-field>
         
                     <nb-form-field>
-                        <input nbInput type="datetime" formControlName='paymentDeadline' required="true" [readonly]="isEditModeOff" id="m03"
+                        <input nbInput type="datetime" formControlName='paymentDeadline' required="true" [readonly]="isEditModeOff" placeholder="Fizetési határidő" id="m03"
                             mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
                     </nb-form-field>
         
                     <nb-form-field>
-                        <input nbInput type="text" formControlName='invoiceOrdinal' required="true" [readonly]="isEditModeOff" id="m04">
+                        <input nbInput type="text" formControlName='invoiceOrdinal' required="true" [readonly]="isEditModeOff" placeholder="Számla sorszáma" id="m04">
                     </nb-form-field>
         
                     <nb-form-field>
-                        <textarea rows="1" nbInput type="text" formControlName='misc' required="true" [readonly]="isEditModeOff" id="m05">
+                        <textarea rows="1" nbInput type="text" formControlName='misc' required="true" [readonly]="isEditModeOff" placeholder="Egyéb adatok" id="m05">
                         </textarea>
                     </nb-form-field>
                 </form>

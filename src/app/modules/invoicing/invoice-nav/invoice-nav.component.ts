@@ -26,6 +26,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   productsData: TreeGridNode<InvoiceProduct>[];
   productsDataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
   filteredBuyerOptions$: Observable<string[]> = of([]);
+  colsToIgnore: string[] = ["Value"];
 
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
@@ -165,7 +166,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resetEdit();
 
       this.kbS.attachNewMap(this.navigationMatrix);
-      this.generateAndAttachTableMap();
+      this.generateAndAttachTableMap(false, this.colsToIgnore);
 
       // console.log(this.productForms);
 
@@ -181,11 +182,14 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     return [""].concat(this.buyersData.map(x => x.Name).filter(optionValue => optionValue.toLowerCase().includes(filterValue)));
   }
 
-  private generateAndAttachTableMap(nav: boolean = false): void {
+  private generateAndAttachTableMap(nav: boolean = false, readonlyColumns: string[] = []): void {
     let tableNavMap: string[][] = [];
     for(let y = 0; y < this.productsData.length; y++) {
       let row = [];
       for(let x = 0; x < this.colDefs.length; x++) {
+        if (readonlyColumns.findIndex(a => a === this.colDefs[x].objectKey) !== -1) {
+          continue;
+        }
         row.push("PRODUCT-" + x + '-' + y);
       }
       tableNavMap.push(row);
@@ -265,9 +269,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         this.productsDataSource.setData(this.productsData);
 
         this.kbS.detachLastMap(1);
-        this.generateAndAttachTableMap(true);
-
-        this.kbS.moveUp();
+        this.generateAndAttachTableMap(false, this.colsToIgnore);
       }
 
       // Close edit mode
