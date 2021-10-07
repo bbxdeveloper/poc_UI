@@ -31,6 +31,7 @@
     "@angular/router": "~12.2.0",
     "@nebular/eva-icons": "8.0.0",
     "@nebular/theme": "^8.0.0",
+    "chart.js": "^3.5.1",
     "electron-squirrel-startup": "^1.0.0",
     "eva-icons": "^1.1.2",
     "ngx-electron": "^2.2.0",
