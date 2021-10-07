@@ -119,8 +119,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 backgroundColor: '#0000aa',
                 borderRadius: 25,
                 borderColor: '#ffffff',
-                borderWidth: 2,
-                formatter: (valueText: string) => valueText + ' %'
+                borderWidth: 2
               }
             }
           }
