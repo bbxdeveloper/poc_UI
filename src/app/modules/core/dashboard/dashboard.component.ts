@@ -1,6 +1,7 @@
 import { AfterViewInit } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ArcElement, CategoryScale, Chart, Legend, LinearScale, LineController, LineElement, PieController, PointElement, SubTitle, Title } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
@@ -27,7 +28,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       LineElement, ArcElement,
       CategoryScale, LinearScale,
       PointElement,
-      Legend, Title, SubTitle
+      Legend, Title, SubTitle,
+      ChartDataLabels
     );
   }
 
@@ -75,6 +77,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 labels: {
                   color: 'rgb(255, 99, 132)'
                 }
+              },
+              datalabels: {
+                color: '#ffd5dd',
+                backgroundColor: '#0000aa',
+                borderRadius: 25,
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                formatter: (valueText: string) => valueText + ' %'
               }
             }
           }
@@ -96,6 +106,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         let myLineChart = new Chart(cLine, {
           type: 'line',
           data: dataLine,
+          options: {
+            plugins: {
+              legend: {
+                display: true,
+                labels: {
+                  color: 'rgb(255, 99, 132)'
+                }
+              },
+              datalabels: {
+                color: '#ffd5dd',
+                backgroundColor: '#0000aa',
+                borderRadius: 25,
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                formatter: (valueText: string) => valueText + ' %'
+              }
+            }
+          }
         });
       }
     }
