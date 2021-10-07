@@ -64,12 +64,14 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   readonly navigationMatrix: string[][] = [
-    ["l00", "r00", "m00"],
-    ["l01", "r01", "m01"],
-    ["l02", "r02", "m02"],
-    ["l03", "r03", "m03"],
-    ["l04", "r04", "m04"],
-    ["l05", "r05", "m05"],
+    ["l00", "r00"],
+    ["l01", "r01"],
+    ["l02", "r02"],
+    ["l03", "r03"],
+    ["l04", "r04"],
+    ["l05", "r05"],
+    ["m00", "m01", "m02", "m03", "m04"],
+    ["m11"],
   ];
 
   get isEditModeOff() {

@@ -1,7 +1,11 @@
+<div class="separator-horizontal"></div>
+
 <div class="card-row">
+    <div class="card-col separator-vertical"></div>
+
     <div class="card-col">
         <nb-card>
-            <nb-card-header class="card-header-txt-center header-blank">-</nb-card-header>
+            <nb-card-header class="card-header-txt-center card-header-top-margin header-blank">-</nb-card-header>
             <nb-card-body class="form-col-1 card-labels-right">
                 <label>Név</label>
                 <label>Irányítószám és Város</label>
@@ -13,9 +17,11 @@
         </nb-card>
     </div>
 
+    <div class="card-col separator-vertical"></div>
+
     <div class="card-col" (keydown.enter)="handleFormEnter($event)">
         <nb-card>
-            <nb-card-header class="card-header-txt-center">
+            <nb-card-header class="card-header-txt-center card-header-top-margin">
                 Szállító
             </nb-card-header>
             <nb-card-body class="form-col-1">
@@ -47,10 +53,12 @@
             </nb-card-body>
         </nb-card>
     </div>
+    
+    <div class="card-col separator-vertical"></div>
 
     <div class="card-col" (keydown.enter)="handleFormEnter($event, false)">
         <nb-card>
-            <nb-card-header class="card-header-txt-center">
+            <nb-card-header class="card-header-txt-center card-header-top-margin">
                 Vevő
             </nb-card-header>
             <nb-card-body class="form-col-2">
@@ -90,59 +98,62 @@
         </nb-card>
     </div>
 
-    <!-- <div class="card-col separator-vertical"></div> -->
-
-    <div class="card-col card-cols" (keydown.enter)="handleFormEnter($event, false)">
-        <nb-card>
-            <nb-card-header class="card-header-txt-center">
-                Fizetési Adatok
-            </nb-card-header>
-            <nb-card-body class="form-col-1">
-                <form [formGroup]="metaForm" #formDirective="ngForm">
-                    <nb-form-field>
-                        <input nbInput type="text" formControlName='paymentMethod' required="true" [readonly]="isEditModeOff" placeholder="Fizetési mód" id="m00">
-                    </nb-form-field>
-        
-                    <nb-form-field>
-                        <input nbInput type="datetime" formControlName='finishTimeStamp' required="true" [readonly]="isEditModeOff" placeholder="Teljesítési időpont" id="m01"
-                            mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
-                    </nb-form-field>
-        
-                    <nb-form-field>
-                        <input nbInput type="datetime" formControlName='invoiceCreation' required="true" [readonly]="isEditModeOff" placeholder="Számla keltezése" id="m02"
-                            mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
-                    </nb-form-field>
-        
-                    <nb-form-field>
-                        <input nbInput type="datetime" formControlName='paymentDeadline' required="true" [readonly]="isEditModeOff" placeholder="Fizetési határidő" id="m03"
-                            mask="0000-00-00" [showMaskTyped]="true" [validation]="true">
-                    </nb-form-field>
-        
-                    <nb-form-field>
-                        <input nbInput type="text" formControlName='invoiceOrdinal' required="true" [readonly]="isEditModeOff" placeholder="Számla sorszáma" id="m04">
-                    </nb-form-field>
-        
-                    <nb-form-field>
-                        <textarea rows="1" nbInput type="text" formControlName='misc' required="true" [readonly]="isEditModeOff" placeholder="Egyéb adatok" id="m05">
-                        </textarea>
-                    </nb-form-field>
-                </form>
-            </nb-card-body>
-        </nb-card>
-
-        <nb-card>
-            <nb-card-header class="card-header-txt-center header-blank">-</nb-card-header>
-            <nb-card-body class="form-col-1 card-labels-left">
-                <label>Fizetési mód</label>
-                <label>Teljesítési időpont</label>
-                <label>Számla keltezése</label>
-                <label>Fizetési határidő</label>
-                <label>Számla sorszáma</label>
-                <label>Egyéb adatok</label>
-            </nb-card-body>
-        </nb-card>
-    </div>
+    <div class="card-col separator-vertical"></div>
 </div>
+
+<div class="separator-horizontal"></div>
+
+<div class="card-col card-cols" (keydown.enter)="handleFormEnter($event, false)">
+    <nb-card>
+        <nb-card-body class="form-col-1">
+            <form class="form-horizontal" [formGroup]="metaForm" #formDirective="ngForm">
+                <nb-form-field>
+                    <label>Fizetési mód</label>
+                    <input nbInput type="text" formControlName='paymentMethod' required="true"
+                        [readonly]="isEditModeOff" placeholder="Fizetési mód" id="m00">
+                </nb-form-field>
+
+                <nb-form-field>
+                    <label>Teljesítési időpont</label>
+                    <input nbInput type="datetime" formControlName='finishTimeStamp' required="true"
+                        [readonly]="isEditModeOff" placeholder="Teljesítési időpont" id="m01" mask="0000-00-00"
+                        [showMaskTyped]="true" [validation]="true">
+                </nb-form-field>
+
+                <nb-form-field>
+                    <label>Számla keltezése</label>
+                    <input nbInput type="datetime" formControlName='invoiceCreation' required="true"
+                        [readonly]="isEditModeOff" placeholder="Számla keltezése" id="m02" mask="0000-00-00"
+                        [showMaskTyped]="true" [validation]="true">
+                </nb-form-field>
+
+                <nb-form-field>
+                    <label>Fizetési határidő</label>
+                    <input nbInput type="datetime" formControlName='paymentDeadline' required="true"
+                        [readonly]="isEditModeOff" placeholder="Fizetési határidő" id="m03" mask="0000-00-00"
+                        [showMaskTyped]="true" [validation]="true">
+                </nb-form-field>
+
+                <nb-form-field>
+                    <label>Számla sorszáma</label>
+                    <input nbInput type="text" formControlName='invoiceOrdinal' required="true"
+                        [readonly]="isEditModeOff" placeholder="Számla sorszáma" id="m04">
+                </nb-form-field>
+
+                <nb-form-field class="form-field-full-width">
+                    <div class="form-field-full-width-inner-div">
+                        <label>Egyéb adatok</label>
+                        <textarea rows="1" nbInput type="text" formControlName='misc' required="true" [readonly]="isEditModeOff"
+                            placeholder="Egyéb adatok" id="m11">
+                                                    </textarea>
+                    </div>
+                </nb-form-field>
+            </form>
+        </nb-card-body>
+    </nb-card>
+</div>
+
+<div class="separator-horizontal"></div>
 
 <nb-card>
     <nb-card-body>
@@ -165,13 +176,12 @@
                             id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
 
                             <input *ngIf="editedRowPos == rowPos && editedProperty == it.objectKey" nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]" id="PRODUCT-EDIT"
-                                    [mask]="it.mask" [patterns]="customMaskPatterns" [showMaskTyped]="true"/> <!--formControlName="edited"-->
+                                    [mask]="it.mask" [patterns]="customMaskPatterns" [showMaskTyped]="true" class="input-table-cell"/> <!--formControlName="edited"-->
                             
                             <div *ngIf="editedRowPos !== rowPos || editedProperty !== it.objectKey">
                                 {{ row.data[it.objectKey] }}
                             </div>
                         </td>
-
                     </ng-container>
                 </ng-container>
             </table>

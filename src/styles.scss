@@ -5,7 +5,9 @@
 @include nb-install() {
   @include nb-theme-global();
 };
+
 /* You can add global styles to this file, and also import other style files */
+
 body, html {
   height: 100%;
 }
@@ -27,8 +29,6 @@ body, html {
 }
 
 .card-title {
-  // @extend .card-header-txt-center;
-
   background: none !important;
   border: none !important;
 
@@ -48,7 +48,6 @@ body, html {
 }
 
 .card-col {
-  // flex: 1 0 calc(30% - 1rem);
   margin: 0;
 }
 
@@ -91,15 +90,61 @@ nb-layout-column {
 }
 
 .separator-vertical {
-  background: #252547;
+  background: #bebeec;
   width: 5px;
-
   border: #000000 1px solid;
-
-  padding-bottom: 15px;
-  padding-top: 15px;
-  
-  margin-bottom: 30px;
+  border-radius: 50px;
   margin-left: 30px;
   margin-right: 30px;
+}
+
+.separator-horizontal {
+  background: #bebeec;
+  height: 5px;
+  border: #000000 1px solid;
+  margin: auto;
+}
+
+.form-field-full-width {
+  display: flex !important;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  align-items: center !important;
+  max-width: 100% !important;
+  margin: auto !important;
+}
+
+.form-field-full-width-inner-div {
+  // @extend .form-field-full-width-inner-div;
+
+  display: flex !important;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  align-items: center !important;
+  max-width: 100% !important;
+  margin: auto !important;
+
+  column-gap: 25px;
+
+  textarea, input {
+    max-width: 100% !important;
+  }
+
+  label {
+    min-width: fit-content;
+  }
+}
+
+.card-header-top-margin {
+  margin-top: 25px;
+}
+
+.input-table-cell {
+  margin: 0px;
+  padding: 5px;
+
+  max-width: 150px !important;
+  max-height: 20px !important;
 }
