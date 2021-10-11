@@ -1,6 +1,10 @@
 .grid-cards-info {
     display: grid;
 
+    margin-top: 50px;
+
+    max-height: 40vh;
+
     //grid-auto-rows: max-content;
     //grid-template-columns: 33% 33% 33%;
     grid-template: 
@@ -12,3 +16,26 @@
     
     justify-content: center;
 }
+
+// ::ng-deep nb-layout-column {
+//     justify-content: right;
+//     display: flex;
+// }
+
+.wrapper-chat {
+    display: flex;
+
+    justify-content: right;
+
+    min-width: max-content;
+    max-height: fit-content;
+
+    margin-left: 15px;
+    margin-right: 15px;
+
+    nb-chat {
+        width: 400px;
+        max-height: 45vh;
+    }
+}
+

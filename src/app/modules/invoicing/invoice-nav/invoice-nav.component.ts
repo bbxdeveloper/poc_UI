@@ -276,7 +276,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Close edit mode
       this.resetEdit();
-      this.kbS.moveRight();
+      this.kbS.moveNextInTable();
       this.cdref.detectChanges();
       
     } else {

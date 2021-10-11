@@ -39,18 +39,6 @@ body, html {
   text-transform: uppercase;
 }
 
-.card-row {
-  display: flex;
-  margin: 0;
-  margin-left: auto;
-  margin-right: auto;
-  width: fit-content;
-}
-
-.card-col {
-  margin: 0;
-}
-
 tr:nth-child(even) {
     background-color: #493668 !important;
 }
@@ -71,17 +59,12 @@ nb-layout-column {
     padding-right: 0px !important;
     padding-bottom: 0px !important;
 
-    margin-top: 5px;
-    padding-top: 5px;
+    margin-top: 5px !important;
+    padding-top: 0px !important;
 }
 
 .header-blank {
   color: transparent !important;
-}
-
-.card-cols {
-  display: flex;
-  flex-direction: row;
 }
 
 .flex-text-center {
@@ -90,7 +73,7 @@ nb-layout-column {
 }
 
 .separator-vertical {
-  background: #bebeec;
+  background: #3ed820;
   width: 5px;
   border: #000000 1px solid;
   border-radius: 50px;
@@ -99,52 +82,20 @@ nb-layout-column {
 }
 
 .separator-horizontal {
-  background: #bebeec;
+  background: #3ed820;
   height: 5px;
   border: #000000 1px solid;
   margin: auto;
 }
 
-.form-field-full-width {
-  display: flex !important;
-  flex-direction: row;
-  align-content: center;
-  justify-content: center;
-  align-items: center !important;
-  max-width: 100% !important;
-  margin: auto !important;
+::ng-deep nb-card-header {
+    font-size: 2rem !important;
 }
 
-.form-field-full-width-inner-div {
-  // @extend .form-field-full-width-inner-div;
-
-  display: flex !important;
-  flex-direction: row;
-  align-content: center;
-  justify-content: center;
-  align-items: center !important;
-  max-width: 100% !important;
-  margin: auto !important;
-
-  column-gap: 25px;
-
-  textarea, input {
-    max-width: 100% !important;
-  }
-
-  label {
-    min-width: fit-content;
-  }
+input, label, th, td {
+    font-size: 1.2rem;
 }
 
 .card-header-top-margin {
   margin-top: 25px;
-}
-
-.input-table-cell {
-  margin: 0px;
-  padding: 5px;
-
-  max-width: 150px !important;
-  max-height: 20px !important;
 }

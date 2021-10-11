@@ -35,6 +35,20 @@ export class KeyboardNavigationService {
     return this._currentKeyboardMode === KeyboardModes.EDIT;
   }
 
+  private get _map() { return this.World[this.matrixPos.Y][this.matrixPos.X]; }
+
+  private get maxMapX() {
+    return this._map[this.pos.Y].length - 1;
+  }
+
+  private get maxMapY() {
+    return this._map.length - 1;
+  }
+
+  private get isCurrentLocationValid() {
+    return this.pos.X <= this.maxMapX && this.pos.Y <= this.maxMapY;
+  }
+
   /** UP direction is locked and not usable. */
   lockedUp: boolean = false;
   /** DOWN direction is locked and not usable. */
@@ -60,20 +74,27 @@ export class KeyboardNavigationService {
       return this.getCurrentTile();
     }
 
+    // Kilépünk az almenüből
     if (!canJump && this.pos.Y == 1 && !!this.activeSubKey && !!NM.SubMapping[this.activeSubKey]) {
       this.activeSubKey = "";
       this.pos.Y--;
     }
+    // Egy térképpel feljebb ugrunk
     else if (canJump && this.matrixPos.Y > 0) {
       this.matrixPos.Y--;
       this.pos.X = 0;
       this.pos.Y = 0;
     }
+    // Jelenlegi térképen lépünk egyet felfelé
     else if (!canJump && this.pos.Y > 0) {
       this.pos.Y--;
       if (!!this.activeSubKey) {
         return this.process(doSelect, true);
       }
+      else if(!this.isCurrentLocationValid) {
+        this.pos.X = this.maxMapX;
+      }
+      return this.process(doSelect, false);
     }
 
     return this.process(doSelect);
@@ -92,11 +113,13 @@ export class KeyboardNavigationService {
 
     var tile = this.getCurrentTile();
     
+    // Almenübe lépés
     if (!canJump && this.pos.Y == 0 && !!NM.SubMapping[tile]) {
       this.activeSubKey = tile;
       this.pos.Y++;
       return this.process(doSelect, true);
     }
+    // Almenüben
     else if (!!this.activeSubKey) {
       if (this.pos.Y < NM.SubMapping[tile].length - 1) {
         this.pos.Y++;
@@ -105,13 +128,22 @@ export class KeyboardNavigationService {
         return this.process(doSelect, true);
       }
     }
+    // Ugrás lejebb
     else if (canJump && this.matrixPos.Y < this.World.length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
     }
+    // Mozgás lefelé
     else if (this.pos.Y < this.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
       this.pos.Y++;
+      if (!!this.activeSubKey) {
+        return this.process(doSelect, true);
+      }
+      else if (!this.isCurrentLocationValid) {
+        this.pos.X = this.maxMapX;
+      }
+      return this.process(doSelect, false);
     }
 
     return this.process(doSelect);
@@ -128,17 +160,28 @@ export class KeyboardNavigationService {
       return this.getCurrentTile();
     }
 
+    // Almenüben
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
-    else if (this.pos.X > 0) {
-      this.pos.X--;
-    }
+    // Ugrás
     else if (canJump && this.matrixPos.X > 0) {
       this.matrixPos.X--;
       this.pos.X = 0;
       this.pos.Y = 0;
     }
+    // Mozgás balra
+    else if (this.pos.X > 0) {
+      this.pos.X--;
+      if (!!this.activeSubKey) {
+        return this.getCurrentTile();
+      }
+      else if (!this.isCurrentLocationValid) {
+        this.pos.Y = this.maxMapY;
+      }
+      return this.process(doSelect, false);
+    }
+    
     return this.process(doSelect);
   }
 
@@ -153,17 +196,28 @@ export class KeyboardNavigationService {
       return this.getCurrentTile();
     }
 
+    // Almenüben
     if (!!this.activeSubKey) {
       return this.getCurrentTile();
     }
-    else if (this.pos.X < this.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
-      this.pos.X++;
-    }
+    // Ugrás
     else if (canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
     }
+    // Mozgás jobbra
+    else if (this.pos.X < this.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
+      this.pos.X++;
+      if (!!this.activeSubKey) {
+        return this.getCurrentTile();
+      }
+      else if (!this.isCurrentLocationValid) {
+        this.pos.Y = this.maxMapY;
+      }
+      return this.process(doSelect, false);
+    }
+    
     return this.process(doSelect);
   }
 
@@ -200,6 +254,21 @@ export class KeyboardNavigationService {
       res = this.moveTopInCurrentArea();
     }
     return res;
+  }
+
+  /**
+   * Moves one step right if possible, if not, tries to move to the first element of the next row of the matrix.
+   * @returns Tile on the current (aftermove) position.
+   */
+  moveNextInTable(): string {
+    let tile = this.getCurrentTile();
+    var res = this.moveRight(true, false);
+    if (tile === res) {
+      this.moveDown(true, false);
+      this.pos.X = 0;
+      this.selectCurrentTile();
+    }
+    return this.getCurrentTile();
   }
 
   /**

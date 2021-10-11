@@ -2,9 +2,11 @@ import { AfterViewInit } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ArcElement, CategoryScale, Chart, Legend, LinearScale, LineController, LineElement, PieController, PointElement, SubTitle, Title } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ChatService } from 'src/app/services/chat.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +17,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   isReady: boolean = false;
   // products: TreeGridNode<InvoiceProduct>[] = [];
 
+  messages: any[];
+
   // productGratestValue: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => b.data.Value - a.data.Value;
   // productGratestPrice: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => b.data.Price - a.data.Price;
   // productGratestAmount: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => b.data.Amount - a.data.Amount;
@@ -22,7 +26,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // productSmallestPrice: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => a.data.Price - b.data.Price;
   // productSmallestAmount: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => a.data.Amount - b.data.Amount;
 
-  constructor(private seInv: InvoiceService) {
+  constructor(protected chatShowcaseService: ChatService,
+    private seInv: InvoiceService) {
     Chart.register(
       PieController, LineController,
       LineElement, ArcElement,
@@ -31,6 +36,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       Legend, Title, SubTitle,
       ChartDataLabels
     );
+    this.messages = this.chatShowcaseService.loadMessages();
   }
 
   ngAfterViewInit(): void {
@@ -39,6 +45,32 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isReady = true;
+  }
+
+  sendMessage(event: any) {
+    const files = !event.files ? [] : event.files.map((file: { src: any; type: any; }) => {
+      return {
+        url: file.src,
+        type: file.type,
+        icon: 'file-text-outline',
+      };
+    });
+
+    this.messages.push({
+      text: event.message,
+      date: new Date(),
+      reply: true,
+      type: files.length ? 'file' : 'text',
+      files: files,
+      user: {
+        name: 'Jonh Doe',
+        avatar: 'https://i.gifer.com/no.gif',
+      },
+    });
+    const botReply = this.chatShowcaseService.reply(event.message);
+    if (botReply) {
+      setTimeout(() => { this.messages.push(botReply) }, 500);
+    }
   }
 
   initCharts(): void {
@@ -75,7 +107,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               legend: {
                 display: true,
                 labels: {
-                  color: 'rgb(255, 99, 132)'
+                  color: 'rgb(255, 99, 132)',
+                  font: {
+                    size: 20
+                  }
                 }
               },
               datalabels: {
@@ -84,7 +119,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 borderRadius: 25,
                 borderColor: '#ffffff',
                 borderWidth: 2,
-                formatter: (valueText: string) => valueText + ' %'
+                formatter: (valueText: string) => valueText + ' %',
+                font: {
+                  size: 20
+                }
               }
             }
           }
@@ -111,7 +149,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               legend: {
                 display: true,
                 labels: {
-                  color: 'rgb(255, 99, 132)'
+                  color: 'rgb(255, 99, 132)',
+                  font: {
+                    size : 20
+                  }
                 }
               },
               datalabels: {
@@ -119,7 +160,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 backgroundColor: '#0000aa',
                 borderRadius: 25,
                 borderColor: '#ffffff',
-                borderWidth: 2
+                borderWidth: 2,
+                font: {
+                  size: 20
+                }
               }
             }
           }
