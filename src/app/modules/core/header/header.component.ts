@@ -72,29 +72,29 @@ export class HeaderComponent implements OnInit {
       case KeyBindings.up: {
         if (!this.kbS.isEditModeActivated) {
           event.preventDefault();
+          this.kbS.moveUp(true, event.altKey);
         }
-        this.kbS.moveUp(true, event.altKey);
         break;
       }
       case KeyBindings.down: {
         if (!this.kbS.isEditModeActivated) {
           event.preventDefault();
+          this.kbS.moveDown(true, event.altKey);
         }
-        this.kbS.moveDown(true, event.altKey);
         break;
       }
       case KeyBindings.left: {
         if (!this.kbS.isEditModeActivated) {
           event.preventDefault();
+          this.kbS.moveLeft(true, event.altKey);
         }
-        this.kbS.moveLeft(true, event.altKey);
         break;
       }
       case KeyBindings.right: {
         if (!this.kbS.isEditModeActivated) {
           event.preventDefault();
+          this.kbS.moveRight(true, event.altKey);
         }
-        this.kbS.moveRight(true, event.altKey);
         break;
       }
       case KeyBindings.edit: {

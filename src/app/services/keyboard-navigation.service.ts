@@ -66,7 +66,7 @@ export class KeyboardNavigationService {
   /**
    * Moves up in the current matrix or submatrix.
    * @param doSelect Focusing the tile on the current (aftermove) position.
-   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @param canJump Jumpst to the next map in direction.
    * @returns Tile on the current (aftermove) position.
    */
   moveUp(doSelect: boolean = true, canJump: boolean = false): string {
@@ -80,10 +80,12 @@ export class KeyboardNavigationService {
       this.pos.Y--;
     }
     // Egy térképpel feljebb ugrunk
-    else if (canJump && this.matrixPos.Y > 0) {
+    else if ((canJump && this.matrixPos.Y > 0)
+              || (!canJump && this.pos.Y == 0 && this.matrixPos.Y > 0)) {
       this.matrixPos.Y--;
       this.pos.X = 0;
       this.pos.Y = 0;
+      return this.process(doSelect, false);
     }
     // Jelenlegi térképen lépünk egyet felfelé
     else if (!canJump && this.pos.Y > 0) {
@@ -103,7 +105,7 @@ export class KeyboardNavigationService {
   /**
    * Moves down in the current matrix or submatrix.
    * @param doSelect Focusing the tile on the current (aftermove) position.
-   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @param canJump Jumpst to the next map in direction.
    * @returns Tile on the current (aftermove) position.
    */
   moveDown(doSelect: boolean = true, canJump: boolean = false): string {
@@ -129,7 +131,8 @@ export class KeyboardNavigationService {
       }
     }
     // Ugrás lejebb
-    else if (canJump && this.matrixPos.Y < this.World.length - 1) {
+    else if ((canJump && this.matrixPos.Y < this.World.length - 1)
+              || (!canJump && this.pos.Y == this._map.length - 1 && this.matrixPos.Y < this.World.length - 1)) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
@@ -152,7 +155,7 @@ export class KeyboardNavigationService {
   /**
    * Moves left in the current matrix or submatrix.
    * @param doSelect Focusing the tile on the current (aftermove) position.
-   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @param canJump Jumpst to the next map in direction.
    * @returns Tile on the current (aftermove) position.
    */
   moveLeft(doSelect: boolean = true, canJump: boolean = false): string {
@@ -165,7 +168,8 @@ export class KeyboardNavigationService {
       return this.getCurrentTile();
     }
     // Ugrás
-    else if (canJump && this.matrixPos.X > 0) {
+    else if ((canJump && this.matrixPos.X > 0)
+              || (!canJump && this.matrixPos.X > 0 && this.pos.X == 0)) {
       this.matrixPos.X--;
       this.pos.X = 0;
       this.pos.Y = 0;
@@ -188,7 +192,7 @@ export class KeyboardNavigationService {
   /**
    * Moves right in the current matrix or submatrix.
    * @param doSelect Focusing the tile on the current (aftermove) position.
-   * @param canJump If reached the edge of the matrix already but there is another map, it jumps onto it.
+   * @param canJump Jumpst to the next map in direction.
    * @returns Tile on the current (aftermove) position.
    */
   moveRight(doSelect: boolean = true, canJump: boolean = false): string {
@@ -201,10 +205,12 @@ export class KeyboardNavigationService {
       return this.getCurrentTile();
     }
     // Ugrás
-    else if (canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1) {
+    else if ((canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1)
+              || (!canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1 && this.pos.X == this._map[this.pos.Y].length - 1)) {
       this.matrixPos.Y++;
       this.pos.X = 0;
       this.pos.Y = 0;
+      return this.process(doSelect, false);
     }
     // Mozgás jobbra
     else if (this.pos.X < this.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
@@ -243,32 +249,49 @@ export class KeyboardNavigationService {
   }
 
   /**
-   * Moves one step down if possible, if not, tries to move one step right then to the top edge of the matrix.
+   * Moves to the next formfield. One step right, if not possible then down.
    * @returns Tile on the current (aftermove) position.
    */
   moveNextInForm(): string {
     let tile = this.getCurrentTile();
-    var res = this.moveDown(true, false);
-    if (tile === res) {
-      this.moveRight(true, false);
-      res = this.moveTopInCurrentArea();
+    var res = "";
+    //debugger;
+    if (this.pos.X == this._map[this.pos.Y].length - 1) {
+      res = this.moveDown(true, false);
+      if (tile !== res) {
+        this.pos.X = 0;
+        this.selectCurrentTile();
+        return this.getCurrentTile();
+      }
     }
+
+    res = this.moveRight(true, false);
+    if (tile === res) {
+      res = this.moveDown(true, false);
+      return res;
+    }
+
+    if (this.pos.Y == this._map.length - 1) {
+      return tile;
+    }
+
     return res;
   }
 
   /**
    * Moves one step right if possible, if not, tries to move to the first element of the next row of the matrix.
-   * @returns Tile on the current (aftermove) position.
+   * @returns X position
    */
-  moveNextInTable(): string {
+  moveNextInTable(): number {
     let tile = this.getCurrentTile();
     var res = this.moveRight(true, false);
     if (tile === res) {
       this.moveDown(true, false);
       this.pos.X = 0;
       this.selectCurrentTile();
+      return this.pos.X;
     }
-    return this.getCurrentTile();
+    return this.pos.X;
   }
 
   /**
@@ -412,6 +435,10 @@ export class KeyboardNavigationService {
 
   toggleEdit(): void {
     this._currentKeyboardMode = this._currentKeyboardMode == KeyboardModes.EDIT ? KeyboardModes.NAVIGATION : KeyboardModes.EDIT;
+  }
+
+  setEditMode(mode: KeyboardModes): void {
+    this._currentKeyboardMode = mode;
   }
 
   clearPosCache(): void {

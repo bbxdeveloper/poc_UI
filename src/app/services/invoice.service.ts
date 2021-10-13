@@ -4,6 +4,8 @@ import { Observable, of } from 'rxjs';
 import { Company } from 'src/assets/model/Company';
 import { Invoice } from 'src/assets/model/Invoice';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
+import { PaymentData } from 'src/assets/model/PaymentData';
+import { PaymentMethod } from 'src/assets/model/PaymentMethod';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -13,6 +15,13 @@ export class InvoiceService {
   private readonly BaseUrl = environment.apiUrl + 'transaction' + environment.apiVersion;
 
   constructor(private http: HttpClient) { }
+
+  getPaymentMethods(): Observable<PaymentMethod[]> {
+    return of([
+      { Key: 'Készpénz', Value: "Készpénz"} as PaymentMethod,
+      { Key: 'Átutalás', Value: "Átutalás"} as PaymentMethod,
+    ]);
+  }
 
   getMockData(storageId: string): Observable<Invoice> {
     return of({
@@ -34,6 +43,9 @@ export class InvoiceService {
         TaxNumber: '12332123-2-34',
         Note: 'Semmi.'
       } as Company,
+      Payment: {
+        InvoiceNumber: "K-0000001/21"
+      } as PaymentData,
       Products: [
         {Code: 'AAA-A', Measure: 'db', Amount: 2341.0, Price: 232.20, Value: 6234.1, Name: 'Valami'} as InvoiceProduct,
         {Code: 'BFS-A', Measure: 'kg', Amount: 623.0, Price: 32.220, Value: 623.1, Name: 'Valami2'} as InvoiceProduct,

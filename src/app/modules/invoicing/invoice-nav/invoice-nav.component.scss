@@ -42,11 +42,18 @@ nb-card {
     td {
         min-width: 16vw;
         max-width: 16vw;
-    }
 
-    // &::-webkit-scrollbar{
-    //     display: none;
-    // }
+        height: 50px;
+
+        &.table-cell-edited {
+            text-align: center;
+            padding: 0px;
+
+            .input-table-cell {
+                max-width: 80%;
+            }
+        }
+    }
 
     .td-focusable:focus {
         background: darkblue;
@@ -54,14 +61,6 @@ nb-card {
 
     tr:last-child {
         background-color: #524469 !important;
-    }
-
-    .input-table-cell {
-        margin: 0;
-        padding: 5px;
-
-        max-width: 16vw !important;
-        max-height: 20px !important;
     }
 }
 
@@ -76,16 +75,12 @@ nb-card {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 10px !important;
-    // -webkit-box-shadow: inset 0 0 6px rgba(62, 26, 192, 0.747) !important;
-    // -webkit-box-shadow: inset 0 0 6px rgba(69, 67, 219, 0.747) !important;
     -webkit-box-shadow: inset 0 0 6px rgba(85, 84, 180, 0.966) !important;
 }
 
 .card-labels-right {
     display: flex;
     flex-direction: column;
-
-    // row-gap: 20px;
 
     text-align: right;
 
@@ -98,8 +93,6 @@ nb-card {
 .card-labels-left {
     display: flex;
     flex-direction: column;
-
-    // row-gap: 20px;
 
     text-align: left;
 
@@ -129,8 +122,6 @@ nb-card-header {
     margin: 0;
     margin-left: auto;
     margin-right: auto;
-
-    // width: fit-content;
 
     .card-col-labels {
         ::ng-deep nb-card {
@@ -187,9 +178,8 @@ nb-card-header {
 
     nb-form-field {
         min-width: 20% !important;
-        // max-width: fit-content !important;
 
-        input {
+        input, nb-select {
             min-width: 100% !important;
         }
     }
@@ -205,8 +195,6 @@ nb-card-header {
     }
 
     .form-field-full-width-inner-div {
-        // @extend .form-field-full-width-inner-div;
-
         display: flex !important;
         flex-direction: row;
         align-content: center;
@@ -217,9 +205,9 @@ nb-card-header {
 
         column-gap: 25px;
 
-        textarea,
         input {
             max-width: 100% !important;
+            min-width: auto !important;
         }
 
         label {

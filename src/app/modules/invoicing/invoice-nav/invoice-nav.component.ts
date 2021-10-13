@@ -8,6 +8,8 @@ import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keybo
 import { ColDef } from 'src/assets/model/ColDef';
 import { Company } from 'src/assets/model/Company';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
+import { PaymentData } from 'src/assets/model/PaymentData';
+import { PaymentMethod } from 'src/assets/model/PaymentMethod';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
 
 @Component({
@@ -20,13 +22,19 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   senderData: Company;
   buyerData: Company;
+  metaData: PaymentData;
+
   buyersData: Company[] = [];
+  paymentMethods: PaymentMethod[] = [];
 
   productCreatorRow: TreeGridNode<InvoiceProduct>;
   productsData: TreeGridNode<InvoiceProduct>[];
   productsDataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
   filteredBuyerOptions$: Observable<string[]> = of([]);
+  paymentMethodOptions$: Observable<string[]> = of([]);
   colsToIgnore: string[] = ["Value"];
+
+  isUnfinishedRowDeletable = false;
 
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
@@ -59,20 +67,21 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   get NextTabIndex() { return this.tabIndex++; }
   get GenerateCreatorRow(): TreeGridNode<InvoiceProduct> {
     return {
-      data: { Code: '', Measure: '', Amount: 0, Price: 0, Value: 0, Name: '' } as InvoiceProduct
+      data: { Code: undefined, Measure: undefined, Amount: undefined, Price: undefined, Value: 0, Name: undefined } as InvoiceProduct
     };
   }
 
   readonly navigationMatrix: string[][] = [
-    ["l00", "r00"],
-    ["l01", "r01"],
-    ["l02", "r02"],
-    ["l03", "r03"],
-    ["l04", "r04"],
-    ["l05", "r05"],
-    ["m00", "m01", "m02", "m03", "m04"],
+    ["r00"],
+    // ["r01"],
+    // ["r02"],
+    // ["r03"],
+    // ["r04"],
+    // ["r05"],
+    ["m00", "m01", "m02", "m03"],
     ["m11"],
   ];
+  tableNavMap: string[][] = [];
 
   get isEditModeOff() {
     return this.kbS.currentKeyboardMode !== KeyboardModes.EDIT;
@@ -88,6 +97,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.senderData = {} as Company;
     this.buyerData = {} as Company;
+    this.metaData = {} as PaymentData;
     
     this.productsData = [];
     this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
@@ -172,6 +182,8 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // console.log(this.productForms);
 
+      this.paymentMethodOptions$ = this.seInv.getPaymentMethods().pipe(map(data => data.map(d => d.Key)));
+
       this.table?.renderRows();
     });
   }
@@ -185,7 +197,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private generateAndAttachTableMap(nav: boolean = false, readonlyColumns: string[] = []): void {
-    let tableNavMap: string[][] = [];
+    this.tableNavMap = [];
     for(let y = 0; y < this.productsData.length; y++) {
       let row = [];
       for(let x = 0; x < this.colDefs.length; x++) {
@@ -194,10 +206,10 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         row.push("PRODUCT-" + x + '-' + y);
       }
-      tableNavMap.push(row);
+      this.tableNavMap.push(row);
     }
     // console.log(tableNavMap);
-    this.kbS.attachNewMap(tableNavMap, nav);
+    this.kbS.attachNewMap(this.tableNavMap, nav);
   }
 
   changeSort(sortRequest: NbSortRequest): void {
@@ -240,6 +252,21 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.kbS.detachLastMap(2);
   }
 
+  handleAutoCompleteOptionFocused(event: any): void {
+    console.log(event);
+  }
+
+  private feelBuyerForm(name: string) {
+    let buyer = this.buyersData.find(b => b.Name === name);
+    if (!!buyer) {
+      this.buyerForm.controls["zipCodeCity"].setValue(buyer.ZipCodeCity);
+      this.buyerForm.controls["street"].setValue(buyer.Address);
+      this.buyerForm.controls["invoiceNum"].setValue(buyer.InvoiceAddress);
+      this.buyerForm.controls["taxNum"].setValue(buyer.TaxNumber);
+      this.buyerForm.controls["note"].setValue(buyer.Note);
+    }
+  }
+
   edit(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string) {
     this.productForm = new FormGroup({
       edited: new FormControl((row.data as any)[col])
@@ -247,59 +274,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editedProperty = col;
     this.editedRow = row;
     this.editedRowPos = rowPos;
-  }
-
-  resetEdit(): void {
-    this.productForm = new FormGroup({});
-    this.editedProperty = undefined;
-    this.editedRow = undefined;
-    this.editedRowPos = undefined;
-  }
-
-  handleGridEnter(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
-    // Switch between nav and edit mode
-    this.kbS.toggleEdit();
-
-    // Already in Edit mode
-    if (!!this.editedRow) {
-
-      // Creator row edited
-      if (rowPos === this.productsData.length - 1 && col === 'Code') {
-        this.productCreatorRow = this.GenerateCreatorRow;
-        this.productsData.push(this.productCreatorRow);
-        
-        this.productsDataSource.setData(this.productsData);
-
-        this.kbS.detachLastMap(1);
-        this.generateAndAttachTableMap(false, this.colsToIgnore);
-      }
-
-      // Close edit mode
-      this.resetEdit();
-      this.kbS.moveNextInTable();
-      this.cdref.detectChanges();
-      
-    } else {
-      // Entering edit mode
-      this.edit(row, rowPos, col);
-      this.cdref.detectChanges();
-      this.kbS.focusById("PRODUCT-EDIT");
-    }
-
-    console.log((this.productsData[rowPos].data as any)[col]);
-  }
-
-  handleGridDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
-    if (rowPos !== this.productsData.length - 1 && !this.kbS.isEditModeActivated) {
-      this.productsData.splice(rowPos, 1);
-      this.productsDataSource.setData(this.productsData);
-      
-      this.kbS.moveUp();
-      this.kbS.detachLastMap(1);
-      this.generateAndAttachTableMap();
-    }
-
-    console.log((this.productsData[rowPos].data as any)[col]);
   }
 
   handleFormEnter(event: Event, jumpNext: boolean = true, toggleEditMode: boolean = true): void {
@@ -328,18 +302,119 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  handleAutoCompleteOptionFocused(event: any): void {
-    console.log(event);
+  resetEdit(): void {
+    this.productForm = new FormGroup({});
+    this.editedProperty = undefined;
+    this.editedRow = undefined;
+    this.editedRowPos = undefined;
   }
 
-  private feelBuyerForm(name: string) {
-    let buyer = this.buyersData.find(b => b.Name === name);
-    if (!!buyer) {
-      this.buyerForm.controls["zipCodeCity"].setValue(buyer.ZipCodeCity);
-      this.buyerForm.controls["street"].setValue(buyer.Address);
-      this.buyerForm.controls["invoiceNum"].setValue(buyer.InvoiceAddress);
-      this.buyerForm.controls["taxNum"].setValue(buyer.TaxNumber);
-      this.buyerForm.controls["note"].setValue(buyer.Note);
+  handleGridEscape(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number): void {
+    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+    this.resetEdit();
+    this.cdref.detectChanges();
+    this.kbS.selectCurrentTile();
+  }
+
+  handleGridMovement(event: KeyboardEvent, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number, upward: boolean): void {
+    // Új sorokat generáló sort nem dobhatjuk el.
+    if (rowPos !== this.productsData.length - 1) {
+      // Csak befejezetlen sort dobhatunk el, amikor nincs szerkesztésmód.
+      let _data = row.data;
+      let rowIsUnfinished =
+        _data.Value == undefined || _data.Price == undefined || _data.Name == undefined ||
+        _data.Measure == undefined || _data.Code == undefined || _data.Amount == undefined;
+      if (rowIsUnfinished && !this.kbS.isEditModeActivated) {
+        switch (event.key) {
+          case "ArrowUp":
+            if (!this.isUnfinishedRowDeletable) {
+              return;
+            }
+            this.isUnfinishedRowDeletable = false;
+
+            this.productsData.splice(rowPos, 1);
+            this.productsDataSource.setData(this.productsData);
+            
+            // Ha felfelé navigálunk, akkor egyet kell lefelé navigálnunk, hogy korrigáljuk a mozgást.
+            this.kbS.moveDown();
+            this.kbS.detachLastMap(1);
+            this.generateAndAttachTableMap();
+            break;
+          case "ArrowDown":
+            if (!this.isUnfinishedRowDeletable) {
+              return;
+            }
+            this.isUnfinishedRowDeletable = false;
+
+            this.productsData.splice(rowPos, 1);
+            this.productsDataSource.setData(this.productsData);
+
+            // Ha lefelé navigálunk, akkor egyet kell felfelé navigálnunk, hogy korrigáljuk a mozgást.
+            this.kbS.moveUp();
+            this.kbS.detachLastMap(1);
+            this.generateAndAttachTableMap();
+            break;
+        }
+      }
     }
+  }
+
+  handleGridEnter(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number): void {
+    // Switch between nav and edit mode
+    let wasEditActivatedPreviously = this.kbS.isEditModeActivated;
+    this.kbS.toggleEdit();
+
+    // Already in Edit mode
+    if (!!this.editedRow) {
+
+      // Creator row edited
+      if (rowPos === this.productsData.length - 1 && col === 'Code') {
+        this.productCreatorRow = this.GenerateCreatorRow;
+        this.productsData.push(this.productCreatorRow);
+        
+        this.productsDataSource.setData(this.productsData);
+
+        this.kbS.detachLastMap(1);
+        this.generateAndAttachTableMap(false, this.colsToIgnore);
+
+        this.isUnfinishedRowDeletable = true;
+      }
+
+      // this.kbS.toggleEdit();
+      this.resetEdit();
+      this.cdref.detectChanges();
+
+      let newX = this.kbS.moveNextInTable();
+      if (wasEditActivatedPreviously) {
+        if (newX < colPos) {
+          this.isUnfinishedRowDeletable = false;
+        }
+        let nextRowPost = newX < colPos ? rowPos + 1 : rowPos;
+        let nextRow = newX < colPos ? this.productsData[nextRowPost] : row;
+        this.handleGridEnter(nextRow, nextRowPost, this.colDefs[newX].objectKey, newX);
+      }
+    } else {
+      // Entering edit mode
+      this.edit(row, rowPos, col);
+      this.cdref.detectChanges();
+      this.kbS.focusById("PRODUCT-EDIT");
+    }
+
+    console.log((this.productsData[rowPos].data as any)[col]);
+  }
+
+  handleGridDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
+    if (rowPos !== this.productsData.length - 1 && !this.kbS.isEditModeActivated) {
+      this.productsData.splice(rowPos, 1);
+      this.productsDataSource.setData(this.productsData);
+      
+      if (rowPos !== 0) {
+        this.kbS.moveUp();
+      }
+      this.kbS.detachLastMap(1);
+      this.generateAndAttachTableMap();
+    }
+
+    console.log((this.productsData[rowPos].data as any)[col]);
   }
 }
