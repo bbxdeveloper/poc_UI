@@ -115,7 +115,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       finishTimeStamp: new FormControl('', []),
       invoiceCreation: new FormControl('', []),
       paymentDeadline: new FormControl('', []),
-      invoiceOrdinal: new FormControl('', []),
+      invoiceOrdinal: new FormControl('K-0000001/21', []),
       misc: new FormControl('', []),
     });
     this.buyerForm = new FormGroup({
