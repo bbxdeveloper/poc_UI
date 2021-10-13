@@ -46,11 +46,23 @@ nb-card {
         height: 50px;
 
         &.table-cell-edited {
-            text-align: center;
+            // text-align: center;
             padding: 0px;
 
             .input-table-cell {
                 max-width: 80%;
+
+                border: none;
+                background: none;
+                text-align: left;
+                padding-left: 20px;
+
+                font-size: 1.2rem !important;
+
+                color: #ffffff;
+                font-family: Open Sans, sans-serif;
+                font-weight: 400;
+                line-height: 1.25rem;
             }
         }
     }

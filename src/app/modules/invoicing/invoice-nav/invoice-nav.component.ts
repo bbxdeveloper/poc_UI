@@ -1,3 +1,4 @@
+import { ThrowStmt } from '@angular/compiler';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NbOptionComponent, NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
@@ -239,7 +240,9 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     // for (let item of tmp) {
     //   item.tabIndex = -1;
     // }
-    this.kbS.moveTopInCurrentArea();
+    // this.kbS.moveTopInCurrentArea();
+    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+    this.kbS.selectFirstTile();
   }
 
   ngOnInit(): void {
@@ -277,13 +280,36 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleFormEnter(event: Event, jumpNext: boolean = true, toggleEditMode: boolean = true): void {
+    // debugger;
     console.log("FORM HANDLING KEYBOARD ACTION");
     if (toggleEditMode) {
       this.kbS.toggleEdit();
     }
     if (jumpNext) {
+      let oldMy = this.kbS.matrixPos.Y;
       this.kbS.moveNextInForm();
+      // TODO: navigációs mátrixhoz típust rendelni, pl. "táblázat"
+      if (oldMy < this.kbS.matrixPos.Y) {
+        console.log(this.kbS.getCurrentTile());
+        this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+        // this.kbS.clickCurrentTile();
+        // const ke = new KeyboardEvent('keydown', {
+        //   bubbles: true, cancelable: true, keyCode: 13
+        // });
+        // document!.getElementById(this.kbS.getCurrentTile())!.dispatchEvent(ke);
+        this.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
+      } else {
+        this.kbS.clickCurrentTile();
+        if (this.isEditModeOff) {
+          this.kbS.toggleEdit();
+        }
+      }
     }
+  }
+
+  handleFormEscape(): void {
+    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+    this.cdref.detectChanges();
   }
 
   handleAutoCompleteSelect(event: any): void {
@@ -298,7 +324,22 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       this.feelBuyerForm(event);
     }
     if (this.isEditModeOff) {
+      let oldMy = this.kbS.matrixPos.Y;
       this.kbS.moveNextInForm();
+      // TODO: navigációs mátrixhoz típust rendelni, pl. "táblázat"
+      if (oldMy < this.kbS.matrixPos.Y) {
+        console.log(this.kbS.getCurrentTile());
+        this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+        // this.kbS.clickCurrentTile();
+        // const ke = new KeyboardEvent('keydown', {
+        //   bubbles: true, cancelable: true, keyCode: 13
+        // });
+        // document!.getElementById(this.kbS.getCurrentTile())!.dispatchEvent(ke);
+        this.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
+      } else {
+        this.kbS.clickCurrentTile();
+        this.kbS.toggleEdit();
+      }
     }
   }
 

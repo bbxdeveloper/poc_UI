@@ -84,7 +84,7 @@ export class KeyboardNavigationService {
               || (!canJump && this.pos.Y == 0 && this.matrixPos.Y > 0)) {
       this.matrixPos.Y--;
       this.pos.X = 0;
-      this.pos.Y = 0;
+      this.pos.Y = this._map.length - 1;
       return this.process(doSelect, false);
     }
     // Jelenlegi térképen lépünk egyet felfelé
@@ -374,6 +374,14 @@ export class KeyboardNavigationService {
         }
       }
     }
+  }
+
+  selectFirstTile() {
+    this.pos.X = 0;
+    this.pos.Y = 0;
+    this.matrixPos.X = 0;
+    this.matrixPos.Y = 0;
+    this.selectCurrentTile();
   }
 
   selectCurrentTile() {

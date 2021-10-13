@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit {
     private dialogService: NbDialogService,
     private kbS: KeyboardNavigationService,
     private router: Router) {
-      this.kbS.selectCurrentTile();
+      this.kbS.selectFirstTile();
     }
 
   ngOnInit(): void {
@@ -107,6 +107,10 @@ export class HeaderComponent implements OnInit {
       }
       default: {}
     }
+  }
+
+  handleEscape(): void {
+    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
   }
 
   goTo(link: string): void {

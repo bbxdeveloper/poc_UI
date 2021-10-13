@@ -23,7 +23,7 @@
                 Szállító
             </nb-card-header>
             <nb-card-body class="form-col-1">
-                <form [formGroup]="exporterForm" (keydown.enter)="$event.preventDefault()" #formDirective="ngForm">
+                <form [formGroup]="exporterForm" (keydown.enter)="$event.preventDefault()" #formDirective="ngForm" (keydown.escape)="handleFormEscape()">
                     <nb-form-field>
                         <input nbInput type="text" formControlName='name' required="true" readonly id="l00">
                     </nb-form-field>
@@ -60,7 +60,7 @@
                 Vevő
             </nb-card-header>
             <nb-card-body class="form-col-2">
-                <form [formGroup]="buyerForm" #formDirective="ngForm">
+                <form [formGroup]="buyerForm" #formDirective="ngForm" (keydown.escape)="handleFormEscape()">
                     <nb-form-field (keydown.enter)="handleFormEnter($event, false)">
                         <input formControlName="name" nbInput type="text" [nbAutocomplete]="auto" [readonly]="isEditModeOff" placeholder="Név" autocomplete="off"
                             id="r00" /> <!--  (keyup)="handleAutoCompleteOptionFocused($event)"-->
@@ -102,7 +102,7 @@
 <div class="card-col-2">
     <nb-card>
         <nb-card-body class="form-col-2">
-            <form class="form-horizontal" [formGroup]="metaForm" #formDirective="ngForm">
+            <form class="form-horizontal" [formGroup]="metaForm" #formDirective="ngForm" (keydown.escape)="handleFormEscape()">
                 <nb-form-field (keydown.enter)="handleFormEnter($event, false)">
                     <label>Fizetési mód</label>
                     <!-- <input nbInput type="text" formControlName='paymentMethod' required="true"
