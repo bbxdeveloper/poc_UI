@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { ProductLookupDialogComponent } from './product-lookup-dialog/product-lookup-dialog.component';
-import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule } from '@nebular/theme';
+import { ActiveProductDialogComponent } from './active-product-dialog/active-product-dialog.component';
+import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule, NbTabsetModule, NbButtonGroupModule } from '@nebular/theme';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
@@ -10,7 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     ConfirmationDialogComponent,
-    ProductLookupDialogComponent
+    ActiveProductDialogComponent
   ],
   imports: [
     CommonModule,
@@ -20,14 +20,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     NbTreeGridModule,
+    NbTabsetModule,
+    NbButtonGroupModule
   ],
   exports: [
     ConfirmationDialogComponent,
-    ProductLookupDialogComponent
+    ActiveProductDialogComponent
   ],
   providers: [
     ConfirmationDialogComponent,
-    ProductLookupDialogComponent
+    ActiveProductDialogComponent
   ]
 })
 export class SharedModule { }

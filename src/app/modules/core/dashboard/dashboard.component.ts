@@ -183,8 +183,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
     if (event.code === 'Tab') {
       event.preventDefault();

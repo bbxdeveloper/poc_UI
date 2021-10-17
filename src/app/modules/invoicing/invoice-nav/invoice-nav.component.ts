@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { NbDialogService, NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { FooterService } from 'src/app/services/footer.service';
@@ -15,6 +15,7 @@ import { PaymentData } from 'src/assets/model/PaymentData';
 import { PaymentMethod } from 'src/assets/model/PaymentMethod';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
+import { ActiveProductDialogComponent } from '../../shared/active-product-dialog/active-product-dialog.component';
 
 @Component({
   selector: 'app-invoice-nav',
@@ -91,6 +92,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   isReady: boolean = false;
 
   constructor(
+    @Optional() private dialogService: NbDialogService,
     private fS: FooterService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
     private elem: ElementRef,
@@ -317,8 +319,22 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       case KeyBindings.F2: {
         event.preventDefault();
-        if (this.kbS.isEditModeActivated) {
-
+        if (this.tableIsFocused) {
+          // const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { context: { msg: Constants.MSG_CONFIRMATION_QUIT } });
+          const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
+          dialogRef.onClose.subscribe(res => {
+            if (res) {
+              window.close();
+            }
+          });
+        } else {
+          // const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { context: { msg: Constants.MSG_CONFIRMATION_QUIT } });
+          const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
+          dialogRef.onClose.subscribe(res => {
+            if (res) {
+              window.close();
+            }
+          });
         }
         break;
       }
