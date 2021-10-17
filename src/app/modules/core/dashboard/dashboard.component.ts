@@ -1,11 +1,13 @@
-import { AfterViewInit } from '@angular/core';
+import { AfterViewInit, HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ArcElement, CategoryScale, Chart, Legend, LinearScale, LineController, LineElement, PieController, PointElement, SubTitle, Title } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ChatService } from 'src/app/services/chat.service';
+import { FooterService } from 'src/app/services/footer.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
-import { TreeGridNode } from 'src/assets/model/TreeGridNode';
+import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { FooterCommandInfo } from 'src/assets/model/FooterCommandInfo';
+import { KeyBindings } from 'src/assets/util/KeyBindings';
 
 
 @Component({
@@ -15,18 +17,26 @@ import { TreeGridNode } from 'src/assets/model/TreeGridNode';
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   isReady: boolean = false;
-  // products: TreeGridNode<InvoiceProduct>[] = [];
 
   messages: any[];
 
-  // productGratestValue: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => b.data.Value - a.data.Value;
-  // productGratestPrice: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => b.data.Price - a.data.Price;
-  // productGratestAmount: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => b.data.Amount - a.data.Amount;
-  // productSmallestValue: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => a.data.Value - b.data.Value;
-  // productSmallestPrice: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => a.data.Price - b.data.Price;
-  // productSmallestAmount: (a: TreeGridNode<InvoiceProduct>, b: TreeGridNode<InvoiceProduct>) => number = (a, b) => a.data.Amount - b.data.Amount;
+  readonly commands: FooterCommandInfo[] = [
+    { key: 'F1', value: 'Súgó', disabled: false },
+    { key: 'F2', value: '', disabled: false },
+    { key: 'F3', value: '', disabled: false },
+    { key: 'F4', value: 'Számolás', disabled: false },
+    { key: 'F5', value: '', disabled: false },
+    { key: 'F6', value: '', disabled: false },
+    { key: 'F7', value: '', disabled: false },
+    { key: 'F8', value: '', disabled: false },
+    { key: 'F9', value: '', disabled: false },
+    { key: 'F10', value: '', disabled: false },
+  ];
 
-  constructor(protected chatShowcaseService: ChatService,
+  constructor(
+    private kbS: KeyboardNavigationService,
+    private fS: FooterService,
+    protected chatShowcaseService: ChatService,
     private seInv: InvoiceService) {
     Chart.register(
       PieController, LineController,
@@ -44,6 +54,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.fS.pushCommands(this.commands);
     this.isReady = true;
   }
 
@@ -169,6 +180,25 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           }
         });
       }
+    }
+  }
+
+
+
+  @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Tab') {
+      event.preventDefault();
+    }
+    switch (event.key) {
+      case KeyBindings.F1: {
+        event.preventDefault();
+        break;
+      }
+      case KeyBindings.F4: {
+        event.preventDefault();
+        break;
+      }
+      default: { }
     }
   }
 

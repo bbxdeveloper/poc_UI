@@ -3,11 +3,13 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
+import { FooterService } from 'src/app/services/footer.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { ProductsGridNavigationService } from 'src/app/services/products-grid-navigation.service';
 import { ColDef } from 'src/assets/model/ColDef';
 import { Company } from 'src/assets/model/Company';
+import { FooterCommandInfo } from 'src/assets/model/FooterCommandInfo';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { PaymentData } from 'src/assets/model/PaymentData';
 import { PaymentMethod } from 'src/assets/model/PaymentMethod';
@@ -50,6 +52,21 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     C: { pattern: new RegExp('[a-zA-Z0-9]') }
   };
 
+  readonly commands: FooterCommandInfo[] = [
+    { key: 'F1', value: 'Súgó', disabled: false },
+    { key: 'F2', value: 'Keresés', disabled: false },
+    { key: 'F3', value: 'Új Partner', disabled: false },
+    { key: 'F4', value: 'Számolás', disabled: false },
+    { key: 'F5', value: 'Adóalany', disabled: false },
+    { key: 'F6', value: 'Módosítás', disabled: false },
+    { key: 'F7', value: 'GdprNy', disabled: false },
+    { key: 'F8', value: 'GdprAd', disabled: false },
+    { key: 'F9', value: '', disabled: false },
+    { key: 'F10', value: '', disabled: false },
+  ];
+
+  tableIsFocused: boolean = false;
+
   sortColumn: string = '';
   sortDirection: NbSortDirection = NbSortDirection.NONE;
 
@@ -74,6 +91,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   isReady: boolean = false;
 
   constructor(
+    private fS: FooterService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
     private elem: ElementRef,
     private seInv: InvoiceService,
@@ -129,7 +147,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       this.kbS.detachLastMap(2);
       
       // this.buyerData = d.Buyer;
-      
+
       this.senderData = d.Sender;
       this.exporterForm = new FormGroup({
         name: new FormControl(this.senderData.Name, []),
@@ -194,7 +212,9 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     return row.uid;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fS.pushCommands(this.commands);
+  }
   ngAfterViewInit(): void {
     this.kbS.setEditMode(KeyboardModes.NAVIGATION);
     this.kbS.selectFirstTile();
@@ -273,51 +293,88 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  focusOnTable(focusIn: boolean): void {
+    this.tableIsFocused = focusIn;
+    if (focusIn) {
+      this.gridNavHandler.pushFooterCommandList();
+    } else {
+      this.fS.pushCommands(this.commands);
+    }
+  }
+
   // F KEYS
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
     if (event.code === 'Tab') {
       event.preventDefault();
     }
     switch (event.key) {
+      case KeyBindings.F1: {
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
+        }
+        break;
+      }
       case KeyBindings.F2: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
         }
         break;
       }
       case KeyBindings.F3: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
+        }
+        break;
+      }
+      case KeyBindings.F4: {
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
         }
         break;
       }
       case KeyBindings.F5: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
         }
         break;
       }
       case KeyBindings.F6: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
         }
         break;
       }
       case KeyBindings.F7: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
         }
         break;
       }
       case KeyBindings.F8: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
+        }
+        break;
+      }
+      case KeyBindings.F9: {
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
+        }
+        break;
+      }
+      case KeyBindings.F10: {
+        event.preventDefault();
+        if (this.kbS.isEditModeActivated) {
+
         }
         break;
       }

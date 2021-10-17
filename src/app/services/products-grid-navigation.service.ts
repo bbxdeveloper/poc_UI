@@ -5,6 +5,8 @@ import { NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/them
 import { ColDef } from 'src/assets/model/ColDef';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
+import { FooterCommandInfo } from 'src/assets/model/FooterCommandInfo';
+import { FooterService } from './footer.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,11 +36,37 @@ export class ProductsGridNavigationService {
     };
   }
 
+  readonly commandsOnTable: FooterCommandInfo[] = [
+    { key: 'F1', value: 'Súgó', disabled: false },
+    { key: 'F2', value: '', disabled: false },
+    { key: 'F3', value: 'Megr. ->', disabled: false },
+    { key: 'F4', value: 'Számolás', disabled: false },
+    { key: 'F5', value: 'TkInf.', disabled: false },
+    { key: 'F6', value: 'Szml.', disabled: false },
+    { key: 'F7', value: 'Árkal.', disabled: false },
+    { key: 'F8', value: 'Töröl', disabled: false },
+    { key: 'F9', value: 'Új Sor', disabled: false },
+    { key: 'F10', value: 'Ügynk.', disabled: false },
+  ];
+  readonly commandsOnTableEditMode: FooterCommandInfo[] = [
+    { key: 'F1', value: 'Súgó', disabled: false },
+    { key: 'F2', value: 'AktívT', disabled: false },
+    { key: 'F3', value: 'Rend. ->', disabled: false },
+    { key: 'F4', value: 'KAktíT', disabled: false },
+    { key: 'F5', value: 'TkInf.', disabled: false },
+    { key: 'F6', value: 'ÖsszTk.', disabled: false },
+    { key: 'F7', value: '', disabled: false },
+    { key: 'F8', value: '', disabled: false },
+    { key: 'F9', value: '', disabled: false },
+    { key: 'F10', value: 'Ügynk.', disabled: false },
+  ];
+
   private cdref?: ChangeDetectorRef;
 
   constructor(
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
-    private kbS: KeyboardNavigationService
+    private kbS: KeyboardNavigationService,
+    private fS: FooterService
   ) {
     this.productsData = [];
     this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
@@ -73,6 +101,14 @@ export class ProductsGridNavigationService {
     this.generateAndAttachTableMap(false, this.colsToIgnore);
   }
 
+  pushFooterCommandList(): void {
+    if (this.kbS.isEditModeActivated) {
+      this.fS.pushCommands(this.commandsOnTableEditMode);
+    } else {
+      this.fS.pushCommands(this.commandsOnTable);
+    }
+  }
+
   resetEdit(): void {
     this.productForm = new FormGroup({});
     this.editedProperty = undefined;
@@ -94,6 +130,7 @@ export class ProductsGridNavigationService {
     this.resetEdit();
     this.cdref!.detectChanges();
     this.kbS.selectCurrentTile();
+    this.pushFooterCommandList();
   }
 
   generateAndAttachTableMap(nav: boolean = false, readonlyColumns: string[] = []): void {
@@ -194,6 +231,8 @@ export class ProductsGridNavigationService {
       this.cdref!.detectChanges();
       this.kbS.focusById("PRODUCT-EDIT");
     }
+
+    this.pushFooterCommandList();
 
     console.log((this.productsData[rowPos].data as any)[col]);
   }

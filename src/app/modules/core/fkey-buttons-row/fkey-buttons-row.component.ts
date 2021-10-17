@@ -1,6 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { FooterService } from 'src/app/services/footer.service';
 import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
-import { KeyBindings } from 'src/assets/util/KeyBindings';
+import { FooterCommandInfo } from 'src/assets/model/FooterCommandInfo';
 
 @Component({
   selector: 'app-fkey-buttons-row',
@@ -8,48 +10,16 @@ import { KeyBindings } from 'src/assets/util/KeyBindings';
   styleUrls: ['./fkey-buttons-row.component.scss']
 })
 export class FKeyButtonsRowComponent implements OnInit {
-  readonly commands = [
-    { key: 'F1', value: 'Súgó', disabled: false },
-    { key: 'F2', value: 'Keresés', disabled: false },
-    { key: 'F3', value: 'Új Partner', disabled: false },
-    { key: 'F4', value: 'Számolás', disabled: false },
-    { key: 'F5', value: 'Adóalany', disabled: false },
-    { key: 'F6', value: 'Módosítás', disabled: false },
-    { key: 'F7', value: 'GdprNy', disabled: false },
-    { key: 'F8', value: 'GdprAd', disabled: false },
-    { key: 'F9', value: '', disabled: false },
-    { key: 'F10', value: '', disabled: false },
-  ]
+  commands$: Observable<FooterCommandInfo[]>;
 
   constructor(
+    private fS: FooterService,
     private kbS: KeyboardNavigationService) {
     this.kbS.selectFirstTile();
+    this.commands$ = this.fS.commands;
   }
 
   ngOnInit(): void {
-  }
-
-  @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
-    if (event.code === 'Tab') {
-      event.preventDefault();
-    }
-    switch (event.key) {
-      case KeyBindings.F1: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
-        }
-        break;
-      }
-      case KeyBindings.F4: {
-        if (!this.kbS.isEditModeActivated) {
-          event.preventDefault();
-          // TODO: open Help.
-        }
-        break;
-      }
-      default: { }
-    }
   }
 
 }

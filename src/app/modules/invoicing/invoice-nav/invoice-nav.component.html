@@ -167,7 +167,8 @@
     <nb-card-body>
         <form>
             <table class="card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource"
-                [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
+                [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth
+                (focusin)="focusOnTable(true)" (focusout)="focusOnTable(false)">
 
                 <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
                 <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
