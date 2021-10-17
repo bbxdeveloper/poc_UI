@@ -1,11 +1,11 @@
-import { ThrowStmt } from '@angular/compiler';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { NbOptionComponent, NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { ProductsGridNavigationService } from 'src/app/services/products-grid-navigation.service';
 import { ColDef } from 'src/assets/model/ColDef';
 import { Company } from 'src/assets/model/Company';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
@@ -29,15 +29,13 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   buyersData: Company[] = [];
   paymentMethods: PaymentMethod[] = [];
 
-  productCreatorRow: TreeGridNode<InvoiceProduct>;
   productsData: TreeGridNode<InvoiceProduct>[];
   productsDataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
+
   filteredBuyerOptions$: Observable<string[]> = of([]);
   paymentMethodOptions$: Observable<string[]> = of([]);
+  
   colsToIgnore: string[] = ["Value"];
-
-  isUnfinishedRowDeletable = false;
-
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
     { label: 'Termékkód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" },
@@ -59,30 +57,21 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   metaForm: FormGroup;
   buyerForm: FormGroup;
 
-  productForm: FormGroup;
-  editedRow?: TreeGridNode<InvoiceProduct>;
-  editedProperty?: string;
-  editedRowPos?: number;
-
   private uid = 0;
   private tabIndex = 10000;
   get NextTabIndex() { return this.tabIndex++; }
-  get GenerateCreatorRow(): TreeGridNode<InvoiceProduct> {
-    return {
-      data: { Code: undefined, Measure: undefined, Amount: undefined, Price: undefined, Value: 0, Name: undefined } as InvoiceProduct
-    };
-  }
 
   readonly navigationMatrix: string[][] = [
     ["r00"],
     ["m00", "m01", "m02", "m03"],
     ["m11"],
   ];
-  tableNavMap: string[][] = [];
 
   get isEditModeOff() {
     return this.kbS.currentKeyboardMode !== KeyboardModes.EDIT;
   }
+
+  isReady: boolean = false;
 
   constructor(
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
@@ -90,7 +79,8 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private seInv: InvoiceService,
     private cdref: ChangeDetectorRef,
     private kbS: KeyboardNavigationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public gridNavHandler: ProductsGridNavigationService
   ) {
     this.senderData = {} as Company;
     this.buyerData = {} as Company;
@@ -124,9 +114,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       note: new FormControl('', []),
     });
 
-    this.productForm = new FormGroup({});
-    this.productCreatorRow = this.GenerateCreatorRow;
-
     this.filteredBuyerOptions$ = this.buyerForm.controls["name"].valueChanges
       .pipe(
         startWith(''),
@@ -138,23 +125,12 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   refresh(): void {
     this.seInv.getMockData("").subscribe(d => {
-      this.kbS.detachLastMap(2);
 
-      // console.log(d.Products);
+      this.kbS.detachLastMap(2);
       
       // this.buyerData = d.Buyer;
+      
       this.senderData = d.Sender;
-
-      this.seInv.getMockBuyers().subscribe(b => {
-        this.buyersData = b;
-      });
-      
-      this.productCreatorRow = this.GenerateCreatorRow;
-      this.productsData = d.Products.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
-      this.productsData.push(this.productCreatorRow);
-      
-      this.productsDataSource.setData(this.productsData);
-
       this.exporterForm = new FormGroup({
         name: new FormControl(this.senderData.Name, []),
         zipCodeCity: new FormControl(this.senderData.ZipCodeCity, []),
@@ -163,25 +139,28 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         taxNum: new FormControl(this.senderData.TaxNumber, []),
         note: new FormControl(this.senderData.Note, []),
       });
-      // this.buyerForm = new FormGroup({
-      //   name: new FormControl(this.buyerData.Name, []),
-      //   zipCodeCity: new FormControl(this.buyerData.ZipCodeCity, []),
-      //   street: new FormControl(this.buyerData.Address, []),
-      //   invoiceNum: new FormControl(this.buyerData.InvoiceAddress, []),
-      //   taxNum: new FormControl(this.buyerData.TaxNumber, []),
-      //   note: new FormControl(this.buyerData.Note, []),
-      // });
 
-      this.resetEdit();
-
-      this.kbS.attachNewMap(this.navigationMatrix);
-      this.generateAndAttachTableMap(false, this.colsToIgnore);
-
-      // console.log(this.productForms);
-
+      this.seInv.getMockBuyers().subscribe(b => {
+        this.buyersData = b;
+      });
+      
+      this.productsData = d.Products.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+      
+      this.productsDataSource.setData(this.productsData);
+      
       this.paymentMethodOptions$ = this.seInv.getPaymentMethods().pipe(map(data => data.map(d => d.Key)));
-
+      
+      this.kbS.attachNewMap(this.navigationMatrix);
+      
       this.table?.renderRows();
+      this.gridNavHandler.setUp(
+        this.productsData, this.productsDataSource,
+        this.allColumns, this.colDefs,
+        this.cdref,
+        this.colsToIgnore
+      );
+
+      this.isReady = true;
     });
   }
 
@@ -191,22 +170,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const filterValue = value.toLowerCase();
     return [""].concat(this.buyersData.map(x => x.Name).filter(optionValue => optionValue.toLowerCase().includes(filterValue)));
-  }
-
-  private generateAndAttachTableMap(nav: boolean = false, readonlyColumns: string[] = []): void {
-    this.tableNavMap = [];
-    for(let y = 0; y < this.productsData.length; y++) {
-      let row = [];
-      for(let x = 0; x < this.colDefs.length; x++) {
-        if (readonlyColumns.findIndex(a => a === this.colDefs[x].objectKey) !== -1) {
-          continue;
-        }
-        row.push("PRODUCT-" + x + '-' + y);
-      }
-      this.tableNavMap.push(row);
-    }
-    // console.log(tableNavMap);
-    this.kbS.attachNewMap(this.tableNavMap, nav);
   }
 
   changeSort(sortRequest: NbSortRequest): void {
@@ -231,21 +194,11 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     return row.uid;
   }
 
+  ngOnInit(): void {}
   ngAfterViewInit(): void {
-    // var tmp = this.elem.nativeElement.querySelectorAll('.nb-tree-grid-header-change-sort-button');
-    // for (let item of tmp) {
-    //   item.tabIndex = -1;
-    // }
-    // this.kbS.moveTopInCurrentArea();
     this.kbS.setEditMode(KeyboardModes.NAVIGATION);
     this.kbS.selectFirstTile();
   }
-
-  ngOnInit(): void {
-    // this.refresh();
-    // this.cdref.detectChanges();
-  }
-
   ngOnDestroy(): void {
     console.log("Detach");
     this.kbS.detachLastMap(2);
@@ -266,15 +219,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  edit(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string) {
-    this.productForm = new FormGroup({
-      edited: new FormControl((row.data as any)[col])
-    });
-    this.editedProperty = col;
-    this.editedRow = row;
-    this.editedRowPos = rowPos;
-  }
-
   handleFormEnter(event: Event, jumpNext: boolean = true, toggleEditMode: boolean = true): void {
     // debugger;
     console.log("FORM HANDLING KEYBOARD ACTION");
@@ -288,12 +232,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       if (oldMy < this.kbS.matrixPos.Y) {
         console.log(this.kbS.getCurrentTile());
         this.kbS.setEditMode(KeyboardModes.NAVIGATION);
-        // this.kbS.clickCurrentTile();
-        // const ke = new KeyboardEvent('keydown', {
-        //   bubbles: true, cancelable: true, keyCode: 13
-        // });
-        // document!.getElementById(this.kbS.getCurrentTile())!.dispatchEvent(ke);
-        this.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
+        this.gridNavHandler.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
       } else {
         this.kbS.clickCurrentTile();
         if (this.isEditModeOff) {
@@ -326,133 +265,12 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       if (oldMy < this.kbS.matrixPos.Y) {
         console.log(this.kbS.getCurrentTile());
         this.kbS.setEditMode(KeyboardModes.NAVIGATION);
-        // this.kbS.clickCurrentTile();
-        // const ke = new KeyboardEvent('keydown', {
-        //   bubbles: true, cancelable: true, keyCode: 13
-        // });
-        // document!.getElementById(this.kbS.getCurrentTile())!.dispatchEvent(ke);
-        this.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
+        this.gridNavHandler.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
       } else {
         this.kbS.clickCurrentTile();
         this.kbS.toggleEdit();
       }
     }
-  }
-
-  resetEdit(): void {
-    this.productForm = new FormGroup({});
-    this.editedProperty = undefined;
-    this.editedRow = undefined;
-    this.editedRowPos = undefined;
-  }
-
-  handleGridEscape(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number): void {
-    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
-    this.resetEdit();
-    this.cdref.detectChanges();
-    this.kbS.selectCurrentTile();
-  }
-
-  handleGridMovement(event: KeyboardEvent, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number, upward: boolean): void {
-    // Új sorokat generáló sort nem dobhatjuk el.
-    if (rowPos !== this.productsData.length - 1) {
-      // Csak befejezetlen sort dobhatunk el, amikor nincs szerkesztésmód.
-      let _data = row.data;
-      let rowIsUnfinished =
-        _data.Value == undefined || _data.Price == undefined || _data.Name == undefined ||
-        _data.Measure == undefined || _data.Code == undefined || _data.Amount == undefined;
-      if (rowIsUnfinished && !this.kbS.isEditModeActivated) {
-        switch (event.key) {
-          case "ArrowUp":
-            if (!this.isUnfinishedRowDeletable) {
-              return;
-            }
-            this.isUnfinishedRowDeletable = false;
-
-            this.productsData.splice(rowPos, 1);
-            this.productsDataSource.setData(this.productsData);
-            
-            // Ha felfelé navigálunk, akkor egyet kell lefelé navigálnunk, hogy korrigáljuk a mozgást.
-            this.kbS.moveDown();
-            this.kbS.detachLastMap(1);
-            this.generateAndAttachTableMap();
-            break;
-          case "ArrowDown":
-            if (!this.isUnfinishedRowDeletable) {
-              return;
-            }
-            this.isUnfinishedRowDeletable = false;
-
-            this.productsData.splice(rowPos, 1);
-            this.productsDataSource.setData(this.productsData);
-
-            // Ha lefelé navigálunk, akkor egyet kell felfelé navigálnunk, hogy korrigáljuk a mozgást.
-            this.kbS.moveUp();
-            this.kbS.detachLastMap(1);
-            this.generateAndAttachTableMap();
-            break;
-        }
-      }
-    }
-  }
-
-  handleGridEnter(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number): void {
-    // Switch between nav and edit mode
-    let wasEditActivatedPreviously = this.kbS.isEditModeActivated;
-    this.kbS.toggleEdit();
-
-    // Already in Edit mode
-    if (!!this.editedRow) {
-
-      // Creator row edited
-      if (rowPos === this.productsData.length - 1 && col === 'Code') {
-        this.productCreatorRow = this.GenerateCreatorRow;
-        this.productsData.push(this.productCreatorRow);
-        
-        this.productsDataSource.setData(this.productsData);
-
-        this.kbS.detachLastMap(1);
-        this.generateAndAttachTableMap(false, this.colsToIgnore);
-
-        this.isUnfinishedRowDeletable = true;
-      }
-
-      // this.kbS.toggleEdit();
-      this.resetEdit();
-      this.cdref.detectChanges();
-
-      let newX = this.kbS.moveNextInTable();
-      if (wasEditActivatedPreviously) {
-        if (newX < colPos) {
-          this.isUnfinishedRowDeletable = false;
-        }
-        let nextRowPost = newX < colPos ? rowPos + 1 : rowPos;
-        let nextRow = newX < colPos ? this.productsData[nextRowPost] : row;
-        this.handleGridEnter(nextRow, nextRowPost, this.colDefs[newX].objectKey, newX);
-      }
-    } else {
-      // Entering edit mode
-      this.edit(row, rowPos, col);
-      this.cdref.detectChanges();
-      this.kbS.focusById("PRODUCT-EDIT");
-    }
-
-    console.log((this.productsData[rowPos].data as any)[col]);
-  }
-
-  handleGridDelete(event: Event, row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string): void {
-    if (rowPos !== this.productsData.length - 1 && !this.kbS.isEditModeActivated) {
-      this.productsData.splice(rowPos, 1);
-      this.productsDataSource.setData(this.productsData);
-      
-      if (rowPos !== 0) {
-        this.kbS.moveUp();
-      }
-      this.kbS.detachLastMap(1);
-      this.generateAndAttachTableMap();
-    }
-
-    console.log((this.productsData[rowPos].data as any)[col]);
   }
 
   // F KEYS

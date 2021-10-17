@@ -11,8 +11,7 @@ import { CoreModule } from './modules/core/core.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { InvoicingModule } from './modules/invoicing/invoicing.module';
-import { NgxMaskModule, IConfig } from 'ngx-mask'
-import { ChatService } from './services/chat.service';
+import { NgxMaskModule, IConfig } from 'ngx-mask';
 
 const maskConfig: Partial<IConfig> = {
   validation: true,

@@ -166,11 +166,12 @@
 <nb-card>
     <nb-card-body>
         <form>
-            <table class="card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource" [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
-            
+            <table class="card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource"
+                [trackBy]="trackRows" (sort)="changeSort($event)" equalColumnsWidth>
+
                 <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
                 <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
-            
+
                 <ng-container *ngFor="let it of colDefs; let colPos = index" [nbTreeGridColumnDef]="it.colKey">
                     <ng-container [ngSwitch]="it.type">
 
@@ -178,18 +179,23 @@
                             {{it.label}}
                         </th>
 
-                        <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell *nbTreeGridCellDef="let row; let rowPos = index"
-                            [class.table-cell-edited]="editedRowPos == rowPos && editedProperty == it.objectKey"
-                            (keydown.escape)="handleGridEscape(row, rowPos, it.objectKey, colPos)"
-                            (keydown)="handleGridMovement($event, row, rowPos, it.objectKey, colPos, true)"
-                            (keydown.enter)="handleGridEnter(row, rowPos, it.objectKey, colPos)"
-                            (keydown.delete)="handleGridDelete($event, row, rowPos, it.objectKey)"
+                        <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell
+                            *nbTreeGridCellDef="let row; let rowPos = index"
+                            [class.table-cell-edited]="gridNavHandler.editedRowPos == rowPos && gridNavHandler.editedProperty == it.objectKey"
+                            (keydown.escape)="gridNavHandler.handleGridEscape(row, rowPos, it.objectKey, colPos)"
+                            (keydown)="gridNavHandler.handleGridMovement($event, row, rowPos, it.objectKey, colPos, true)"
+                            (keydown.enter)="gridNavHandler.handleGridEnter(row, rowPos, it.objectKey, colPos)"
+                            (keydown.delete)="gridNavHandler.handleGridDelete($event, row, rowPos, it.objectKey)"
                             id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
 
-                            <input *ngIf="editedRowPos == rowPos && editedProperty == it.objectKey" nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]" id="PRODUCT-EDIT"
-                                    [mask]="it.mask" [patterns]="customMaskPatterns" [dropSpecialCharacters]="false"  [showMaskTyped]="true" class="input-table-cell"/> <!--formControlName="edited"-->
-                            
-                            <div *ngIf="editedRowPos !== rowPos || editedProperty !== it.objectKey">
+                            <input
+                                *ngIf="gridNavHandler.editedRowPos == rowPos && gridNavHandler.editedProperty == it.objectKey"
+                                nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]"
+                                id="PRODUCT-EDIT" [mask]="it.mask" [patterns]="customMaskPatterns"
+                                [dropSpecialCharacters]="false" [showMaskTyped]="true" class="input-table-cell" />
+
+                            <div
+                                *ngIf="gridNavHandler.editedRowPos !== rowPos || gridNavHandler.editedProperty !== it.objectKey">
                                 {{ row.data[it.objectKey] }}
                             </div>
                         </td>

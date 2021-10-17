@@ -1,8 +1,9 @@
-import { NgModule } from '@angular/core';
+import { ChangeDetectorRef, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { NbButtonModule, NbCardModule, NbLayoutModule } from '@nebular/theme';
 import { ProductLookupDialogComponent } from './product-lookup-dialog/product-lookup-dialog.component';
+import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule } from '@nebular/theme';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -15,7 +16,10 @@ import { ProductLookupDialogComponent } from './product-lookup-dialog/product-lo
     CommonModule,
     NbLayoutModule,
     NbCardModule,
-    NbButtonModule
+    NbButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NbTreeGridModule,
   ],
   exports: [
     ConfirmationDialogComponent,
