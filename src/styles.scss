@@ -92,6 +92,13 @@ nb-layout-column {
     font-size: 2rem !important;
 }
 
+nb-layout-footer.custom {
+  nav {
+    padding: 0px !important;
+    background: none !important;
+  }
+}
+
 input, label, th, td {
     font-size: 1.2rem;
 }

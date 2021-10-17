@@ -1,0 +1,6 @@
+<nb-actions tabIndex="-1" size="medium">
+    <nb-action tabIndex="-1" class="disable-select" *ngFor="let command of commands" [disabled]="command.disabled">
+        <span tabIndex="-1" class="fkey-key">{{command.key}}</span>
+        <span tabIndex="-1" class="fkey-value">{{command.value}}</span>
+    </nb-action>
+</nb-actions>

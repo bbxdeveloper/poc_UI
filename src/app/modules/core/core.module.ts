@@ -5,6 +5,7 @@ import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule, NbChatM
 import { StatCardComponent } from './components/stat-card/stat-card.component';
 import { HeaderModule } from './header/header.module';
 import { ChatService } from 'src/app/services/chat.service';
+import { FkeyButtonsRowModule } from './fkey-buttons-row/fkey-buttons-row.module';
 
 
 
@@ -22,7 +23,8 @@ import { ChatService } from 'src/app/services/chat.service';
     NbChatModule
   ],
   exports: [
-    HeaderModule
+    HeaderModule,
+    FkeyButtonsRowModule
   ],
   providers: [
     ChatService,
