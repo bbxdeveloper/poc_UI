@@ -1,5 +1,5 @@
 import { ThrowStmt } from '@angular/compiler';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NbOptionComponent, NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
@@ -12,6 +12,7 @@ import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { PaymentData } from 'src/assets/model/PaymentData';
 import { PaymentMethod } from 'src/assets/model/PaymentMethod';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
+import { KeyBindings } from 'src/assets/util/KeyBindings';
 
 @Component({
   selector: 'app-invoice-nav',
@@ -74,11 +75,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly navigationMatrix: string[][] = [
     ["r00"],
-    // ["r01"],
-    // ["r02"],
-    // ["r03"],
-    // ["r04"],
-    // ["r05"],
     ["m00", "m01", "m02", "m03"],
     ["m11"],
   ];
@@ -457,5 +453,57 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     console.log((this.productsData[rowPos].data as any)[col]);
+  }
+
+  // F KEYS
+  @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Tab') {
+      event.preventDefault();
+    }
+    switch (event.key) {
+      case KeyBindings.F2: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      case KeyBindings.F3: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      case KeyBindings.F5: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      case KeyBindings.F6: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      case KeyBindings.F7: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      case KeyBindings.F8: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      default: { }
+    }
   }
 }

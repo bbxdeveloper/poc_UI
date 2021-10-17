@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { KeyBindings } from 'src/assets/util/KeyBindings';
 
 @Component({
   selector: 'app-fkey-buttons-row',
@@ -19,9 +21,35 @@ export class FKeyButtonsRowComponent implements OnInit {
     { key: 'F10', value: '', disabled: false },
   ]
 
-  constructor() { }
+  constructor(
+    private kbS: KeyboardNavigationService) {
+    this.kbS.selectFirstTile();
+  }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Tab') {
+      event.preventDefault();
+    }
+    switch (event.key) {
+      case KeyBindings.F1: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      case KeyBindings.F4: {
+        if (!this.kbS.isEditModeActivated) {
+          event.preventDefault();
+          // TODO: open Help.
+        }
+        break;
+      }
+      default: { }
+    }
   }
 
 }

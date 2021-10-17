@@ -1,20 +1,20 @@
 import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
-import { NbDialogRef } from '@nebular/theme';
+import { NbDialogRef } from 'out/bbx-win32-x64/resources/app/node_modules/@nebular/theme';
 import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 
 @Component({
-  selector: 'app-confirmation-dialog',
-  templateUrl: './confirmation-dialog.component.html',
-  styleUrls: ['./confirmation-dialog.component.scss']
+  selector: 'app-product-lookup-dialog',
+  templateUrl: './product-lookup-dialog.component.html',
+  styleUrls: ['./product-lookup-dialog.component.scss']
 })
-export class ConfirmationDialogComponent implements AfterContentInit, OnDestroy {
+export class ProductLookupDialogComponent implements AfterContentInit, OnDestroy {
   @Input() msg: string = "";
   closedManually = false;
 
   constructor(
-    protected dialogRef: NbDialogRef<ConfirmationDialogComponent>,
+    protected dialogRef: NbDialogRef<ProductLookupDialogComponent>,
     private kBs: KeyboardNavigationService
-  ) {}
+  ) { }
 
   ngAfterContentInit(): void {
     this.kBs.attachNewMap([["confirm-dialog-button-yes", "confirm-dialog-button-no"]], true);

@@ -4,9 +4,7 @@
     padding-top: 50px;
 
     max-height: 40vh;
-
-    //grid-auto-rows: max-content;
-    //grid-template-columns: 33% 33% 33%;
+    
     grid-template: 
             "a b" auto
             "a b" auto;
@@ -16,11 +14,6 @@
     
     justify-content: center;
 }
-
-// ::ng-deep nb-layout-column {
-//     justify-content: right;
-//     display: flex;
-// }
 
 .wrapper-chat {
     display: flex;
@@ -38,4 +31,3 @@
         max-height: 45vh;
     }
 }
-
