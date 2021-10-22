@@ -318,16 +318,7 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       case KeyBindings.F2: {
         event.preventDefault();
-        if (this.tableIsFocused && !this.isEditModeOff) {
-          const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
-          dialogRef.onClose.subscribe(res => {
-            if (res) {
-              console.log(res);
-              this.gridNavHandler.fillCurrentlyEditedRow(res);
-              this.gridNavHandler.clearEdit();
-            }
-          });
-        }
+        this.handleActiveProductModalSelection();
         break;
       }
       case KeyBindings.F3: {
@@ -387,6 +378,26 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       }
       default: { }
+    }
+  }
+
+  handleActiveProductModalSelection(): void {
+    if (this.tableIsFocused && !this.isEditModeOff) {
+      const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
+      dialogRef.onClose.subscribe(res => {
+        if (res) {
+          console.log(res);
+          this.gridNavHandler.fillCurrentlyEditedRow(res);
+        }
+        const rowPos = this.gridNavHandler.editedRowPos;
+        const cel = this.gridNavHandler.editedProperty;
+        this.gridNavHandler.clearEdit();
+        if (!!res && rowPos !== undefined && cel !== undefined) {
+          this.gridNavHandler.handleGridEnter(res, rowPos, cel, this.colDefs.findIndex(x => x.objectKey === cel));
+        } else {
+          this.kbS.selectCurrentTile();
+        }
+      });
     }
   }
 }

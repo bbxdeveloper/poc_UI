@@ -1,4 +1,4 @@
-import { AfterContentInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { AfterContentInit, AfterViewChecked, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { NbDialogRef, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { FooterService } from 'src/app/services/footer.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
@@ -21,9 +21,9 @@ const NavMap: string[][] = [
   templateUrl: './active-product-dialog.component.html',
   styleUrls: ['./active-product-dialog.component.scss']
 })
-export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy, OnInit {
-  firstBtnGroupVal: string[] = [];
-  secondBtnGroupVal: string[] = [];
+export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy, OnInit, AfterViewChecked {
+  firstBtnGroupVal: boolean = false;
+  secondBtnGroupVal: boolean = false;
 
   closedManually: boolean = false;
 
@@ -70,6 +70,8 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
   ngAfterContentInit(): void {
     this.kbS.setEditMode(KeyboardModes.NAVIGATION);
     this.kbS.attachNewMap(NavMap, true, true, true);
+  }
+  ngAfterViewChecked(): void {
     this.kbS.selectCurrentTile();
   }
   ngOnDestroy(): void {
@@ -121,11 +123,11 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     return row.uid;
   }
 
-  updateBtnGroupValue(value: string[], first: boolean = true): void {
+  updateBtnGroupValue(first: boolean = true): void {
     if (first) {
-      this.firstBtnGroupVal = value;
+      this.firstBtnGroupVal = true;
     } else {
-      this.secondBtnGroupVal = value;
+      this.secondBtnGroupVal = true;
       this.kbS.detachLastMap(1, false);
       this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
     }
@@ -152,13 +154,13 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     switch (event.key) {
       case KeyBindings.exit: {
         event.preventDefault();
-        if (this.secondBtnGroupVal.length == 0 && this.firstBtnGroupVal.length == 0) {
+        if (!this.secondBtnGroupVal && !this.firstBtnGroupVal) {
           this.close(undefined);
         }
-        if (this.secondBtnGroupVal.length > 0) {
-          this.secondBtnGroupVal = [];
+        if (this.secondBtnGroupVal) {
+          this.secondBtnGroupVal = false;
         } else {
-          this.firstBtnGroupVal = [];
+          this.firstBtnGroupVal = false;
         }
         break;
       }

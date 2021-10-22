@@ -1,16 +1,16 @@
 <nb-card>
     <nb-card-header>
         <span>Gyorskeresés</span>
-        <nb-button-group (valueChange)="updateBtnGroupValue($event, true)" *ngIf="firstBtnGroupVal.length == 0">
-            <button nbButtonToggle value="btn-1" id="active-prod-btn-1">Termékek</button>
-            <button nbButtonToggle value="btn-2" id="active-prod-btn-2">Termékcsoportok</button>
-        </nb-button-group>
-        <nb-button-group (valueChange)="updateBtnGroupValue($event, false)" *ngIf="firstBtnGroupVal.length > 0">
-            <button nbButtonToggle value="btn-3" id="active-prod-btn-1">Kódra</button>
-            <button nbButtonToggle value="btn-4" id="active-prod-btn-2">Névre</button>
-        </nb-button-group>
+        <div class="btn-group" *ngIf="!firstBtnGroupVal">
+            <button nbButton value="btn-1" id="active-prod-btn-1" (click)="updateBtnGroupValue(true)">Termékek</button>
+            <button nbButton value="btn-2" id="active-prod-btn-2" (click)="updateBtnGroupValue(true)">Termékcsoportok</button>
+        </div>
+        <div class="btn-group" *ngIf="firstBtnGroupVal">
+            <button nbButton value="btn-3" id="active-prod-btn-1" (click)="updateBtnGroupValue(false)">Kódra</button>
+            <button nbButton value="btn-4" id="active-prod-btn-2" (click)="updateBtnGroupValue(false)">Névre</button>
+        </div>
     </nb-card-header>
-    <nb-card-body *ngIf="secondBtnGroupVal.length > 0">
+    <nb-card-body *ngIf="secondBtnGroupVal">
 
         <label class="search-label" for="search">Termék:</label>
         <input nbInput id="active-prod-search" class="search-input" (keydown.enter)="handleEnter($event)" (keyup)="refreshFilter($event)" [readonly]="isEditModeOff">
@@ -55,7 +55,7 @@
         </div>
 
     </nb-card-body>
-    <nb-card-footer *ngIf="secondBtnGroupVal.length > 0">
+    <nb-card-footer *ngIf="secondBtnGroupVal">
         <div class="metadata-footer">
             <div class="label-footer-title">
                 [ Aktív Termékek ]
