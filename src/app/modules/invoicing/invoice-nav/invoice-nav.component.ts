@@ -242,7 +242,6 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleFormEnter(event: Event, jumpNext: boolean = true, toggleEditMode: boolean = true): void {
-    // debugger;
     console.log("FORM HANDLING KEYBOARD ACTION");
     if (toggleEditMode) {
       this.kbS.toggleEdit();
@@ -319,20 +318,13 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       case KeyBindings.F2: {
         event.preventDefault();
-        if (this.tableIsFocused) {
-          // const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { context: { msg: Constants.MSG_CONFIRMATION_QUIT } });
+        if (this.tableIsFocused && !this.isEditModeOff) {
           const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
           dialogRef.onClose.subscribe(res => {
             if (res) {
-              window.close();
-            }
-          });
-        } else {
-          // const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { context: { msg: Constants.MSG_CONFIRMATION_QUIT } });
-          const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
-          dialogRef.onClose.subscribe(res => {
-            if (res) {
-              window.close();
+              console.log(res);
+              this.gridNavHandler.fillCurrentlyEditedRow(res);
+              this.gridNavHandler.clearEdit();
             }
           });
         }

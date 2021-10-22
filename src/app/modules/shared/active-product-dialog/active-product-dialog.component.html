@@ -1,18 +1,21 @@
 <nb-card>
     <nb-card-header>
         <span>Gyorskeresés</span>
-        <nb-button-group (valueChange)="updateBtnGroupValue($event)" *ngIf="firstBtnGroupVal.length == 0">
-            <button nbButtonToggle value="btn-1" id="btn-1">Termékek</button>
-            <button nbButtonToggle value="btn-2" id="btn-2">Termékcsoportok</button>
+        <nb-button-group (valueChange)="updateBtnGroupValue($event, true)" *ngIf="firstBtnGroupVal.length == 0">
+            <button nbButtonToggle value="btn-1" id="active-prod-btn-1">Termékek</button>
+            <button nbButtonToggle value="btn-2" id="active-prod-btn-2">Termékcsoportok</button>
         </nb-button-group>
-        <nb-button-group (valueChange)="updateBtnGroupValue($event)" *ngIf="firstBtnGroupVal.length > 0">
-            <button nbButtonToggle value="btn-3" id="btn-3">Kódra</button>
-            <button nbButtonToggle value="btn-4" id="btn-4">Névre</button>
+        <nb-button-group (valueChange)="updateBtnGroupValue($event, false)" *ngIf="firstBtnGroupVal.length > 0">
+            <button nbButtonToggle value="btn-3" id="active-prod-btn-1">Kódra</button>
+            <button nbButtonToggle value="btn-4" id="active-prod-btn-2">Névre</button>
         </nb-button-group>
     </nb-card-header>
-    <nb-card-body>
+    <nb-card-body *ngIf="secondBtnGroupVal.length > 0">
 
-        <table class="card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource"
+        <label class="search-label" for="search">Termék:</label>
+        <input nbInput id="active-prod-search" class="search-input" (keydown.enter)="handleEnter($event)" (keyup)="refreshFilter($event)" [readonly]="isEditModeOff">
+
+        <table class="table-active-product card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource"
             [trackBy]="trackRows" equalColumnsWidth>
             <!-- <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr> -->
             <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
@@ -23,6 +26,7 @@
                     </th>
                     <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell
                         *nbTreeGridCellDef="let row; let rowPos = index"
+                        (keydown.enter)="selectRow($event, row)"
                         (keydown)="gridNavHandler.handleGridMovement($event, row, rowPos, it.objectKey, colPos, true)"
                         id="{{'ACTIVEPRODUCT-' + colPos + '-' + rowPos}}">
                         <div>
@@ -51,7 +55,7 @@
         </div>
 
     </nb-card-body>
-    <nb-card-footer>
+    <nb-card-footer *ngIf="secondBtnGroupVal.length > 0">
         <div class="metadata-footer">
             <div class="label-footer-title">
                 [ Aktív Termékek ]

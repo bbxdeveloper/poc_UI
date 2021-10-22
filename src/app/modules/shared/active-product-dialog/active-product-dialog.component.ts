@@ -1,8 +1,8 @@
-import { AfterContentInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
-import { NbDialogRef, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { AfterContentInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { NbDialogRef, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { FooterService } from 'src/app/services/footer.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { ProductsGridNavigationService } from 'src/app/services/products-grid-navigation.service';
 import { ColDef } from 'src/assets/model/ColDef';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
@@ -10,6 +10,11 @@ import { TreeGridNode } from 'src/assets/model/TreeGridNode';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
 import { FormBuilder } from '@angular/forms';
 import { OnInit } from '@angular/core';
+
+const NavMap: string[][] = [
+  ['active-prod-btn-1', 'active-prod-btn-2'],
+  ['active-prod-search']
+];
 
 @Component({
   selector: 'app-active-product-dialog',
@@ -36,33 +41,42 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
   private tabIndex = 10000;
   get NextTabIndex() { return this.tabIndex++; }
 
+  private tableMap: string[][] = [];
+
+  get isEditModeOff() {
+    return this.kbS.currentKeyboardMode !== KeyboardModes.EDIT;
+  }
+
   constructor(
     private cdref: ChangeDetectorRef,
     protected dialogRef: NbDialogRef<ActiveProductDialogComponent>,
-    private kBs: KeyboardNavigationService,
+    private kbS: KeyboardNavigationService,
     private fS: FooterService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
     private elem: ElementRef,
     private seInv: InvoiceService,
     private fb: FormBuilder,
+    private gN: ProductsGridNavigationService,
     public gridNavHandler: ProductsGridNavigationService
   ) {
     this.productsData = [];
     this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
-    this.selectedRow = {Price: 0, Amount: 0, Value: 0} as InvoiceProduct;
+    this.selectedRow = { Price: 0, Amount: 0, Value: 0 } as InvoiceProduct;
   }
 
   ngOnInit(): void {
     this.refresh();
   }
   ngAfterContentInit(): void {
-    this.kBs.attachNewMap([["confirm-dialog-button-yes", "confirm-dialog-button-no"]], true);
-    this.kBs.lockDirections(true, false, true, false);
+    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+    this.kbS.attachNewMap(NavMap, true, true, true);
+    this.kbS.selectCurrentTile();
   }
   ngOnDestroy(): void {
+    this.kbS.setEditMode(KeyboardModes.EDIT);
     if (!this.closedManually) {
-      this.kBs.detachLastMap(1, true);
-      this.kBs.lockDirections();
+      this.kbS.detachLastMap(1, true);
+      this.kbS.lockDirections();
     }
   }
 
@@ -70,7 +84,32 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     this.seInv.getActiveProducts().subscribe(data => {
       this.productsData = data.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
       this.productsDataSource.setData(this.productsData);
+      this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
     });
+  }
+
+  refreshFilter(event: any): void {
+    const queryString: string = event.target.value;
+
+    if (!queryString) {
+      this.refreshMap(this.productsData);
+    }
+
+    // this.productsDataSource.filter(queryString);
+    let filtered = this.productsData.filter(x =>
+      x.data.Code?.toLowerCase().includes(queryString.toLowerCase()) || x.data.Name?.toLowerCase().includes(queryString.toLowerCase())
+    );
+
+    this.productsDataSource.setData(filtered);
+    this.refreshMap(filtered);
+  }
+
+  handleEnter(event: any): void {
+    this.kbS.toggleEdit();
+  }
+
+  selectRow(event: any, row: TreeGridNode<InvoiceProduct>): void {
+    this.close(row);
   }
 
   private nextUid(): number {
@@ -87,15 +126,23 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
       this.firstBtnGroupVal = value;
     } else {
       this.secondBtnGroupVal = value;
+      this.kbS.detachLastMap(1, false);
+      this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
     }
     this.cdref.markForCheck();
   }
 
-  close(answer: boolean) {
+  refreshMap(data: TreeGridNode<InvoiceProduct>[]): void {
+    this.tableMap = this.gN.generateTableMap(data, this.colDefs, [], 'ACTIVEPRODUCT');
+    this.kbS.detachLastMap(1, false);
+    this.kbS.attachNewMap(NavMap.concat(this.tableMap), false, true, false);
+  }
+
+  close(selectedGrid?: TreeGridNode<InvoiceProduct>) {
     this.closedManually = true;
-    this.kBs.detachLastMap(1, true);
-    this.kBs.lockDirections();
-    this.dialogRef.close(answer);
+    this.kbS.detachLastMap(1, true);
+    this.kbS.unlockDirections();
+    this.dialogRef.close(selectedGrid);
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
@@ -106,7 +153,7 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
       case KeyBindings.exit: {
         event.preventDefault();
         if (this.secondBtnGroupVal.length == 0 && this.firstBtnGroupVal.length == 0) {
-          this.close(true);
+          this.close(undefined);
         }
         if (this.secondBtnGroupVal.length > 0) {
           this.secondBtnGroupVal = [];

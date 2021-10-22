@@ -190,13 +190,13 @@
                             id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
 
                             <input
-                                *ngIf="gridNavHandler.editedRowPos == rowPos && gridNavHandler.editedProperty == it.objectKey"
+                                *ngIf="gridNavHandler.isEditingCell(rowPos, it.objectKey)"
                                 nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]"
                                 id="PRODUCT-EDIT" [mask]="it.mask" [patterns]="customMaskPatterns"
                                 [dropSpecialCharacters]="false" [showMaskTyped]="true" class="input-table-cell" />
 
                             <div
-                                *ngIf="gridNavHandler.editedRowPos !== rowPos || gridNavHandler.editedProperty !== it.objectKey">
+                                *ngIf="!gridNavHandler.isEditingCell(rowPos, it.objectKey)">
                                 {{ row.data[it.objectKey] }}
                             </div>
                         </td>

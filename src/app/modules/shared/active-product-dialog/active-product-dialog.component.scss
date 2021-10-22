@@ -2,7 +2,7 @@ nb-card {
     border: 4px yellow double;
 
     min-width: 700px;
-    height: 610px;
+    max-height: 650px;
 
     button {
         margin-right: 25px;
@@ -228,6 +228,19 @@ nb-card {
                     text-align: left;
                 }
             }
+        }
+    }
+
+    .search-label {
+        margin-left: 35px;
+    }
+
+    .search-input {
+        margin-left: 15px;
+        margin-bottom: 20px;
+
+        &:focus {
+            background-color: rgb(219, 159, 206);
         }
     }
 }

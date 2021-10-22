@@ -61,6 +61,12 @@ export class KeyboardNavigationService {
   /** Cache for position, order: World X, World Y, Matrix X, Matrix Y. */
   posCache?: number[];
 
+  // For locking map navigation
+  minWorldY: number = Number.MIN_SAFE_INTEGER;
+  maxWorldY: number = Number.MAX_SAFE_INTEGER;
+  minWorldX: number = Number.MIN_SAFE_INTEGER;
+  maxWorldX: number = Number.MAX_SAFE_INTEGER;
+
   constructor() { }
 
   /**
@@ -82,10 +88,12 @@ export class KeyboardNavigationService {
     // Egy térképpel feljebb ugrunk
     else if ((canJump && this.matrixPos.Y > 0)
               || (!canJump && this.pos.Y == 0 && this.matrixPos.Y > 0)) {
-      this.matrixPos.Y--;
-      this.pos.X = 0;
-      this.pos.Y = this._map.length - 1;
-      return this.process(doSelect, false);
+      if (this.matrixPos.Y !== this.minWorldY && this.matrixPos.Y !== this.maxWorldY) {
+        this.matrixPos.Y--;
+        this.pos.X = 0;
+        this.pos.Y = this._map.length - 1;
+        return this.process(doSelect, false);
+      }
     }
     // Jelenlegi térképen lépünk egyet felfelé
     else if (!canJump && this.pos.Y > 0) {
@@ -133,9 +141,11 @@ export class KeyboardNavigationService {
     // Ugrás lejebb
     else if ((canJump && this.matrixPos.Y < this.World.length - 1)
               || (!canJump && this.pos.Y == this._map.length - 1 && this.matrixPos.Y < this.World.length - 1)) {
-      this.matrixPos.Y++;
-      this.pos.X = 0;
-      this.pos.Y = 0;
+      if (this.matrixPos.Y !== this.minWorldY && this.matrixPos.Y !== this.maxWorldY) {
+        this.matrixPos.Y++;
+        this.pos.X = 0;
+        this.pos.Y = 0;
+      }
     }
     // Mozgás lefelé
     else if (this.pos.Y < this.World[this.matrixPos.Y][this.matrixPos.X].length - 1) {
@@ -170,9 +180,11 @@ export class KeyboardNavigationService {
     // Ugrás
     else if ((canJump && this.matrixPos.X > 0)
               || (!canJump && this.matrixPos.X > 0 && this.pos.X == 0)) {
-      this.matrixPos.X--;
-      this.pos.X = 0;
-      this.pos.Y = 0;
+      if (this.matrixPos.X !== this.minWorldX && this.matrixPos.X !== this.maxWorldX) {
+        this.matrixPos.X--;
+        this.pos.X = 0;
+        this.pos.Y = 0;
+      }
     }
     // Mozgás balra
     else if (this.pos.X > 0) {
@@ -207,10 +219,12 @@ export class KeyboardNavigationService {
     // Ugrás
     else if ((canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1)
               || (!canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1 && this.pos.X == this._map[this.pos.Y].length - 1)) {
-      this.matrixPos.Y++;
-      this.pos.X = 0;
-      this.pos.Y = 0;
-      return this.process(doSelect, false);
+      if (this.matrixPos.X !== this.minWorldX && this.matrixPos.X !== this.maxWorldX) {
+        this.matrixPos.Y++;
+        this.pos.X = 0;
+        this.pos.Y = 0;
+        return this.process(doSelect, false);
+      }
     }
     // Mozgás jobbra
     else if (this.pos.X < this.World[this.matrixPos.Y][this.matrixPos.X][this.pos.Y].length - 1) {
@@ -400,8 +414,49 @@ export class KeyboardNavigationService {
     return this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
   }
 
-  attachNewMap(map: string[][], navigateThere: boolean = false): void {
-    this.posCache = [this.matrixPos.X, this.matrixPos.Y, this.pos.X, this.pos.Y];
+  lockMapY(minY: number, maxY: number): void {
+    this.minWorldY = minY;
+    this.maxWorldY = maxY;
+  }
+  unlockMapY(): void {
+    this.minWorldY = Number.MIN_SAFE_INTEGER;
+    this.maxWorldY = Number.MAX_SAFE_INTEGER;
+  }
+
+  lockMapX(minX: number, maxX: number): void {
+    this.minWorldX = minX;
+    this.maxWorldX = maxX;
+  }
+  unlockMapX(): void {
+    this.minWorldX = Number.MIN_SAFE_INTEGER;
+    this.maxWorldX = Number.MAX_SAFE_INTEGER;
+  }
+
+  unlockMap(): void {
+    this.unlockMapX();
+    this.unlockMapY();
+  }
+
+  lockDirections(up: boolean = false, right: boolean = false, down: boolean = false, left: boolean = false): void {
+    this.lockedUp = up;
+    this.lockedRight = right;
+    this.lockedDown = down;
+    this.lockedLeft = left;
+  }
+  unlockDirections(): void {
+    this.lockedUp = false;
+    this.lockedRight = false;
+    this.lockedDown = false;
+    this.lockedLeft = false;
+  }
+
+  attachNewMap(map: string[][], navigateThere: boolean = false, lockMap: boolean = false, savePosCache: boolean = true): void {
+    if (lockMap) {
+      this.lockMapY(this.maxWorldY + 1, this.maxWorldY + 1);
+    }
+    if (savePosCache) {
+      this.posCache = [this.matrixPos.X, this.matrixPos.Y, this.pos.X, this.pos.Y];
+    }
     this.World.push([map]);
     if (navigateThere) {
       this.matrixPos.Y = this.World.length - 1;
@@ -410,13 +465,6 @@ export class KeyboardNavigationService {
       this.pos.Y = 0;
       this.selectCurrentTile();
     }
-  }
-
-  lockDirections(up: boolean = false, right: boolean = false, down: boolean = false, left: boolean = false): void {
-    this.lockedUp = up;
-    this.lockedRight = right;
-    this.lockedDown = down;
-    this.lockedLeft = left;
   }
 
   detachLastMap(top: number = 1, navToPosCache: boolean = false): void {
@@ -432,6 +480,7 @@ export class KeyboardNavigationService {
       this.pos.Y = this.posCache[3];
       this.clearPosCache();
     }
+    this.unlockMap();
   }
 
   focusById(id: string) {

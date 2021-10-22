@@ -109,6 +109,17 @@ export class ProductsGridNavigationService {
     }
   }
 
+  fillCurrentlyEditedRow(newRowData: TreeGridNode<InvoiceProduct>): void {
+    if (!!newRowData && !!this.editedRow) {
+      this.editedRow.data.Code = newRowData.data.Code;
+      this.editedRow.data.Name = newRowData.data.Name;
+      this.editedRow.data.Amount = newRowData.data.Amount;
+      this.editedRow.data.Measure = newRowData.data.Measure;
+      this.editedRow.data.Price = newRowData.data.Price;
+      this.editedRow.data.Value = newRowData.data.Value;
+    }
+  }
+
   resetEdit(): void {
     this.productForm = new FormGroup({});
     this.editedProperty = undefined;
@@ -133,7 +144,22 @@ export class ProductsGridNavigationService {
     this.pushFooterCommandList();
   }
 
-  generateAndAttachTableMap(nav: boolean = false, readonlyColumns: string[] = []): void {
+  generateTableMap(pData: TreeGridNode<InvoiceProduct>[], cDefs: ColDef[], readonlyColumns: string[] = [], idPrefix: string = 'PRODUCT'): string[][] {
+    let tableMap = [];
+    for (let y = 0; y < pData.length; y++) {
+      let row = [];
+      for (let x = 0; x < cDefs.length; x++) {
+        if (readonlyColumns.findIndex(a => a === cDefs[x].objectKey) !== -1) {
+          continue;
+        }
+        row.push(idPrefix + "-" + x + '-' + y);
+      }
+      tableMap.push(row);
+    }
+    return tableMap;
+  }
+
+  generateAndAttachTableMap(nav: boolean = false, readonlyColumns: string[] = [], idPrefix: string = 'PRODUCT'): void {
     this.tableNavMap = [];
     for (let y = 0; y < this.productsData.length; y++) {
       let row = [];
@@ -141,7 +167,7 @@ export class ProductsGridNavigationService {
         if (readonlyColumns.findIndex(a => a === this.colDefs[x].objectKey) !== -1) {
           continue;
         }
-        row.push("PRODUCT-" + x + '-' + y);
+        row.push(idPrefix + "-" + x + '-' + y);
       }
       this.tableNavMap.push(row);
     }
@@ -250,5 +276,15 @@ export class ProductsGridNavigationService {
     }
 
     console.log((this.productsData[rowPos].data as any)[col]);
+  }
+
+  isEditingCell(rowIndex: number, col: string): boolean {
+    return this.kbS.isEditModeActivated && !!this.editedRow && this.editedRowPos == rowIndex && this.editedProperty == col;
+  }
+
+  clearEdit(): void {
+    this.editedRow = undefined;
+    this.editedProperty = undefined;
+    this.kbS.setEditMode(KeyboardModes.NAVIGATION);
   }
 }
