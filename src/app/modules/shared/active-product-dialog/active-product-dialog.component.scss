@@ -1,14 +1,14 @@
-nb-card {
+.modal-product-active {
     border: 4px yellow double;
 
     min-width: 700px;
-    max-height: 650px;
+    max-height: 670px;
 
     button {
         margin-right: 25px;
     }
 
-    nb-card-header {
+    .modal-product-active-header {
         border-bottom: 1px yellow solid;
 
         padding-top: 15px;
@@ -24,9 +24,10 @@ nb-card {
         font-size: 1.2rem !important;
     }
 
-    nb-card-footer {
+    .modal-product-active-footer {
         border-top: 1px yellow solid;
         color: white;
+        text-align: left;
         &,
         * {
             font-size: 1.1rem !important;
@@ -81,7 +82,7 @@ nb-card {
         }
     }
 
-    nb-card-body {
+    .modal-product-active-body {
         padding-left: 0px;
         padding-right: 0px;
     }
@@ -91,10 +92,6 @@ nb-card {
         padding: 0px;
         margin-top: 5px;
         margin-bottom: 5px;
-    }
-
-    nb-card-footer {
-        text-align: left;
     }
 
     :host nb-tab {

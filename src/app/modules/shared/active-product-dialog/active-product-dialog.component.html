@@ -1,5 +1,5 @@
-<nb-card>
-    <nb-card-header>
+<nb-card class="modal-product-active">
+    <nb-card-header class="modal-product-active-header">
         <span>Gyorskeresés</span>
         <div class="btn-group" *ngIf="!firstBtnGroupVal">
             <button nbButton value="btn-1" id="active-prod-btn-1" (click)="updateBtnGroupValue(true)">Termékek</button>
@@ -10,7 +10,7 @@
             <button nbButton value="btn-4" id="active-prod-btn-2" (click)="updateBtnGroupValue(false)">Névre</button>
         </div>
     </nb-card-header>
-    <nb-card-body *ngIf="secondBtnGroupVal">
+    <nb-card-body class="modal-product-active-body" *ngIf="secondBtnGroupVal">
 
         <label class="search-label" for="search">Termék:</label>
         <input nbInput id="active-prod-search" class="search-input" (keydown.enter)="handleEnter($event)" (keyup)="refreshFilter($event)" [readonly]="isEditModeOff">
@@ -55,7 +55,7 @@
         </div>
 
     </nb-card-body>
-    <nb-card-footer *ngIf="secondBtnGroupVal">
+    <nb-card-footer class="modal-product-active-footer" *ngIf="secondBtnGroupVal">
         <div class="metadata-footer">
             <div class="label-footer-title">
                 [ Aktív Termékek ]
