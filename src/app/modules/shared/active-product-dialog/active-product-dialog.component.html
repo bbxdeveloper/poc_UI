@@ -3,7 +3,8 @@
         <span>Gyorskeresés</span>
         <div class="btn-group" *ngIf="!firstBtnGroupVal">
             <button nbButton value="btn-1" id="active-prod-btn-1" (click)="updateBtnGroupValue(true)">Termékek</button>
-            <button nbButton value="btn-2" id="active-prod-btn-2" (click)="updateBtnGroupValue(true)">Termékcsoportok</button>
+            <button nbButton value="btn-2" id="active-prod-btn-2"
+                (click)="updateBtnGroupValue(true)">Termékcsoportok</button>
         </div>
         <div class="btn-group" *ngIf="firstBtnGroupVal">
             <button nbButton value="btn-3" id="active-prod-btn-1" (click)="updateBtnGroupValue(false)">Kódra</button>
@@ -13,10 +14,11 @@
     <nb-card-body class="modal-product-active-body" *ngIf="secondBtnGroupVal">
 
         <label class="search-label" for="search">Termék:</label>
-        <input nbInput id="active-prod-search" class="search-input" (keydown.enter)="handleEnter($event)" (keyup)="refreshFilter($event)" [readonly]="isEditModeOff">
+        <input nbInput id="active-prod-search" class="search-input" (keydown.enter)="handleEnter($event)"
+            (keyup)="refreshFilter($event)" [readonly]="isEditModeOff" autocomplete="off">
 
-        <table class="table-active-product card-table-wrapper" [nbTreeGrid]="productsDataSource" [nbSort]="productsDataSource"
-            [trackBy]="trackRows" equalColumnsWidth>
+        <table class="table-active-product card-table-wrapper" [nbTreeGrid]="productsDataSource"
+            [nbSort]="productsDataSource" [trackBy]="trackRows" equalColumnsWidth>
             <!-- <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr> -->
             <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
             <ng-container *ngFor="let it of colDefs; let colPos = index" [nbTreeGridColumnDef]="it.colKey">
@@ -25,8 +27,7 @@
                         {{it.label}}
                     </th>
                     <td [tabindex]="row.tabindex" class="td-focusable" nbTreeGridCell
-                        *nbTreeGridCellDef="let row; let rowPos = index"
-                        (keydown.enter)="selectRow($event, row)"
+                        *nbTreeGridCellDef="let row; let rowPos = index" (keydown.enter)="selectRow($event, row)"
                         (keydown)="gridNavHandler.handleGridMovement($event, row, rowPos, it.objectKey, colPos, true)"
                         id="{{'ACTIVEPRODUCT-' + colPos + '-' + rowPos}}">
                         <div>
@@ -44,12 +45,22 @@
             </div>
             <div class="metadata-section-lower">
                 <div class="metadata-row">
-                    <div class="label-ker">Nagyker</div> <div>:</div> <div class="label-price">{{selectedRow.Price}}</div> <div>,</div>
-                    <div class="label-brut">Bruttó</div> <div>:</div> <div class="label-price">{{selectedRow.Price}}</div>
+                    <div class="label-ker">Nagyker</div>
+                    <div>:</div>
+                    <div class="label-price">{{selectedRow.Price}}</div>
+                    <div>,</div>
+                    <div class="label-brut">Bruttó</div>
+                    <div>:</div>
+                    <div class="label-price">{{selectedRow.Price}}</div>
                 </div>
                 <div class="metadata-row">
-                    <div class="label-ker">Kisker</div> <div>:</div> <div class="label-price">{{selectedRow.Value}}</div> <div>,</div>
-                    <div class="label-brut">Bruttó</div> <div>:</div> <div class="label-price">{{selectedRow.Value}}</div>
+                    <div class="label-ker">Kisker</div>
+                    <div>:</div>
+                    <div class="label-price">{{selectedRow.Value}}</div>
+                    <div>,</div>
+                    <div class="label-brut">Bruttó</div>
+                    <div>:</div>
+                    <div class="label-price">{{selectedRow.Value}}</div>
                 </div>
             </div>
         </div>
