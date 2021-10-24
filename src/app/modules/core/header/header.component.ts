@@ -120,7 +120,7 @@ export class HeaderComponent implements OnInit {
   quit(event: any): void {
     event.preventDefault();
     if (!this.isElectron) {
-      //return;
+      return;
     }
     const dialogRef = this.dialogService.open(ConfirmationDialogComponent, { context: { msg: Constants.MSG_CONFIRMATION_QUIT } });
     dialogRef.onClose.subscribe(res => {
