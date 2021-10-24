@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Observable, of } from 'rxjs';
 import { FooterCommandInfo } from 'src/assets/model/FooterCommandInfo';
 
 @Injectable({
@@ -28,5 +27,9 @@ export class FooterService {
 
   pushCommands(cmds: FooterCommandInfo[]): void {
     this.commands.next(cmds);
+  }
+
+  pushEmptyList(): void {
+    this.commands.next(this.default);
   }
 }

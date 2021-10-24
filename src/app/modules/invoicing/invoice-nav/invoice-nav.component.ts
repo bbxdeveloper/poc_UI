@@ -95,11 +95,9 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     @Optional() private dialogService: NbDialogService,
     private fS: FooterService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
-    private elem: ElementRef,
     private seInv: InvoiceService,
     private cdref: ChangeDetectorRef,
     private kbS: KeyboardNavigationService,
-    private fb: FormBuilder,
     public gridNavHandler: ProductsGridNavigationService
   ) {
     this.senderData = {} as Company;
@@ -389,14 +387,16 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log(res);
           this.gridNavHandler.fillCurrentlyEditedRow(res);
         }
+        const row = this.gridNavHandler.editedRow;
         const rowPos = this.gridNavHandler.editedRowPos;
         const cel = this.gridNavHandler.editedProperty;
         this.gridNavHandler.clearEdit();
-        if (!!res && rowPos !== undefined && cel !== undefined) {
-          this.gridNavHandler.handleGridEnter(res, rowPos, cel, this.colDefs.findIndex(x => x.objectKey === cel));
+        if (!!row && rowPos !== undefined && cel !== undefined) {
+          this.gridNavHandler.handleGridEnter(row, rowPos, cel, this.colDefs.findIndex(x => x.objectKey === cel));
         } else {
           this.kbS.selectCurrentTile();
         }
+        this.gridNavHandler.pushFooterCommandList();
       });
     }
   }

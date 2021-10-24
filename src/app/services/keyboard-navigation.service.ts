@@ -45,6 +45,10 @@ export class KeyboardNavigationService {
     return this._map.length - 1;
   }
 
+  private get worldYLimit(): number {
+    return this.World.length - 1;
+  }
+
   private get isCurrentLocationValid() {
     return this.pos.X <= this.maxMapX && this.pos.Y <= this.maxMapY;
   }
@@ -219,7 +223,7 @@ export class KeyboardNavigationService {
     // Ugrás
     else if ((canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1)
               || (!canJump && this.matrixPos.X < this.World[this.matrixPos.Y].length - 1 && this.pos.X == this._map[this.pos.Y].length - 1)) {
-      if (this.matrixPos.X !== this.minWorldX && this.matrixPos.X !== this.maxWorldX) {
+      if (this.matrixPos.Y !== this.minWorldY && this.matrixPos.Y !== this.maxWorldY) {
         this.matrixPos.Y++;
         this.pos.X = 0;
         this.pos.Y = 0;
@@ -452,7 +456,7 @@ export class KeyboardNavigationService {
 
   attachNewMap(map: string[][], navigateThere: boolean = false, lockMap: boolean = false, savePosCache: boolean = true): void {
     if (lockMap) {
-      this.lockMapY(this.maxWorldY + 1, this.maxWorldY + 1);
+      this.lockMapY(this.worldYLimit + 1, this.worldYLimit + 1);
     }
     if (savePosCache) {
       this.posCache = [this.matrixPos.X, this.matrixPos.Y, this.pos.X, this.pos.Y];

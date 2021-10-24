@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewChecked, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { AfterContentInit, AfterViewChecked, ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/core';
 import { NbDialogRef, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { FooterService } from 'src/app/services/footer.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
@@ -8,7 +8,6 @@ import { ColDef } from 'src/assets/model/ColDef';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { TreeGridNode } from 'src/assets/model/TreeGridNode';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
-import { FormBuilder } from '@angular/forms';
 import { OnInit } from '@angular/core';
 
 const NavMap: string[][] = [
@@ -53,15 +52,14 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     private kbS: KeyboardNavigationService,
     private fS: FooterService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<TreeGridNode<InvoiceProduct>>,
-    private elem: ElementRef,
     private seInv: InvoiceService,
-    private fb: FormBuilder,
     private gN: ProductsGridNavigationService,
     public gridNavHandler: ProductsGridNavigationService
   ) {
     this.productsData = [];
     this.productsDataSource = this.dataSourceBuilder.create(this.productsData);
     this.selectedRow = { Price: 0, Amount: 0, Value: 0 } as InvoiceProduct;
+    this.fS.pushEmptyList();
   }
 
   ngOnInit(): void {
@@ -78,7 +76,7 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     this.kbS.setEditMode(KeyboardModes.EDIT);
     if (!this.closedManually) {
       this.kbS.detachLastMap(1, true);
-      this.kbS.lockDirections();
+      this.kbS.unlockDirections();
     }
   }
 
@@ -97,7 +95,6 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
       this.refreshMap(this.productsData);
     }
 
-    // this.productsDataSource.filter(queryString);
     let filtered = this.productsData.filter(x =>
       x.data.Code?.toLowerCase().includes(queryString.toLowerCase()) || x.data.Name?.toLowerCase().includes(queryString.toLowerCase())
     );
