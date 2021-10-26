@@ -16,7 +16,8 @@
     "test": "ng test",
     "electron": "ng build --base-href ./ && electron .",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "build-package": "ng build --prod --base-href ./ && electron-forge package"
   },
   "private": true,
   "dependencies": {
