@@ -1,5 +1,3 @@
-<!-- <div class="separator-horizontal"></div> -->
-
 <div class="card-row">
     <div class="card-col-labels">
         <nb-card>
@@ -176,7 +174,7 @@
                 <ng-container *ngFor="let it of colDefs; let colPos = index" [nbTreeGridColumnDef]="it.colKey">
                     <ng-container [ngSwitch]="it.type">
 
-                        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [nbSortHeader]="getDirection(it.colKey)">
+                        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef [style.width]="it.colWidth" [nbSortHeader]="getDirection(it.colKey)">
                             {{it.label}}
                         </th>
 
@@ -187,13 +185,15 @@
                             (keydown)="gridNavHandler.handleGridMovement($event, row, rowPos, it.objectKey, colPos, true)"
                             (keydown.enter)="gridNavHandler.handleGridEnter(row, rowPos, it.objectKey, colPos)"
                             (keydown.delete)="gridNavHandler.handleGridDelete($event, row, rowPos, it.objectKey)"
+                            [style.width]="it.colWidth" [style.text-align]="it.textAlign"
                             id="{{'PRODUCT-' + colPos + '-' + rowPos}}">
 
                             <input
                                 *ngIf="gridNavHandler.isEditingCell(rowPos, it.objectKey)"
                                 nbInput [type]="it.type" name="PRODUCT-EDIT" [(ngModel)]="row.data[it.objectKey]"
                                 id="PRODUCT-EDIT" [mask]="it.mask" [patterns]="customMaskPatterns"
-                                [dropSpecialCharacters]="false" [showMaskTyped]="true" class="input-table-cell" />
+                                [dropSpecialCharacters]="false" [showMaskTyped]="true" class="input-table-cell"
+                                [style.text-align]="it.textAlign" />
 
                             <div
                                 *ngIf="!gridNavHandler.isEditingCell(rowPos, it.objectKey)">

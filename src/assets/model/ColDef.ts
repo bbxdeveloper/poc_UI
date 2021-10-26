@@ -5,4 +5,6 @@ export interface ColDef {
     colKey: string;
     type?: string;
     mask: string;
+    colWidth?: string;
+    textAlign?: string;
 }

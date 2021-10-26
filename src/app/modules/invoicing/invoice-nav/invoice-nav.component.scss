@@ -29,9 +29,6 @@ nb-card {
     margin: auto;
 
     max-height: 305px !important;
-    width: fit-content;
-
-    table-layout: fixed;
 
     tr > th {
         position: sticky;
@@ -40,20 +37,19 @@ nb-card {
 
     th,
     td {
-        min-width: 16vw;
-        max-width: 16vw;
-
         height: 50px;
 
         &.table-cell-edited {
             padding: 0px;
 
             .input-table-cell {
-                max-width: 80%;
+                width: 100%;
 
                 border: none;
                 background: none;
                 text-align: left;
+
+                padding: 0px;
                 padding-left: 20px;
 
                 font-size: 1.2rem !important;
