@@ -21,8 +21,7 @@ const NavMap: string[][] = [
   styleUrls: ['./active-product-dialog.component.scss']
 })
 export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy, OnInit, AfterViewChecked {
-  firstBtnGroupVal: boolean = false;
-  secondBtnGroupVal: boolean = false;
+  btnState: boolean = false;
 
   closedManually: boolean = false;
 
@@ -121,13 +120,9 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
   }
 
   updateBtnGroupValue(first: boolean = true): void {
-    if (first) {
-      this.firstBtnGroupVal = true;
-    } else {
-      this.secondBtnGroupVal = true;
-      this.kbS.detachLastMap(1, false);
-      this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
-    }
+    this.btnState = true;
+    this.kbS.detachLastMap(1, false);
+    this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
     this.cdref.markForCheck();
   }
 
@@ -151,13 +146,11 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     switch (event.key) {
       case KeyBindings.exit: {
         event.preventDefault();
-        if (!this.secondBtnGroupVal && !this.firstBtnGroupVal) {
+        if (!this.btnState) {
           this.close(undefined);
         }
-        if (this.secondBtnGroupVal) {
-          this.secondBtnGroupVal = false;
-        } else {
-          this.firstBtnGroupVal = false;
+        if (this.btnState) {
+          this.btnState = false;
         }
         break;
       }
