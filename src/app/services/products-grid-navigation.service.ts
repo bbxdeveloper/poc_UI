@@ -217,7 +217,7 @@ export class ProductsGridNavigationService {
     }
   }
 
-  handleGridEnter(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number): void {
+  handleGridEnter(row: TreeGridNode<InvoiceProduct>, rowPos: number, col: string, colPos: number, inputId: string = "PRODUCT-EDIT"): void {
     // Switch between nav and edit mode
     let wasEditActivatedPreviously = this.kbS.isEditModeActivated;
     this.kbS.toggleEdit();
@@ -255,7 +255,13 @@ export class ProductsGridNavigationService {
       // Entering edit mode
       this.edit(row, rowPos, col);
       this.cdref!.detectChanges();
-      this.kbS.focusById("PRODUCT-EDIT");
+      this.kbS.focusById(inputId);
+      const _input = document.getElementById(inputId) as HTMLInputElement;
+      if (!!_input && _input.type === "text") {
+        window.setTimeout(function () {
+          _input.setSelectionRange(0, 0);
+        }, 0);
+      }
     }
 
     this.pushFooterCommandList();
