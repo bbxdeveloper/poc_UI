@@ -259,7 +259,13 @@ export class ProductsGridNavigationService {
       const _input = document.getElementById(inputId) as HTMLInputElement;
       if (!!_input && _input.type === "text") {
         window.setTimeout(function () {
-          _input.setSelectionRange(0, 0);
+          const txtVal = ((row.data as any)[col] as string);
+          console.log(txtVal);
+          if (!!txtVal) {
+            _input.setSelectionRange(txtVal.length, txtVal.length);
+          } else {
+            _input.setSelectionRange(0, 0);
+          }
         }, 0);
       }
     }

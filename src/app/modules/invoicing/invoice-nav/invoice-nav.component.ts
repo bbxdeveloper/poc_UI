@@ -41,9 +41,9 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   colsToIgnore: string[] = ["Value"];
   allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
-    { label: 'Termékkód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC", colWidth: "20%", textAlign: "center" },
-    { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: "", colWidth: "30%", textAlign: "center" },
-    { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string', mask: "", colWidth: "5%", textAlign: "center" },
+    { label: 'Termékkód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC", colWidth: "20%", textAlign: "left" },
+    { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: "", colWidth: "30%", textAlign: "left" },
+    { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string', mask: "", colWidth: "5%", textAlign: "left" },
     { label: 'Mennyiség', objectKey: 'Amount', colKey: 'Amount', defaultValue: '', type: 'number', mask: "", colWidth: "15%", textAlign: "right" },
     { label: 'Ár', objectKey: 'Price', colKey: 'Price', defaultValue: '', type: 'number', mask: "", colWidth: "15%", textAlign: "right" },
     { label: 'Érték', objectKey: 'Value', colKey: 'Value', defaultValue: '', type: 'number', mask: "", colWidth: "15%", textAlign: "right" },
