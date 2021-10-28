@@ -28,7 +28,18 @@ nb-card {
 
     margin: auto;
 
-    max-height: 305px !important;
+    @media (max-height: 1000px) {
+        max-height: 255px !important;    
+    }
+    @media (min-height: 1001px) {
+        max-height: 305px !important;
+    }
+    
+    @media (max-height: 1000px) {
+        td {
+            padding: 0.0rem 1.25rem !important;
+        }
+    }
 
     tr > th {
         position: sticky;
@@ -55,7 +66,14 @@ nb-card {
                     text-align: left;
 
                     padding: 0px;
-                    padding-left: 20px;
+
+                    @media (max-height: 1000px) {
+                        padding-left: 0px;
+                    }
+                    @media (min-height: 1001px) {
+                        padding-left: 20px;
+                        padding-right: 20px;
+                    }
 
                     font-size: 1.2rem !important;
 
@@ -66,7 +84,12 @@ nb-card {
                 }
 
                 div {
-                    padding-left: 20px;
+                    @media (max-height: 1000px) {
+                        padding-left: 0px;
+                    }
+                    @media (min-height: 1001px) {
+                        padding-left: 20px;
+                    }
                 }
             }
         }
@@ -92,7 +115,14 @@ nb-card {
                     text-align: left;
 
                     padding: 0px;
-                    padding-left: 20px;
+
+                    @media (max-height: 1000px) {
+                        padding-left: 0px;
+                    }
+                    @media (min-height: 1001px) {
+                        padding-left: 20px;
+                        padding-right: 20px;
+                    }
 
                     font-size: 1.2rem !important;
 
@@ -103,7 +133,12 @@ nb-card {
                 }
 
                 div {
-                    padding-left: 20px;
+                    @media (max-height: 1000px) {
+                        padding-left: 0px;
+                    }
+                    @media (min-height: 1001px) {
+                        padding-left: 20px;
+                    }
                 }
             }
         }
@@ -140,7 +175,13 @@ nb-card {
                     text-align: left;
 
                     padding: 0px;
-                    padding-left: 20px;
+
+                    @media (max-height: 1000px) {
+                        padding-left: 0px;
+                    }
+                    @media (min-height: 1001px) {
+                        padding-left: 20px;
+                    }
 
                     font-size: 1.2rem !important;
 
@@ -151,7 +192,12 @@ nb-card {
                 }
 
                 div {
-                    padding-left: 20px;
+                    @media (max-height: 1000px) {
+                        padding-left: 0px;
+                    }
+                    @media (min-height: 1001px) {
+                        padding-left: 20px;
+                    }
                 }
             }
         }
@@ -219,6 +265,11 @@ nb-card-header {
 
     .card-col-labels {
         ::ng-deep nb-card {
+            @media (max-height: 1000px) {
+                nb-card-body {
+                    padding: 0.1rem 0.8rem !important;
+                }
+            }
             width: 15vw;
             form {
                 min-width: fit-content;
@@ -233,6 +284,11 @@ nb-card-header {
         margin: auto;
 
         nb-card {
+            @media (max-height: 1000px) {
+                nb-card-body {
+                    padding: 0.1rem 0.8rem !important;
+                }
+            }
             form {
                 min-width: fit-content;
                 margin: auto;
@@ -259,6 +315,14 @@ nb-card-header {
 .card-col,
 .card-col-1 {
     margin: 0;
+}
+
+.card-col-2 {
+    @media (max-height: 1000px) {
+        nb-card-body {
+            padding: 0.2rem 0.8rem !important;
+        }
+    }
 }
 
 .form-horizontal {

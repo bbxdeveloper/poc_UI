@@ -10,4 +10,12 @@
 
 nb-action, nb-tag {
   font-size: 1.2rem !important;
+}  
+
+@media (max-height: 1000px) {
+  ::ng-deep nb-layout-header {
+    nav {
+      max-height: 50px !important;
+    }
+  }
 }
