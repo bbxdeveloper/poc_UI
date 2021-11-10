@@ -12,9 +12,14 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class InvoiceService {
-  private readonly BaseUrl = environment.apiUrl + 'transaction' + environment.apiVersion;
+  private readonly BaseUrl = environment.apiUrl + environment.apiVersion;
 
   constructor(private http: HttpClient) { }
+
+  getReport(): Observable<any> {
+    const url = this.BaseUrl + 'report';
+    return this.http.get(url, {responseType: 'blob'});
+  }
 
   getPaymentMethods(): Observable<PaymentMethod[]> {
     return of([

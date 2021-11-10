@@ -13,9 +13,14 @@
     <nb-action id="header-invo" tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom" [nbPopover]="sub_invoicing">Számlázás</nb-action>
     <ng-template #sub_invoicing let-data>
         <nb-card>
-            <nb-card-body>
+            <nb-card-body class="card-body-submenu-button">
                 <button nbButton status="primary" id="invoicing-sub-1" link="invoicing/invoice" (click)="goTo('invoicing/invoice')">
                     Számla
+                </button>
+            </nb-card-body>
+            <nb-card-body class="card-body-submenu-button">
+                <button nbButton status="primary" id="invoicing-sub-2" (click)="printReport()">
+                    Számla Nyomtatás
                 </button>
             </nb-card-body>
         </nb-card>
