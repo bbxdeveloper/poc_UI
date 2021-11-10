@@ -10,10 +10,13 @@ export class UtilityService {
 
   constructor(private invS: InvoiceService) {}
 
-  public execute(commandType: Constants.CommandType, fileType: Constants.FileExtensions = Constants.FileExtensions.UNKNOWN, obs?: Observable<any>): void {
+  public execute(
+    commandType: Constants.CommandType,
+    fileType: Constants.FileExtensions = Constants.FileExtensions.UNKNOWN,
+    params: Constants.Dct = {}, obs?: Observable<any>): void {
     switch(commandType) {
       case Constants.CommandType.PRINT_POC:
-        this.print(fileType, this.invS.getReport());
+        this.print(fileType, this.invS.getReport(params));
         break;
     }
   }
@@ -46,7 +49,7 @@ export class UtilityService {
         // Waiting 1 minute to make sure printing is done, then removing the iframe
         setTimeout(function() {
           document.body.removeChild(iframe);
-        }, 60);
+        }, 600000);
       };
     });
   }

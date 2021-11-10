@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Company } from 'src/assets/model/Company';
@@ -6,6 +6,7 @@ import { Invoice } from 'src/assets/model/Invoice';
 import { InvoiceProduct } from 'src/assets/model/InvoiceProduct';
 import { PaymentData } from 'src/assets/model/PaymentData';
 import { PaymentMethod } from 'src/assets/model/PaymentMethod';
+import { Constants } from 'src/assets/util/Constants';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -16,15 +17,22 @@ export class InvoiceService {
 
   constructor(private http: HttpClient) { }
 
-  getReport(): Observable<any> {
-    const url = this.BaseUrl + 'report';
-    return this.http.get(url, {responseType: 'blob'});
+  getReport(params: Constants.Dct): Observable<any> {
+    let options = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set("charset", "utf8")
+      .set("accept", "application/pdf");
+    return this.http.post(
+      `${environment.apiUrl}report${environment.apiVersion}render/${params['section']}/${params['fileType']}`,
+      JSON.stringify(params['report_params']),
+      { responseType: 'blob', headers: options}
+    );
   }
 
   getPaymentMethods(): Observable<PaymentMethod[]> {
     return of([
-      { Key: 'Készpénz', Value: "Készpénz"} as PaymentMethod,
-      { Key: 'Átutalás', Value: "Átutalás"} as PaymentMethod,
+      { Key: 'Készpénz', Value: "Készpénz" } as PaymentMethod,
+      { Key: 'Átutalás', Value: "Átutalás" } as PaymentMethod,
     ]);
   }
 
@@ -52,10 +60,10 @@ export class InvoiceService {
         InvoiceNumber: "K-0000001/21"
       } as PaymentData,
       Products: [
-        {Code: 'AAA-A', Measure: 'db', Amount: 2341.0, Price: 232.20, Value: 6234.1, Name: 'Valami'} as InvoiceProduct,
-        {Code: 'BFS-A', Measure: 'kg', Amount: 623.0, Price: 32.220, Value: 623.1, Name: 'Valami2'} as InvoiceProduct,
-        {Code: 'WER-X', Measure: 'db', Amount: 42.0, Price: 132235.0, Value: 2343.41, Name: 'Valami3'} as InvoiceProduct,
-        {Code: 'RXE-X', Measure: 'db', Amount: 623.0, Price: 1224433.0, Value: 6234.21, Name: 'Valami4'} as InvoiceProduct,
+        { Code: 'AAA-A', Measure: 'db', Amount: 2341.0, Price: 232.20, Value: 6234.1, Name: 'Valami' } as InvoiceProduct,
+        { Code: 'BFS-A', Measure: 'kg', Amount: 623.0, Price: 32.220, Value: 623.1, Name: 'Valami2' } as InvoiceProduct,
+        { Code: 'WER-X', Measure: 'db', Amount: 42.0, Price: 132235.0, Value: 2343.41, Name: 'Valami3' } as InvoiceProduct,
+        { Code: 'RXE-X', Measure: 'db', Amount: 623.0, Price: 1224433.0, Value: 6234.21, Name: 'Valami4' } as InvoiceProduct,
         // {Code: 'REW-B', Measure: 'db', Amount: 623.0, Price: 32.0, Value: 4234.1, Name: 'Valami5'} as InvoiceProduct,
         // {Code: 'AAA-eA', Measure: 'db', Amount: 432.0, Price: 2.20, Value: 623.1, Name: 'Valami'} as InvoiceProduct,
         // {Code: 'BFS-Af', Measure: 'kg', Amount: 754.0, Price: 123.220, Value: 5234.1, Name: 'Valami2'} as InvoiceProduct,
@@ -179,4 +187,4 @@ export class InvoiceService {
       } as Company,
     ]);
   }
- }
+}

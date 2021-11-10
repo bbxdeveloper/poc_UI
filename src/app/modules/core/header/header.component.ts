@@ -133,7 +133,68 @@ export class HeaderComponent implements OnInit {
   }
 
   printReport(): void {
-    this.utS.execute(Constants.CommandType.PRINT_POC, Constants.FileExtensions.PDF);
+    this.utS.execute(
+      Constants.CommandType.PRINT_POC, Constants.FileExtensions.PDF,
+      {
+        "section": "SzallitoSzamla",
+        "fileType": "pdf",
+        "report_params": {
+          "params": [
+            {
+              "key": "peldanyCount",
+              "value": "1"
+            },
+            {
+              "key": "storageName",
+              "value": "001 | Központi Raktár"
+            },
+            {
+              "key": "buyerName",
+              "value": "ABC Zrt."
+            },
+            {
+              "key": "addressZipCity",
+              "value": "Szeged 5000"
+            },
+            {
+              "key": "addressStreet",
+              "value": "Etető út 5."
+            },
+            {
+              "key": "taxNumber",
+              "value": "5235234321"
+            },
+            {
+              "key": "identifier",
+              "value": "64234234"
+            },
+            {
+              "key": "madeBy",
+              "value": "Szilárd Simon"
+            },
+            {
+              "key": "paymentMethod",
+              "value": "Átutalás"
+            },
+            {
+              "key": "finishDate",
+              "value": "2021.12.10"
+            },
+            {
+              "key": "dateStamp",
+              "value": "2021.12.11"
+            },
+            {
+              "key": "paymentDate",
+              "value": "2021.12.20"
+            },
+            {
+              "key": "documentNumber",
+              "value": "C0-FS3G4G3-210C"
+            }
+          ]
+        }
+      } as Constants.Dct);
   }
 
 }
