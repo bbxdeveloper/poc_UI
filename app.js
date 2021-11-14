@@ -10,14 +10,15 @@ let mainWindow;
 
 ipcMain.on("print-pdf", (event, arg) => {
   // Set temp.pdf path
+  const reportName = `${Date.now()}${Math.random()}.pdf`;
   const pdfPreviewFilePath =
     process.platform === "darwin"
-      ? `${app.getPath("home")}/Library/Logs/BBX/temp.pdf`
-      : `${app.getPath("home")}/AppData/Roaming/BBX/temp.pdf`;
+      ? `${app.getPath("home")}/Library/Logs/BBX/${reportName}`
+      : `${app.getPath("home")}/AppData/Roaming/BBX/${reportName}`;
 
   // Save as temp.pdf
   fs.writeFile(pdfPreviewFilePath, arg.buffer, "binary", (err) => {
-    console.log(pdfPreviewFilePath, err);
+    console.log(reportName, err);
 
     // Silent print PDF with default printer
     print(pdfPreviewFilePath).then((res) => {
