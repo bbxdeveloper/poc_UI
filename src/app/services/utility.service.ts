@@ -24,9 +24,60 @@ export class UtilityService {
   private print(fileType: Constants.FileExtensions, res: Observable<any>): void {
     switch(fileType) {
       case Constants.FileExtensions.PDF:
-        this.printPdfFromResponse(res);
+        this.sendPdfToElectron(res);
         break;
     }
+  }
+
+  private sendPdfToElectron(resData: Observable<any>): void {
+    resData.subscribe(res => {
+      var blob = new Blob([res], { type: 'application/pdf' }); // This make the magic
+      var blobURL = URL.createObjectURL(blob);
+
+      const webV = document.getElementById("pdfViewerWebView") as Electron.WebviewTag;
+
+      const iframe = document.getElementById("pdfViewer") as HTMLIFrameElement;
+      // let iframe = document.createElement('iframe'); // Load content in an iframe to print later
+
+      //iframe.loadURL(blobURL);
+
+      //document.body.appendChild(iframe);
+
+      //iframe.style.display = 'none';
+      webV.src = blobURL;
+      webV.src = "data:text/plain, ";
+      webV.src = blobURL;
+      //iframe.src = blobURL;
+
+      iframe.focus();
+      //iframe.contentWindow!.print();
+      // Dispatch the event.
+      console.log(webV.getWebContentsId());
+      // const event = new CustomEvent('print-pdf', { detail: webV.getWebContentsId() });
+      // document.dispatchEvent(event);
+
+      setTimeout(function () {
+        const event = new CustomEvent('print-pdf', { detail: { id: webV.getWebContentsId(), bloburl: blobURL } });
+        document.dispatchEvent(event);
+      }, 18000);
+return;
+      iframe.onload = function () {
+        // Print
+        setTimeout(function () {
+          iframe.focus();
+          //iframe.contentWindow!.print();
+          // Dispatch the event.
+          console.log(webV.getWebContentsId);
+          const event = new CustomEvent('print-pdf', { detail: webV.getWebContentsId });
+          document.dispatchEvent(event);
+        }, 1);
+        // Waiting 1 minute to make sure printing is done, then removing the iframe
+        setTimeout(function () {
+          //document.body.removeChild(iframe);
+          iframe.src = "";
+        }, 600000);
+      };
+    });
   }
 
   private printPdfFromResponse(resData: Observable<any>): void {
