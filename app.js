@@ -20,11 +20,20 @@ ipcMain.on("print-pdf", (event, arg) => {
       : `${app.getPath("home")}\\AppData\\Roaming\\BBX\\temp.pdf`;
 
   // save as temp.pdf
-  fs.writeFile(pdfPreviewFilePath, arg.buffer, "binary", (err) => {
+  fs.writeFile(pdfPreviewFilePath, arg.buffer, "binary", err => {
     console.log(pdfPreviewFilePath, err);
-    print(pdfPreviewFilePath).then(console.log, (rej) => {
-      // `file://${pdfPreviewFilePath}`
-      console.log(rej);
+    print(pdfPreviewFilePath).then(res => {
+      console.log(res);
+      fs.access(pdfPreviewFilePath, fs.constants.F_OK, err => {
+        if (!!err) {
+          console.log(err);
+        } else {
+          fs.unlink(pdfPreviewFilePath, (err) => {
+            console.log(err);
+          });
+        }
+      });
+      
     });
   });
 
