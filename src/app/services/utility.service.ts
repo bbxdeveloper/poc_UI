@@ -56,10 +56,22 @@ export class UtilityService {
       // const event = new CustomEvent('print-pdf', { detail: webV.getWebContentsId() });
       // document.dispatchEvent(event);
 
-      setTimeout(function () {
-        const event = new CustomEvent('print-pdf', { detail: { id: webV.getWebContentsId(), bloburl: blobURL } });
-        document.dispatchEvent(event);
-      }, 18000);
+      // save as temp.pdf
+      const reader = new FileReader();
+      reader.onload = function () {
+        try {
+          const event = new CustomEvent('print-pdf', { detail: { id: webV.getWebContentsId(), bloburl: blobURL, buffer: this.result } });
+          document.dispatchEvent(event);
+        } catch (error) {
+          console.error("write file error", error);
+        }
+      };
+      reader.readAsBinaryString(blob);
+
+      // setTimeout(function () {
+      //   const event = new CustomEvent('print-pdf', { detail: { id: webV.getWebContentsId(), bloburl: blobURL, blob: blob } });
+      //   document.dispatchEvent(event);
+      // }, 12000);
 return;
       iframe.onload = function () {
         // Print
