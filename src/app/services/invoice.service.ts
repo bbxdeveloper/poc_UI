@@ -29,6 +29,18 @@ export class InvoiceService {
     );
   }
 
+  getGradesReport(params: Constants.Dct): Observable<any> {
+    let options = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set("charset", "utf8")
+      .set("accept", "application/pdf");
+    return this.http.post(
+      `${environment.apiUrl}report${environment.apiVersion}render/grades/${params['section']}/${params['fileType']}`,
+      JSON.stringify(params['report_params']),
+      { responseType: 'blob', headers: options }
+    );
+  }
+
   getPaymentMethods(): Observable<PaymentMethod[]> {
     return of([
       { Key: 'Készpénz', Value: "Készpénz" } as PaymentMethod,

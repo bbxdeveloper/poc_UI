@@ -19,6 +19,9 @@ export class UtilityService {
       case Constants.CommandType.PRINT_POC:
         this.print(fileType, this.invS.getReport(params));
         break;
+      case Constants.CommandType.PRINT_POC_GRADES:
+        this.print(fileType, this.invS.getGradesReport(params));
+        break;
     }
   }
 

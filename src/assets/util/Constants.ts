@@ -7,7 +7,8 @@ export module Constants {
     }
 
     export enum CommandType {
-        PRINT_POC
+        PRINT_POC,
+        PRINT_POC_GRADES
     }
 
     export type Dct = { [id: string]: any; };

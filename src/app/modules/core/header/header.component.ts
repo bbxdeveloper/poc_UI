@@ -197,4 +197,15 @@ export class HeaderComponent implements OnInit {
       } as Constants.Dct);
   }
 
+  printGradesReport(): void {
+    this.utS.execute(Constants.CommandType.PRINT_POC_GRADES, Constants.FileExtensions.PDF,
+      {
+        "section": "OsszegFokozatos",
+        "fileType": "pdf",
+        "report_params": {
+          "params": []
+        }
+      } as Constants.Dct);
+  }
+
 }
