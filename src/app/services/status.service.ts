@@ -13,8 +13,6 @@ export class StatusService {
   public get InProgress() { return this._inProgress; }
 
   constructor() {
-    // this._inProgress = true;
-    // { value: 50, msg: 'Test', title: 'Nyomtatás' }
     this._actualStatus = new BehaviorSubject<ProcessStatus>({} as ProcessStatus);
   }
 

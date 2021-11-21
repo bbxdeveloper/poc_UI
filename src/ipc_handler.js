@@ -1,4 +1,3 @@
-// System.set('electron', System.newModule(require('electron')));
 const { ipcRenderer } = require('electron')
 
 // Listen for the event.

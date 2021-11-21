@@ -78,7 +78,7 @@ export class UtilityService {
 
       const stS = this.sts;
       iframe.onload = () => {
-        // this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.SEND_TO_PRINTER]);
+        this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.SEND_TO_PRINTER]);
         // Print
         setTimeout(function() {
           iframe.focus();

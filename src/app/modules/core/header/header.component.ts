@@ -137,6 +137,7 @@ export class HeaderComponent implements OnInit {
   }
 
   printReport(): void {
+    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_CMD]);
     this.utS.execute(
       Constants.CommandType.PRINT_POC, Constants.FileExtensions.PDF,
       {
@@ -202,6 +203,7 @@ export class HeaderComponent implements OnInit {
   }
 
   printGradesReport(): void {
+    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_CMD]);
     this.utS.execute(Constants.CommandType.PRINT_POC_GRADES, Constants.FileExtensions.PDF,
       {
         "section": "OsszegFokozatos",

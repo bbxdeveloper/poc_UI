@@ -13,11 +13,12 @@ export module Constants {
         PRINT_POC_GRADES
     }
 
-    export enum PrintProcessPhases { GENERATING, PROC_RESP, SEND_TO_PRINTER }
+    export enum PrintProcessPhases { PROC_CMD, GENERATING, PROC_RESP, SEND_TO_PRINTER }
     export const PrintReportStatuses: ProcessStatus[] = [
-        { title: 'Riport Nyomtatás', value: 33, msg: '1/3 - Generálás'},
-        { title: 'Riport Nyomtatás', value: 65, msg: '2/3 - Riport Feldolgozása'},
-        { title: 'Riport Nyomtatás', value: 100, msg: '3/3 - Küldés Nyomtatásra'}
+        { title: 'Riport Nyomtatás', value: 0, msg: '0/4 - Kérés feldolgozása' },
+        { title: 'Riport Nyomtatás', value: 33, msg: '1/4 - Generálás'},
+        { title: 'Riport Nyomtatás', value: 65, msg: '2/4 - Riport Feldolgozása'},
+        { title: 'Riport Nyomtatás', value: 100, msg: '3/4 - Küldés Nyomtatásra'}
     ];
 
     export const BlankProcessStatus: ProcessStatus = { value: -1 } as ProcessStatus;
