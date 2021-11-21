@@ -3,13 +3,14 @@ import { Observable } from 'rxjs';
 import { Constants } from 'src/assets/util/Constants';
 import { environment } from 'src/environments/environment';
 import { InvoiceService } from './invoice.service';
+import { StatusService } from './status.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilityService {
 
-  constructor(private invS: InvoiceService) {}
+  constructor(private invS: InvoiceService, private sts: StatusService) {}
 
   public execute(
     commandType: Constants.CommandType,
@@ -26,6 +27,7 @@ export class UtilityService {
   }
 
   private print(fileType: Constants.FileExtensions, res: Observable<any>): void {
+    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.GENERATING]);
     switch(fileType) {
       case Constants.FileExtensions.PDF:
         if (environment.electron) {
@@ -39,25 +41,31 @@ export class UtilityService {
 
   private sendPdfToElectron(resData: Observable<any>): void {
     resData.subscribe(res => {
+      this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_RESP]);
       var blob = new Blob([res], { type: 'application/pdf' });
       var blobURL = URL.createObjectURL(blob);
 
       // Read blob data as binary string
       const reader = new FileReader();
-      reader.onload = function () {
+      const stS = this.sts;
+      reader.onload = function() {
         try {
           const event = new CustomEvent('print-pdf', { detail: { bloburl: blobURL, buffer: this.result } });
           document.dispatchEvent(event);
+          stS.pushProcessStatus(Constants.BlankProcessStatus);
         } catch (error) {
+          stS.pushProcessStatus(Constants.BlankProcessStatus);
           console.error("write file error", error);
         }
       };
       reader.readAsBinaryString(blob);
+      stS.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.SEND_TO_PRINTER]);
     });
   }
 
   private printPdfFromResponse(resData: Observable<any>): void {
     resData.subscribe(res => {
+      this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_RESP]);
       var blob = new Blob([res], {type: 'application/pdf'});
       var blobURL = URL.createObjectURL(blob);
   
@@ -68,11 +76,14 @@ export class UtilityService {
       iframe.style.display = 'none';
       iframe.src = blobURL;
 
-      iframe.onload = function() {
+      const stS = this.sts;
+      iframe.onload = () => {
+        // this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.SEND_TO_PRINTER]);
         // Print
         setTimeout(function() {
           iframe.focus();
           iframe.contentWindow!.print();
+          stS.pushProcessStatus(Constants.BlankProcessStatus);
         }, 1);
         // Waiting 10 minute to make sure printing is done, then removing the iframe
         setTimeout(function() {

@@ -2,6 +2,7 @@ import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbDialogService, NbIconConfig } from '@nebular/theme';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
+import { StatusService } from 'src/app/services/status.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Constants } from 'src/assets/util/Constants';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
@@ -17,13 +18,15 @@ export class HeaderComponent implements OnInit {
   @Input() title: string = "";
 
   isElectron: boolean = false;
-
+  
   settingsIconConfig: NbIconConfig = { icon: 'settings-2-outline', pack: 'eva' };
   subInvoicingMenuItems = [
     { title: 'Számla', link: "invoicing/invoice", target: "invoicing-sub-1" },
     { title: 'Számla nyomtatása', link: "", target: "invoicing-sub-2" }
   ];
 
+  get InProgress(): boolean { return this.sts.InProgress; }
+  
   get keyboardMode(): string {
     var mode = this.kbS.currentKeyboardMode;
     switch(mode) {
@@ -58,7 +61,8 @@ export class HeaderComponent implements OnInit {
     private dialogService: NbDialogService,
     private kbS: KeyboardNavigationService,
     private utS: UtilityService,
-    private router: Router) {
+    private router: Router,
+    private sts: StatusService) {
       this.kbS.selectFirstTile();
     }
 

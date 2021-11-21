@@ -2,7 +2,7 @@
     
     <nb-action tabIndex="-1" class="disable-select"><img src="assets/svg/bbx_logo.svg"></nb-action>
     
-    <nb-action id="header-home" tabIndex="1" icon="home-outline" link="/" (click)="goTo('/')"></nb-action>
+    <nb-action id="header-home" tabIndex="1" icon="home-outline" link="/" (click)="goTo('/')" [disabled]="InProgress"></nb-action>
     
     <nb-action id="header-user" tabIndex="2" icon="person-outline" disabled></nb-action>
     
@@ -10,21 +10,25 @@
     
     <nb-action id="header-prod" tabIndex="4" disabled>Termékek</nb-action>
     
-    <nb-action id="header-invo" tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom" [nbPopover]="sub_invoicing">Számlázás</nb-action>
+    <nb-action id="header-invo" tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom"
+                [nbPopover]="sub_invoicing" [disabled]="InProgress">Számlázás</nb-action>
     <ng-template #sub_invoicing let-data>
         <nb-card>
             <nb-card-body class="card-body-submenu-button">
-                <button nbButton status="primary" id="invoicing-sub-1" link="invoicing/invoice" (click)="goTo('invoicing/invoice')">
+                <button nbButton status="primary" id="invoicing-sub-1" link="invoicing/invoice" [disabled]="InProgress"
+                        (click)="goTo('invoicing/invoice')">
                     Számla
                 </button>
             </nb-card-body>
             <nb-card-body class="card-body-submenu-button">
-                <button nbButton status="primary" id="invoicing-sub-2" (click)="printReport()">
+                <button nbButton status="primary" id="invoicing-sub-2" [disabled]="InProgress"
+                        (click)="printReport()">
                     Számla Nyomtatás
                 </button>
             </nb-card-body>
             <nb-card-body class="card-body-submenu-button">
-                <button nbButton status="primary" id="invoicing-sub-2" (click)="printGradesReport()">
+                <button nbButton status="primary" id="invoicing-sub-2" [disabled]="InProgress"
+                        (click)="printGradesReport()">
                     Összegfokozatos Riport Nyomtatás
                 </button>
             </nb-card-body>
@@ -39,7 +43,10 @@
     
     <nb-action id="header-serv" tabIndex="9" disabled>Szolgáltatások</nb-action>
     
-    <nb-action id="header-shut" tabIndex="10" icon="power-outline" *ngIf="isElectron" (click)="quit($event)">Kilépés</nb-action>
+    <nb-action id="header-shut" tabIndex="10" icon="power-outline" *ngIf="isElectron" [disabled]="InProgress"
+            (click)="quit($event)">
+            Kilépés
+    </nb-action>
 
     <nb-action class="nb-action-font-big">Hely: 001 Központi Raktár</nb-action>
 
