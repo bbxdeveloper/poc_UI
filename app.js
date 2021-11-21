@@ -9,33 +9,61 @@ const { print } = require("pdf-to-printer");
 let mainWindow;
 
 ipcMain.on("print-pdf", (event, arg) => {
-  // Set temp.pdf path
+  // Filename and path for temp.pdf
   const reportName = `${Date.now()}${Math.random()}.pdf`;
-  const pdfPreviewFilePath =
+  const reportsDirPath =
     process.platform === "darwin"
-      ? `${app.getPath("home")}/Library/Logs/BBX/${reportName}`
-      : `${app.getPath("home")}/AppData/Roaming/BBX/${reportName}`;
+      ? `${app.getPath("home")}/Library/Logs/BBX/Reports`
+      : `${app.getPath("home")}/AppData/Roaming/BBX/Reports`;
+  const reportsFilePath = `${reportsDirPath}/${reportName}`;
 
-  // Save as temp.pdf
-  fs.writeFile(pdfPreviewFilePath, arg.buffer, "binary", (err) => {
-    console.log(reportName, err);
+  // Local function for deleting temp pdf
+  function clean() {
+    // Check temp file after printing
+    fs.access(reportsFilePath, fs.constants.F_OK, (err) => {
+      if (!!err) {
+        console.log(err);
+      } else {
+        // Delete temp file
+        fs.unlink(reportsFilePath, (err) => {
+          console.log(err);
+        });
+      }
+    });
+  }
 
-    // Silent print PDF with default printer
-    print(pdfPreviewFilePath).then((res) => {
-      console.log(res);
+  // Local function for saving pdf and sending to printer
+  function saveThenPrint() {
+    // Save as temp.pdf
+    fs.writeFile(reportsFilePath, arg.buffer, "binary", (err) => {
+      console.log(reportName, err);
+      
+      // Silent print PDF with default printer
+      print(reportsFilePath).then((res) => {
+        console.log(res);
+        clean();
+      }, rej => {
+        console.log(rej);
+        clean();
+      });
+    });
+  }
 
-      // Check temp file after printing
-      fs.access(pdfPreviewFilePath, fs.constants.F_OK, (err) => {
+  // Check if "Reports" dir exists
+  fs.access(reportsDirPath, fs.constants.F_OK, (err) => {
+    if (!!err) {
+      // Creating dir
+      fs.mkdir(reportsDirPath, (err) => {
+        // Dir cannot be created
         if (!!err) {
           console.log(err);
         } else {
-          // Delete temp file
-          fs.unlink(pdfPreviewFilePath, (err) => {
-            console.log(err);
-          });
+          saveThenPrint();
         }
       });
-    });
+    } else {
+      saveThenPrint();
+    }
   });
 });
 
