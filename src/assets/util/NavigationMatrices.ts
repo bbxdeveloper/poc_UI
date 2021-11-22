@@ -5,6 +5,7 @@ export module NM {
     ];
     export const headerInvoSub = [
         ["invoicing-sub-1"],
+        ["invoicing-sub-2"],
     ];
 
     export const SubMapping: { [id: string]: string[][]; } = {};

@@ -135,7 +135,7 @@ export class KeyboardNavigationService {
     }
     // Almenüben
     else if (!!this.activeSubKey) {
-      if (this.pos.Y < NM.SubMapping[tile].length - 1) {
+      if (this.pos.Y < NM.SubMapping[tile].length) {
         this.pos.Y++;
         return this.process(doSelect, true);
       } else {

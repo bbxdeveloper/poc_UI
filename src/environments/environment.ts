@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   electron: false,
-  apiUrl: "",
+  apiUrl: "https://localhost:44378/",
   apiVersion: "/v1/",
 };
 
