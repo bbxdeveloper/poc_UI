@@ -37,14 +37,21 @@ ipcMain.on("print-pdf", (event, arg) => {
     fs.writeFile(reportsFilePath, arg.buffer, "binary", (err) => {
       console.log(reportName, err);
 
+      const options = {
+        orientation: "landscape",
+      };
+
       // Silent print PDF with default printer
-      print(reportsFilePath).then((res) => {
-        console.log(res);
-        clean();
-      }, rej => {
-        console.log(rej);
-        clean();
-      });
+      print(reportsFilePath, options).then(
+        (res) => {
+          console.log(res);
+          clean();
+        },
+        (rej) => {
+          console.log(rej);
+          clean();
+        }
+      );
     });
   }
 
@@ -71,9 +78,10 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       webviewTag: true,
       plugins: true,
+      preload: path.join(app.getAppPath(), "ipc_handler.js"),
     },
   });
 

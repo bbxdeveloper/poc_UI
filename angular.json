@@ -35,7 +35,7 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "src/ipc_handler.js"
+              "ipc_handler.js"
             ],
             "customWebpackConfig": {
               "path": "./polyfill-webpack.config.js",
