@@ -37,12 +37,8 @@ ipcMain.on("print-pdf", (event, arg) => {
     fs.writeFile(reportsFilePath, arg.buffer, "binary", (err) => {
       console.log(reportName, err);
 
-      const options = {
-        orientation: "landscape",
-      };
-
       // Silent print PDF with default printer
-      print(reportsFilePath, options).then(
+      print(reportsFilePath).then(
         (res) => {
           console.log(res);
           clean();
