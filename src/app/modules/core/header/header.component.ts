@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbDialogService, NbIconConfig } from '@nebular/theme';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
@@ -8,13 +8,14 @@ import { Constants } from 'src/assets/util/Constants';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
 import { environment } from 'src/environments/environment';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import * as $ from 'jquery'
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, AfterViewInit {
   @Input() title: string = "";
 
   isElectron: boolean = false;
@@ -63,11 +64,52 @@ export class HeaderComponent implements OnInit {
     private utS: UtilityService,
     private router: Router,
     private sts: StatusService) {
-      this.kbS.selectFirstTile();
+
     }
 
   ngOnInit(): void {
     this.isElectron = environment.electron;
+  }
+
+  ngAfterViewInit(): void {
+    this.generateAndSetNavMatrices();
+    this.kbS.selectFirstTile();
+  }
+
+  private generateAndSetNavMatrices(): void {
+    // Get menus
+    const headerMenusRaw = $(".cl-header-menu");
+
+    // Prepare matrix and submenu mappings
+    const headerNavMatrix: string[][] = [[]];
+    const subMapping: { [id: string]: string[][]; } = {};
+
+    // Getting ids for menus
+    for (let i = 0; i < headerMenusRaw.length; i++) {
+      // Id of menu for navigation
+      const nextId = headerMenusRaw[i].id;
+      headerNavMatrix[0].push(nextId);
+
+      // Get list of submenu ids from the data-sub attribute
+      const subItems = headerMenusRaw[i].getAttribute('data-sub')?.split(',');
+      if (!!subItems) {
+        for (let o = 0; o < subItems.length; o++) {
+          // Next submenu id to add
+          const nextSubId = subItems[o];
+
+          // If no available mapping for the menu, initialize it
+          if (!(!!subMapping[nextId] && subMapping[nextId].length > 0)) {
+            subMapping[nextId] = [];
+          }
+
+          // Adding submenu id to the mapping of the current menu
+          subMapping[nextId].push([nextSubId]);
+        }
+      }
+    }
+
+    // Set nav matrices in KeyboardNavigationService
+    this.kbS.setHeaderMatrices(headerNavMatrix, subMapping);
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {

@@ -2,48 +2,55 @@
     
     <nb-action tabIndex="-1" class="disable-select"><img src="assets/svg/bbx_logo.svg"></nb-action>
     
-    <nb-action id="header-home" tabIndex="1" icon="home-outline" link="/" (click)="goTo('/')" [disabled]="InProgress"></nb-action>
+    <nb-action id="header-home" class="cl-header-menu" tabIndex="1" icon="home-outline" link="/" (click)="goTo('/')" [disabled]="InProgress"></nb-action>
     
-    <nb-action id="header-user" tabIndex="2" icon="person-outline" disabled></nb-action>
+    <nb-action id="header-user" class="cl-header-menu" tabIndex="2" icon="person-outline" disabled></nb-action>
     
-    <nb-action id="header-sett" tabIndex="3" [icon]="settingsIconConfig" disabled></nb-action>
+    <nb-action id="header-sett" class="cl-header-menu" tabIndex="3" [icon]="settingsIconConfig" disabled></nb-action>
     
-    <nb-action id="header-prod" tabIndex="4" disabled>Termékek</nb-action>
+    <nb-action id="header-prod" class="cl-header-menu" tabIndex="4" disabled>Termékek</nb-action>
     
-    <nb-action id="header-invo" tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom"
-                [nbPopover]="sub_invoicing" [disabled]="InProgress">Számlázás</nb-action>
+    <nb-action id="header-invo" class="cl-header-menu" tabIndex="5" nbPopoverTrigger="focus" nbPopoverPlacement="bottom"
+                [nbPopover]="sub_invoicing" [disabled]="InProgress"
+                data-sub="header-invo-sub-1,header-invo-sub-2">Számlázás</nb-action>
     <ng-template #sub_invoicing let-data>
         <nb-card>
-            <nb-card-body class="card-body-submenu-button">
-                <button nbButton status="primary" id="invoicing-sub-1" link="invoicing/invoice" [disabled]="InProgress"
+            <nb-card-body class="card-body-submenu-button cl-header-menu-sub">
+                <button nbButton status="primary" id="header-invo-sub-1" link="invoicing/invoice" [disabled]="InProgress"
                         (click)="goTo('invoicing/invoice')">
                     Számla
                 </button>
             </nb-card-body>
-            <nb-card-body class="card-body-submenu-button">
-                <button nbButton status="primary" id="invoicing-sub-2" [disabled]="InProgress"
+            <nb-card-body class="card-body-submenu-button cl-header-menu-sub">
+                <button nbButton status="primary" id="header-invo-sub-2" [disabled]="InProgress"
                         (click)="printReport()">
                     Számla Nyomtatás
                 </button>
             </nb-card-body>
+        </nb-card>
+    </ng-template>
+    
+    <nb-action id="header-orde" class="cl-header-menu" tabIndex="6" disabled>Megrendelés</nb-action>
+    
+    <nb-action id="header-info" class="cl-header-menu" tabIndex="7" nbPopoverTrigger="focus" nbPopoverPlacement="bottom"
+        [nbPopover]="sub_information" [disabled]="InProgress"
+        data-sub="header-info-sub-1">Információ</nb-action>
+    <ng-template #sub_information let-data>
+        <nb-card>
             <nb-card-body class="card-body-submenu-button">
-                <button nbButton status="primary" id="invoicing-sub-2" [disabled]="InProgress"
-                        (click)="printGradesReport()">
+                <button nbButton status="primary" id="header-info-sub-1" [disabled]="InProgress"
+                    (click)="printGradesReport()">
                     Összegfokozatos Riport Nyomtatás
                 </button>
             </nb-card-body>
         </nb-card>
     </ng-template>
     
-    <nb-action id="header-orde" tabIndex="6" disabled>Megrendelés</nb-action>
+    <nb-action id="header-list" class="cl-header-menu" tabIndex="8" disabled>Listák</nb-action>
     
-    <nb-action id="header-info" tabIndex="7" disabled>Információ</nb-action>
+    <nb-action id="header-serv" class="cl-header-menu" tabIndex="9" disabled>Szolgáltatások</nb-action>
     
-    <nb-action id="header-list" tabIndex="8" disabled>Listák</nb-action>
-    
-    <nb-action id="header-serv" tabIndex="9" disabled>Szolgáltatások</nb-action>
-    
-    <nb-action id="header-shut" tabIndex="10" icon="power-outline" *ngIf="isElectron" [disabled]="InProgress"
+    <nb-action id="header-shut" class="cl-header-menu" tabIndex="10" icon="power-outline" *ngIf="isElectron" [disabled]="InProgress"
             (click)="quit($event)">
             Kilépés
     </nb-action>

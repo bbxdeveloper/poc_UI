@@ -15,7 +15,6 @@ export class FKeyButtonsRowComponent implements OnInit {
   constructor(
     private fS: FooterService,
     private kbS: KeyboardNavigationService) {
-    this.kbS.selectFirstTile();
     this.commands$ = this.fS.commands;
   }
 
