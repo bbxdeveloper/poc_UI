@@ -1,6 +1,6 @@
 {
   "name": "bbx",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "app.js",
   "author": {
     "name": "BBX",
@@ -15,8 +15,6 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "electron": "ng build --base-href ./ && electron .",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
     "build-package": "ng build --prod --base-href ./ && electron-forge package"
   },
   "private": true,
@@ -32,10 +30,12 @@
     "@angular/router": "~12.2.0",
     "@nebular/eva-icons": "8.0.0",
     "@nebular/theme": "^8.0.0",
+    "@types/jquery": "^3.5.9",
     "chart.js": "^3.5.1",
     "chartjs-plugin-datalabels": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "eva-icons": "^1.1.2",
+    "jquery": "^3.6.0",
     "ngx-electron": "^2.2.0",
     "ngx-mask": "^12.0.0",
     "pdf-to-printer": "^5.0.0",

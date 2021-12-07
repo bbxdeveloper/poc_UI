@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { NM } from '../../assets/util/NavigationMatrices';
 
 interface MatrixCoordinate {
   X: number;
@@ -21,8 +20,11 @@ export class KeyboardNavigationService {
   /** Active submap key, if there is a focused submap tile. */
   activeSubKey: string = "";
 
+  HeaderNavMatrix: string[][] = [];
+  SubMapping: { [id: string]: string[][]; } = {};
+  
   private World: string[][][][] = [
-    [NM.HeaderNavMatrix]
+    [this.HeaderNavMatrix]
   ];
 
   private _currentKeyboardMode: KeyboardModes = KeyboardModes.NAVIGATION;
@@ -85,7 +87,7 @@ export class KeyboardNavigationService {
     }
 
     // Kilépünk az almenüből
-    if (!canJump && this.pos.Y == 1 && !!this.activeSubKey && !!NM.SubMapping[this.activeSubKey]) {
+    if (!canJump && this.pos.Y == 1 && !!this.activeSubKey && !!this.SubMapping[this.activeSubKey]) {
       this.activeSubKey = "";
       this.pos.Y--;
     }
@@ -128,14 +130,14 @@ export class KeyboardNavigationService {
     var tile = this.getCurrentTile();
     
     // Almenübe lépés
-    if (!canJump && this.pos.Y == 0 && !!NM.SubMapping[tile]) {
+    if (!canJump && this.pos.Y == 0 && !!this.SubMapping[tile]) {
       this.activeSubKey = tile;
       this.pos.Y++;
       return this.process(doSelect, true);
     }
     // Almenüben
     else if (!!this.activeSubKey) {
-      if (this.pos.Y < NM.SubMapping[tile].length) {
+      if (this.pos.Y < this.SubMapping[tile].length) {
         this.pos.Y++;
         return this.process(doSelect, true);
       } else {
@@ -324,7 +326,7 @@ export class KeyboardNavigationService {
     var tile = "";
 
     if (sub) {
-      tile = this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
+      tile = this.getTileFromSub(this.pos.Y, this.SubMapping[this.activeSubKey]);
     } else {
       tile = this.getTile(this.matrixPos.X, this.matrixPos.Y, this.pos.X, this.pos.Y);
     }
@@ -347,6 +349,7 @@ export class KeyboardNavigationService {
   }
 
   private getTile(mX: number, mY: number, x: number, y: number): string {
+    console.log(this.World[mY][mX][y][x]);
     return this.World[mY][mX][y][x];
   }
 
@@ -411,11 +414,11 @@ export class KeyboardNavigationService {
   }
 
   selectCurrentSubTile() {
-    this.selectTile(this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]));
+    this.selectTile(this.getTileFromSub(this.pos.Y, this.SubMapping[this.activeSubKey]));
   }
 
   getCurrentSubTile(): string {
-    return this.getTileFromSub(this.pos.Y, NM.SubMapping[this.activeSubKey]);
+    return this.getTileFromSub(this.pos.Y, this.SubMapping[this.activeSubKey]);
   }
 
   lockMapY(minY: number, maxY: number): void {
@@ -504,5 +507,11 @@ export class KeyboardNavigationService {
 
   clearPosCache(): void {
     this.posCache = undefined;
+  }
+
+  setHeaderMatrices(headerNavMatrix: string[][], subMappings: { [id: string]: string[][]; }): void {
+    this.HeaderNavMatrix = headerNavMatrix;
+    this.World[0][0] = this.HeaderNavMatrix;
+    this.SubMapping = subMappings;
   }
 }

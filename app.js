@@ -38,13 +38,16 @@ ipcMain.on("print-pdf", (event, arg) => {
       console.log(reportName, err);
 
       // Silent print PDF with default printer
-      print(reportsFilePath).then((res) => {
-        console.log(res);
-        clean();
-      }, rej => {
-        console.log(rej);
-        clean();
-      });
+      print(reportsFilePath).then(
+        (res) => {
+          console.log(res);
+          clean();
+        },
+        (rej) => {
+          console.log(rej);
+          clean();
+        }
+      );
     });
   }
 
@@ -71,9 +74,10 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       webviewTag: true,
       plugins: true,
+      preload: path.join(app.getAppPath(), "ipc_handler.js"),
     },
   });
 
