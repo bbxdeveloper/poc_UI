@@ -179,9 +179,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   }
 
   printReport(): void {
-    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_CMD]);
+    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.PROC_CMD]);
     this.utS.execute(
-      Constants.CommandType.PRINT_POC, Constants.FileExtensions.PDF,
+      Constants.CommandType.POC_REPORT, Constants.FileExtensions.PDF,
       {
         "section": "SzallitoSzamla",
         "fileType": "pdf",
@@ -240,19 +240,21 @@ export class HeaderComponent implements OnInit, AfterViewInit {
               "value": "C0-FS3G4G3-210C"
             }
           ]
-        }
+        },
+        "data_operation": Constants.DataOperation.PRINT_BLOB
       } as Constants.Dct);
   }
 
   printGradesReport(): void {
-    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_CMD]);
+    this.sts.pushProcessStatus(Constants.DownloadReportStatuses[Constants.DownloadReportProcessPhases.PROC_CMD]);
     this.utS.execute(Constants.CommandType.PRINT_POC_GRADES, Constants.FileExtensions.PDF,
       {
         "section": "OsszegFokozatos",
         "fileType": "pdf",
         "report_params": {
           "params": []
-        }
+        },
+        "data_operation": Constants.DataOperation.DOWNLOAD_BLOB
       } as Constants.Dct);
   }
 

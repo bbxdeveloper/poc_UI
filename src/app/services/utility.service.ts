@@ -17,17 +17,31 @@ export class UtilityService {
     fileType: Constants.FileExtensions = Constants.FileExtensions.UNKNOWN,
     params: Constants.Dct = {}, obs?: Observable<any>): void {
     switch(commandType) {
-      case Constants.CommandType.PRINT_POC:
-        this.print(fileType, this.invS.getReport(params));
+      case Constants.CommandType.POC_REPORT:
+        switch (params['data_operation'] as Constants.DataOperation) {
+          case Constants.DataOperation.PRINT_BLOB:
+            this.print(fileType, this.invS.getReport(params));
+            break;
+          case Constants.DataOperation.DOWNLOAD_BLOB:
+            this.download(this.invS.getReport(params));
+            break;
+        }
         break;
       case Constants.CommandType.PRINT_POC_GRADES:
-        this.print(fileType, this.invS.getGradesReport(params));
+        switch (params['data_operation'] as Constants.DataOperation) {
+          case Constants.DataOperation.PRINT_BLOB:
+            this.print(fileType, this.invS.getGradesReport(params));
+            break;
+          case Constants.DataOperation.DOWNLOAD_BLOB:
+            this.download(this.invS.getGradesReport(params));
+            break;
+        }
         break;
     }
   }
 
   private print(fileType: Constants.FileExtensions, res: Observable<any>): void {
-    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.GENERATING]);
+    this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.GENERATING]);
     switch(fileType) {
       case Constants.FileExtensions.PDF:
         if (environment.electron) {
@@ -41,7 +55,7 @@ export class UtilityService {
 
   private sendPdfToElectron(resData: Observable<any>): void {
     resData.subscribe(res => {
-      this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_RESP]);
+      this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.PROC_RESP]);
       var blob = new Blob([res], { type: 'application/pdf' });
       var blobURL = URL.createObjectURL(blob);
 
@@ -59,13 +73,13 @@ export class UtilityService {
         }
       };
       reader.readAsBinaryString(blob);
-      stS.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.SEND_TO_PRINTER]);
+      stS.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.SEND_TO_PRINTER]);
     });
   }
 
   private printPdfFromResponse(resData: Observable<any>): void {
     resData.subscribe(res => {
-      this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.PROC_RESP]);
+      this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.PROC_RESP]);
       var blob = new Blob([res], {type: 'application/pdf'});
       var blobURL = URL.createObjectURL(blob);
   
@@ -78,7 +92,7 @@ export class UtilityService {
 
       const stS = this.sts;
       iframe.onload = () => {
-        this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintProcessPhases.SEND_TO_PRINTER]);
+        this.sts.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.SEND_TO_PRINTER]);
         // Print
         setTimeout(function() {
           iframe.focus();
@@ -90,6 +104,32 @@ export class UtilityService {
           document.body.removeChild(iframe);
         }, 600000);
       };
+    });
+  }
+
+  private download(resData: Observable<any>): void {
+    this.sts.pushProcessStatus(Constants.DownloadReportStatuses[Constants.DownloadReportProcessPhases.GENERATING]);
+    this.downloadBlobFromResponse(resData);
+  }
+
+  private downloadBlobFromResponse(resData: Observable<any>): void {
+    resData.subscribe(res => {
+      this.sts.pushProcessStatus(Constants.DownloadReportStatuses[Constants.DownloadReportProcessPhases.PROC_RESP]);
+      var blob = new Blob([res], { type: 'application/pdf' });
+      var blobURL = URL.createObjectURL(blob);
+
+      let a = document.createElement('a');
+      
+      document.body.appendChild(a);
+      a.setAttribute('style', 'display: none');
+      a.href = blobURL;
+      a.download = res.filename;
+      
+      a.click();
+      
+      URL.revokeObjectURL(blobURL);
+      a.remove();
+      this.sts.pushProcessStatus(Constants.BlankProcessStatus);
     });
   }
 }
