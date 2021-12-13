@@ -1,5 +1,6 @@
 export interface InvoiceProduct {
-    Code?: string;
+    ID?: number;
+    ProductCode?: string;
     Name?: string;
     Measure?: string;
     Amount?: number;

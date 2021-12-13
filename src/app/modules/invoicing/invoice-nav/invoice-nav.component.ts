@@ -39,9 +39,9 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   paymentMethodOptions$: Observable<string[]> = of([]);
   
   colsToIgnore: string[] = ["Value"];
-  allColumns = ['Code', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
+  allColumns = ['ProductCode', 'Name', 'Measure', 'Amount', 'Price', 'Value'];
   colDefs: ColDef[] = [
-    { label: 'Termékkód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC", colWidth: "20%", textAlign: "left" },
+    { label: 'Termékkód', objectKey: 'ProductCode', colKey: 'ProductCode', defaultValue: '', type: 'string', mask: "AAA-ACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC", colWidth: "20%", textAlign: "left" },
     { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: "", colWidth: "30%", textAlign: "left" },
     { label: 'Mértékegység', objectKey: 'Measure', colKey: 'Measure', defaultValue: '', type: 'string', mask: "", colWidth: "5%", textAlign: "left" },
     { label: 'Mennyiség', objectKey: 'Amount', colKey: 'Amount', defaultValue: '', type: 'number', mask: "", colWidth: "15%", textAlign: "right" },

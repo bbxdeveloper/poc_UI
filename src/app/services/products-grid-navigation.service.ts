@@ -32,7 +32,7 @@ export class ProductsGridNavigationService {
 
   get GenerateCreatorRow(): TreeGridNode<InvoiceProduct> {
     return {
-      data: { Code: undefined, Measure: undefined, Amount: undefined, Price: undefined, Value: 0, Name: undefined } as InvoiceProduct
+      data: { ProductCode: undefined, Measure: undefined, Amount: undefined, Price: undefined, Value: 0, Name: undefined } as InvoiceProduct
     };
   }
 
@@ -111,7 +111,7 @@ export class ProductsGridNavigationService {
 
   fillCurrentlyEditedRow(newRowData: TreeGridNode<InvoiceProduct>): void {
     if (!!newRowData && !!this.editedRow) {
-      this.editedRow.data.Code = newRowData.data.Code;
+      this.editedRow.data.ProductCode = newRowData.data.ProductCode;
       this.editedRow.data.Name = newRowData.data.Name;
       this.editedRow.data.Amount = newRowData.data.Amount;
       this.editedRow.data.Measure = newRowData.data.Measure;
@@ -181,7 +181,7 @@ export class ProductsGridNavigationService {
       let _data = row.data;
       let rowIsUnfinished =
         _data.Value == undefined || _data.Price == undefined || _data.Name == undefined ||
-        _data.Measure == undefined || _data.Code == undefined || _data.Amount == undefined;
+        _data.Measure == undefined || _data.ProductCode == undefined || _data.Amount == undefined;
       if (rowIsUnfinished && !this.kbS.isEditModeActivated) {
         switch (event.key) {
           case "ArrowUp":

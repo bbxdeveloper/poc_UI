@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewChecked, ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/core';
+import { AfterContentInit, AfterViewChecked, ChangeDetectorRef, Component, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { NbDialogRef, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { FooterService } from 'src/app/services/footer.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
@@ -29,9 +29,9 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
   productsDataSource: NbTreeGridDataSource<TreeGridNode<InvoiceProduct>>;
   selectedRow: InvoiceProduct;
 
-  allColumns = ['Code', 'Name'];
+  allColumns = ['ProductCode', 'Name'];
   colDefs: ColDef[] = [
-    { label: 'Termékkód', objectKey: 'Code', colKey: 'Code', defaultValue: '', type: 'string', mask: "" },
+    { label: 'Termékkód', objectKey: 'ProductCode', colKey: 'ProductCode', defaultValue: '', type: 'string', mask: "" },
     { label: 'Megnevezés', objectKey: 'Name', colKey: 'Name', defaultValue: '', type: 'string', mask: "" }
   ];
 
@@ -81,25 +81,33 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
 
   refresh(): void {
     this.seInv.getActiveProducts().subscribe(data => {
-      this.productsData = data.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+      this.productsData = data.result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
       this.productsDataSource.setData(this.productsData);
+      console.log(data.result, this.productsData, this.productsDataSource);
       this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
     });
   }
 
   refreshFilter(event: any): void {
-    const queryString: string = event.target.value;
+    this.seInv.getActiveProducts(event.target.value).subscribe(data => {
+      this.productsData = data.result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+      this.productsDataSource.setData(this.productsData);
+      console.log(data.result, this.productsData, this.productsDataSource);
+      this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
+    });
 
-    if (!queryString) {
-      this.refreshMap(this.productsData);
-    }
+    // const queryString: string = event.target.value;
 
-    let filtered = this.productsData.filter(x =>
-      x.data.Code?.toLowerCase().includes(queryString.toLowerCase()) || x.data.Name?.toLowerCase().includes(queryString.toLowerCase())
-    );
+    // if (!queryString) {
+    //   this.refreshMap(this.productsData);
+    // }
 
-    this.productsDataSource.setData(filtered);
-    this.refreshMap(filtered);
+    // let filtered = this.productsData.filter(x =>
+    //   x.data.ProductCode?.toLowerCase().includes(queryString.toLowerCase()) || x.data.Name?.toLowerCase().includes(queryString.toLowerCase())
+    // );
+
+    // this.productsDataSource.setData(filtered);
+    // this.refreshMap(filtered);
   }
 
   handleEnter(event: any): void {
