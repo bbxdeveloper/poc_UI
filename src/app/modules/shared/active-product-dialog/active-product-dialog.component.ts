@@ -12,8 +12,14 @@ import { OnInit } from '@angular/core';
 
 const NavMap: string[][] = [
   ['active-prod-btn-1', 'active-prod-btn-2'],
-  ['active-prod-search']
+  ['active-prod-search', 'show-all', 'show-less']
 ];
+
+enum SearchMode {
+  Code = 0,
+  Name = 1,
+  NotDefined = 2
+}
 
 @Component({
   selector: 'app-active-product-dialog',
@@ -22,6 +28,9 @@ const NavMap: string[][] = [
 })
 export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy, OnInit, AfterViewChecked {
   btnState: boolean = false;
+
+  searchMode: SearchMode = SearchMode.NotDefined;
+  searchString: string = '';
 
   closedManually: boolean = false;
 
@@ -79,35 +88,65 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     }
   }
 
-  refresh(): void {
-    this.seInv.getActiveProducts().subscribe(data => {
-      this.productsData = data.result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+  refresh(all: boolean = false): void {
+    this.seInv.getActiveProducts(all).subscribe(data => {
+      this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
       this.productsDataSource.setData(this.productsData);
-      console.log(data.result, this.productsData, this.productsDataSource);
+      console.log(data.Result, this.productsData, this.productsDataSource);
       this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
     });
   }
 
+  search(queryString: string, mode: SearchMode, all: boolean = false): void {
+    switch (mode) {
+      case SearchMode.Code:
+        this.seInv.searchActiveProductsByCode(queryString, all).subscribe(data => {
+          this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+          this.productsDataSource.setData(this.productsData);
+          console.log(data.Result, this.productsData, this.productsDataSource);
+          this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
+        });
+        break;
+      case SearchMode.Name:
+        this.seInv.searchActiveProductsByName(queryString, all).subscribe(data => {
+          this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+          this.productsDataSource.setData(this.productsData);
+          console.log(data.Result, this.productsData, this.productsDataSource);
+          this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
+        });
+        break;
+      default:
+        this.refresh(all);
+        break;
+    }
+  }
+
   refreshFilter(event: any): void {
-    this.seInv.getActiveProducts(event.target.value).subscribe(data => {
-      this.productsData = data.result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
-      this.productsDataSource.setData(this.productsData);
-      console.log(data.result, this.productsData, this.productsDataSource);
-      this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
-    });
+    this.searchString = event.target.value;
 
-    // const queryString: string = event.target.value;
+    console.log("Search: ", this.searchString, "Mode: ", this.searchMode, "Btn state: ", this.btnState);
 
-    // if (!queryString) {
-    //   this.refreshMap(this.productsData);
-    // }
+    if (this.searchString.length === 0) {
+      this.refresh();
+    } else {
+      this.search(this.searchString, this.searchMode);
+    }
+  }
 
-    // let filtered = this.productsData.filter(x =>
-    //   x.data.ProductCode?.toLowerCase().includes(queryString.toLowerCase()) || x.data.Name?.toLowerCase().includes(queryString.toLowerCase())
-    // );
+  showAll(): void {
+    if (this.searchString.length === 0) {
+      this.refresh(true);
+    } else {
+      this.search(this.searchString, this.searchMode, true);
+    }
+  }
 
-    // this.productsDataSource.setData(filtered);
-    // this.refreshMap(filtered);
+  showLess(): void {
+    if (this.searchString.length === 0) {
+      this.refresh();
+    } else {
+      this.search(this.searchString, this.searchMode);
+    }
   }
 
   handleEnter(event: any): void {
@@ -127,8 +166,9 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     return row.uid;
   }
 
-  updateBtnGroupValue(first: boolean = true): void {
+  updateBtnGroupValue(first: boolean = true, mode: number): void {
     this.btnState = true;
+    this.searchMode = mode;
     this.kbS.detachLastMap(1, false);
     this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
     this.cdref.markForCheck();
@@ -154,11 +194,17 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     switch (event.key) {
       case KeyBindings.exit: {
         event.preventDefault();
+        // Closing dialog
         if (!this.btnState) {
           this.close(undefined);
         }
+        // Stepping back to the search mode selector
         if (this.btnState) {
           this.btnState = false;
+          // Resetting filter and navigation map
+          this.refreshFilter("");
+          this.kbS.detachLastMap(1, false);
+          this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
         }
         break;
       }

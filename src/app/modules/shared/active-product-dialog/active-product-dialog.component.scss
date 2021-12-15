@@ -234,11 +234,16 @@
 
     .search-input {
         margin-left: 15px;
+        margin-right: 15px;
         margin-bottom: 20px;
 
         &:focus {
             background-color: rgb(219, 159, 206);
         }
+    }
+
+    .btn-util {
+        height: 20px;
     }
 }
 
