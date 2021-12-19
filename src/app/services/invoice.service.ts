@@ -101,24 +101,13 @@ export class InvoiceService {
     return this.http.get<InvoiceProductResponse>(_url,{ headers: options });
   }
 
-  searchActiveProductsByCode(searchQuery: string, all: boolean = false): Observable<InvoiceProductResponse> {
+  searchActiveProducts(searchQuery: string, all: boolean = false): Observable<InvoiceProductResponse> {
     let options = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set("charset", "utf8")
       .set("accept", "application/json");
     return this.http.get<InvoiceProductResponse>(
-      `${environment.apiUrl}product${environment.apiVersion}search/code/${searchQuery}`,
-      { headers: options }
-    );
-  }
-
-  searchActiveProductsByName(searchQuery: string, all: boolean = false): Observable<InvoiceProductResponse> {
-    let options = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set("charset", "utf8")
-      .set("accept", "application/json");
-    return this.http.get<InvoiceProductResponse>(
-      `${environment.apiUrl}product${environment.apiVersion}search/name/${searchQuery}`,
+      `${environment.apiUrl}product${environment.apiVersion}search/${searchQuery}`,
       { headers: options }
     );
   }

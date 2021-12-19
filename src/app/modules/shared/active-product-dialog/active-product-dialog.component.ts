@@ -11,15 +11,8 @@ import { KeyBindings } from 'src/assets/util/KeyBindings';
 import { OnInit } from '@angular/core';
 
 const NavMap: string[][] = [
-  ['active-prod-btn-1', 'active-prod-btn-2'],
   ['active-prod-search', 'show-all', 'show-less']
 ];
-
-enum SearchMode {
-  Code = 0,
-  Name = 1,
-  NotDefined = 2
-}
 
 @Component({
   selector: 'app-active-product-dialog',
@@ -27,10 +20,8 @@ enum SearchMode {
   styleUrls: ['./active-product-dialog.component.scss']
 })
 export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy, OnInit, AfterViewChecked {
-  btnState: boolean = false;
-
-  searchMode: SearchMode = SearchMode.NotDefined;
   searchString: string = '';
+  responseMessage: string = '';
 
   closedManually: boolean = false;
 
@@ -91,45 +82,34 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
   refresh(all: boolean = false): void {
     this.seInv.getActiveProducts(all).subscribe(data => {
       this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+      this.responseMessage = data.Message ?? '';
       this.productsDataSource.setData(this.productsData);
       console.log(data.Result, this.productsData, this.productsDataSource);
       this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
+      this.updateBtnGroupValue();
     });
   }
 
-  search(queryString: string, mode: SearchMode, all: boolean = false): void {
-    switch (mode) {
-      case SearchMode.Code:
-        this.seInv.searchActiveProductsByCode(queryString, all).subscribe(data => {
-          this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
-          this.productsDataSource.setData(this.productsData);
-          console.log(data.Result, this.productsData, this.productsDataSource);
-          this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
-        });
-        break;
-      case SearchMode.Name:
-        this.seInv.searchActiveProductsByName(queryString, all).subscribe(data => {
-          this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
-          this.productsDataSource.setData(this.productsData);
-          console.log(data.Result, this.productsData, this.productsDataSource);
-          this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
-        });
-        break;
-      default:
-        this.refresh(all);
-        break;
-    }
+  search(queryString: string, all: boolean = false): void {
+    this.seInv.searchActiveProducts(queryString, all).subscribe(data => {
+      this.productsData = data.Result.map(x => { return { data: x, uid: this.nextUid(), tabIndex: this.NextTabIndex }; });
+      this.responseMessage = data.Message ?? '';
+      this.productsDataSource.setData(this.productsData);
+      console.log(data.Result, this.productsData, this.productsDataSource);
+      this.tableMap = this.gN.generateTableMap(this.productsData, this.colDefs, [], 'ACTIVEPRODUCT');
+      this.updateBtnGroupValue();
+    });
   }
 
   refreshFilter(event: any): void {
     this.searchString = event.target.value;
 
-    console.log("Search: ", this.searchString, "Mode: ", this.searchMode, "Btn state: ", this.btnState);
+    console.log("Search: ", this.searchString);
 
     if (this.searchString.length === 0) {
       this.refresh();
     } else {
-      this.search(this.searchString, this.searchMode);
+      this.search(this.searchString);
     }
   }
 
@@ -137,7 +117,7 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     if (this.searchString.length === 0) {
       this.refresh(true);
     } else {
-      this.search(this.searchString, this.searchMode, true);
+      this.search(this.searchString, true);
     }
   }
 
@@ -145,7 +125,7 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     if (this.searchString.length === 0) {
       this.refresh();
     } else {
-      this.search(this.searchString, this.searchMode);
+      this.search(this.searchString);
     }
   }
 
@@ -166,9 +146,7 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
     return row.uid;
   }
 
-  updateBtnGroupValue(first: boolean = true, mode: number): void {
-    this.btnState = true;
-    this.searchMode = mode;
+  updateBtnGroupValue(): void {
     this.kbS.detachLastMap(1, false);
     this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
     this.cdref.markForCheck();
@@ -195,17 +173,7 @@ export class ActiveProductDialogComponent implements AfterContentInit, OnDestroy
       case KeyBindings.exit: {
         event.preventDefault();
         // Closing dialog
-        if (!this.btnState) {
-          this.close(undefined);
-        }
-        // Stepping back to the search mode selector
-        if (this.btnState) {
-          this.btnState = false;
-          // Resetting filter and navigation map
-          this.refreshFilter("");
-          this.kbS.detachLastMap(1, false);
-          this.kbS.attachNewMap(NavMap.concat(this.tableMap), true, true, false);
-        }
+        this.close(undefined);
         break;
       }
       default: { }

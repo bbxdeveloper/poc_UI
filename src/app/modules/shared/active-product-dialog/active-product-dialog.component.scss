@@ -2,7 +2,7 @@
     border: 4px yellow double;
 
     min-width: 700px;
-    max-height: 670px;
+    max-height: 675px;
 
     button {
         margin-right: 25px;
@@ -244,6 +244,17 @@
 
     .btn-util {
         height: 20px;
+    }
+
+    .msg {
+        display: flex;
+        max-width: 800px;
+        margin: 10px;
+        font-size: 1.2rem;
+        font-weight: 400;
+        line-height: 1.25rem;
+        min-height: 50px;
+        align-items: self-end;
     }
 }
 

@@ -1,12 +1,8 @@
 <nb-card class="modal-product-active">
     <nb-card-header class="modal-product-active-header">
         <span>Gyorskeresés</span>
-        <div class="btn-group">
-            <button nbButton value="btn-3" id="active-prod-btn-1" (click)="updateBtnGroupValue(false, 0)">Kódra</button>
-            <button nbButton value="btn-4" id="active-prod-btn-2" (click)="updateBtnGroupValue(false, 1)">Névre</button>
-        </div>
     </nb-card-header>
-    <nb-card-body class="modal-product-active-body" *ngIf="btnState">
+    <nb-card-body class="modal-product-active-body">
 
         <label class="search-label" for="search">Termék:</label>
         <input nbInput id="active-prod-search" class="search-input" (keydown.enter)="handleEnter($event)"
@@ -36,6 +32,8 @@
             </ng-container>
         </table>
 
+        <div class="msg">{{responseMessage}}</div>
+
         <div class="metadata">
             <div class="metadata-section-upper">
                 <div>Készleten</div>
@@ -64,7 +62,7 @@
         </div>
 
     </nb-card-body>
-    <nb-card-footer class="modal-product-active-footer" *ngIf="btnState">
+    <nb-card-footer class="modal-product-active-footer">
         <div class="metadata-footer">
             <div class="label-footer-title">
                 [ Aktív Termékek ]
