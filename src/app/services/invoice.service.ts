@@ -81,6 +81,17 @@ export class InvoiceService {
     } as Invoice);
   }
 
+  getProductByProductCode(productCode: string): Observable<InvoiceProductResponse> {
+    let options = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set("charset", "utf8")
+      .set("accept", "application/json");
+
+    let _url = `${environment.apiUrl}product${environment.apiVersion}read/${productCode}`;
+
+    return this.http.get<InvoiceProductResponse>(_url, { headers: options });
+  }
+
   getActiveProducts(all: boolean = false, topCount?: number): Observable<InvoiceProductResponse> {
     let options = new HttpHeaders()
       .set('Content-Type', 'application/json')

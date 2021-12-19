@@ -382,10 +382,16 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
   handleActiveProductModalSelection(): void {
     if (this.tableIsFocused && !this.isEditModeOff) {
       const dialogRef = this.dialogService.open(ActiveProductDialogComponent, { closeOnEsc: false });
-      dialogRef.onClose.subscribe(res => {
-        if (res) {
-          console.log(res);
-          this.gridNavHandler.fillCurrentlyEditedRow(res);
+      dialogRef.onClose.subscribe((res: TreeGridNode<InvoiceProduct>) => {
+        if (!!res && !!res.data) {
+          this.seInv.getProductByProductCode(res.data.ProductCode!).subscribe(resp => {
+            if (!resp.IsError) {
+              res.data = resp.Result[0];
+              this.gridNavHandler.fillCurrentlyEditedRow(res);
+            } else {
+              console.log(resp.Message);
+            }
+          })
         }
         const row = this.gridNavHandler.editedRow;
         const rowPos = this.gridNavHandler.editedRowPos;
