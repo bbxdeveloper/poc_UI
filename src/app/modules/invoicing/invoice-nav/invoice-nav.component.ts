@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { NbDialogService, NbSortDirection, NbSortRequest, NbTable, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { NbDialogService, NbGlobalPhysicalPosition, NbSortDirection, NbSortRequest, NbTable, NbToastrService, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { FooterService } from 'src/app/services/footer.service';
@@ -98,7 +98,8 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private seInv: InvoiceService,
     private cdref: ChangeDetectorRef,
     private kbS: KeyboardNavigationService,
-    public gridNavHandler: ProductsGridNavigationService
+    public gridNavHandler: ProductsGridNavigationService,
+    private toastrService: NbToastrService
   ) {
     this.senderData = {} as Company;
     this.buyerData = {} as Company;
@@ -389,7 +390,10 @@ export class InvoiceNavComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data = resp.Result[0];
               this.gridNavHandler.fillCurrentlyEditedRow(res);
             } else {
-              console.log(resp.Message);
+              this.toastrService.show(
+                resp.Message, `Hiba`,
+                { preventDuplicates: true, duration: 1000, status: 'danger', position: NbGlobalPhysicalPosition.BOTTOM_LEFT }
+              );
             }
           })
         }
