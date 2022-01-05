@@ -4,13 +4,14 @@ import { Constants } from 'src/assets/util/Constants';
 import { environment } from 'src/environments/environment';
 import { InvoiceService } from './invoice.service';
 import { StatusService } from './status.service';
+import { NbGlobalPhysicalPosition, NbToastrService } from '@nebular/theme';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilityService {
 
-  constructor(private invS: InvoiceService, private sts: StatusService) {}
+  constructor(private invS: InvoiceService, private sts: StatusService, private toastrService: NbToastrService) {}
 
   public execute(
     commandType: Constants.CommandType,
@@ -74,6 +75,12 @@ export class UtilityService {
       };
       reader.readAsBinaryString(blob);
       stS.pushProcessStatus(Constants.PrintReportStatuses[Constants.PrintReportProcessPhases.SEND_TO_PRINTER]);
+    }, error => {
+      this.sts.pushProcessStatus(Constants.BlankProcessStatus);
+      this.toastrService.show(
+        error.statusText, `Hiba`,
+        { preventDuplicates: true, duration: 1000, status: 'danger', position: NbGlobalPhysicalPosition.BOTTOM_LEFT }
+      );
     });
   }
 
@@ -104,6 +111,12 @@ export class UtilityService {
           document.body.removeChild(iframe);
         }, 600000);
       };
+    }, error => {
+      this.sts.pushProcessStatus(Constants.BlankProcessStatus);
+      this.toastrService.show(
+        error.statusText, `Hiba`,
+        { preventDuplicates: true, duration: 1000, status: 'danger', position: NbGlobalPhysicalPosition.BOTTOM_LEFT }
+      );
     });
   }
 
@@ -130,6 +143,12 @@ export class UtilityService {
       URL.revokeObjectURL(blobURL);
       a.remove();
       this.sts.pushProcessStatus(Constants.BlankProcessStatus);
+    }, error => {
+      this.sts.pushProcessStatus(Constants.BlankProcessStatus);
+      this.toastrService.show(
+        error.statusText, `Hiba`,
+        { preventDuplicates: true, duration: 1000, status: 'danger', position: NbGlobalPhysicalPosition.BOTTOM_LEFT }
+      );
     });
   }
 }

@@ -36,7 +36,7 @@ export class InvoiceService {
       .set("charset", "utf8")
       .set("accept", "application/pdf");
     return this.http.post(
-      `${environment.apiUrl}report${environment.apiVersion}render/grades/${params['section']}/${params['fileType']}`,
+      `${environment.apiUrl}report${environment.apiVersion}render/grades/${params['section']}/${params['fileType']}/${params['from']}/${params['to']}`,
       JSON.stringify(params['report_params']),
       { responseType: 'blob', headers: options }
     );

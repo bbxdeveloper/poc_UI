@@ -248,8 +248,8 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   printGradesReport(): void {
     const dialogRef = this.dialogService.open(SumReportDateIntervalDialogComponent, { context: {} });
-    dialogRef.onClose.subscribe(res => {
-      if (res) {
+    dialogRef.onClose.subscribe((res: { From: Date, To: Date } | undefined) => {
+      if (!!res) {
         this.sts.pushProcessStatus(Constants.DownloadReportStatuses[Constants.DownloadReportProcessPhases.PROC_CMD]);
         this.utS.execute(Constants.CommandType.PRINT_POC_GRADES, Constants.FileExtensions.PDF,
           {
@@ -258,7 +258,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
             "report_params": {
               "params": []
             },
-            "data_operation": Constants.DataOperation.DOWNLOAD_BLOB
+            "data_operation": Constants.DataOperation.DOWNLOAD_BLOB,
+            "from": res.From,
+            "to": res.To
           } as Constants.Dct);
       }
     });

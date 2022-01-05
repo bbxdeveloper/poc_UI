@@ -2,10 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ActiveProductDialogComponent } from './active-product-dialog/active-product-dialog.component';
-import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule, NbTabsetModule, NbButtonGroupModule, NbProgressBarModule, NbSpinnerModule, NbDatepickerModule } from '@nebular/theme';
+import { NbLayoutModule, NbButtonModule, NbCardModule, NbTreeGridModule, NbTabsetModule, NbButtonGroupModule, NbProgressBarModule, NbSpinnerModule, NbDatepickerModule, NbFormFieldModule, NbInputModule } from '@nebular/theme';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StatusAndSpinnerComponent } from './status-and-spinner/status-and-spinner.component';
 import { SumReportDateIntervalDialogComponent } from './sum-report-date-interval-dialog/sum-report-date-interval-dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 
 
@@ -28,7 +29,10 @@ import { SumReportDateIntervalDialogComponent } from './sum-report-date-interval
     NbButtonGroupModule,
     NbProgressBarModule,
     NbSpinnerModule,
-    NbDatepickerModule
+    NbDatepickerModule,
+    NbFormFieldModule,
+    NbInputModule,
+    NgxMaskModule.forChild(),
   ],
   exports: [
     ConfirmationDialogComponent,

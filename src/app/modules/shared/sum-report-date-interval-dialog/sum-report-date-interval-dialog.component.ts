@@ -3,9 +3,11 @@ import { NbDialogRef } from '@nebular/theme';
 import { FooterService } from 'src/app/services/footer.service';
 import { KeyboardModes, KeyboardNavigationService } from 'src/app/services/keyboard-navigation.service';
 import { KeyBindings } from 'src/assets/util/KeyBindings';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 const NavMap: string[][] = [
-  ["sum-report-date-dialog-from", "sum-report-date-dialog-to"],
+  ["sum-report-date-dialog-from"],
+  ["sum-report-date-dialog-to"],
   ["sum-report-date-dialog-button-yes", "sum-report-date-dialog-button-no"]
 ];
 
@@ -15,8 +17,7 @@ const NavMap: string[][] = [
   styleUrls: ['./sum-report-date-interval-dialog.component.scss']
 })
 export class SumReportDateIntervalDialogComponent implements AfterContentInit, AfterViewChecked, OnDestroy {
-  dateFrom = new Date();
-  dateTo = new Date();
+  dateForm: FormGroup;
   
   closedManually = false;
 
@@ -26,6 +27,10 @@ export class SumReportDateIntervalDialogComponent implements AfterContentInit, A
     private kbS: KeyboardNavigationService
   ) {
     this.fS.pushEmptyList();
+    this.dateForm = new FormGroup({
+      dateFrom: new FormControl('', [Validators.required]),
+      dateTo: new FormControl('', [Validators.required])
+    });
   }
 
   ngAfterContentInit(): void {
@@ -48,7 +53,7 @@ export class SumReportDateIntervalDialogComponent implements AfterContentInit, A
     this.kbS.detachLastMap(1, true);
     this.kbS.unlockDirections();
     this.dialogRef.close(
-      answer ? { From: this.dateFrom, To: this.dateTo } : undefined
+      answer ? { From: this.dateForm.get('dateFrom')?.value, To: this.dateForm.get('dateTo')?.value } : undefined
     );
   }
 
