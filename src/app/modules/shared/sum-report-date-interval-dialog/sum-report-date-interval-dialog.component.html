@@ -1,0 +1,18 @@
+<nb-card class="modal-product-active">
+    <nb-card-header class="modal-product-active-header">
+        <span>Összegfokozatos Jelentés Lekérése</span>
+    </nb-card-header>
+    <nb-card-body class="modal-product-active-body">
+        <label class="search-label" for="search">Kezdődátum:</label>
+        <input id="sum-report-date-dialog-from" [nbDatepicker]="datepickerFrom" [(ngModel)]="dateFrom">
+        <nb-datepicker #datepickerFrom></nb-datepicker>
+
+        <label class="search-label" for="search">Végdátum:</label>
+        <input id="sum-report-date-dialog-to" [nbDatepicker]="datepickerTo" [(ngModel)]="dateTo">
+        <nb-datepicker #datepickerTo></nb-datepicker>
+    </nb-card-body>
+    <nb-card-footer class="modal-product-active-footer">
+        <button nbButton (click)="close(true)" status="primary" tabindex="-1" id="sum-report-date-dialog-button-yes">Ok</button>
+        <button nbButton (click)="close(false)" status="danger" tabindex="-1" id="sum-report-date-dialog-button-no">Mégse</button>
+    </nb-card-footer>
+</nb-card>

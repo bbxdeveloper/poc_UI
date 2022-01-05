@@ -9,6 +9,7 @@ import { KeyBindings } from 'src/assets/util/KeyBindings';
 import { environment } from 'src/environments/environment';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import * as $ from 'jquery'
+import { SumReportDateIntervalDialogComponent } from '../../shared/sum-report-date-interval-dialog/sum-report-date-interval-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -246,16 +247,21 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   }
 
   printGradesReport(): void {
-    this.sts.pushProcessStatus(Constants.DownloadReportStatuses[Constants.DownloadReportProcessPhases.PROC_CMD]);
-    this.utS.execute(Constants.CommandType.PRINT_POC_GRADES, Constants.FileExtensions.PDF,
-      {
-        "section": "OsszegFokozatos",
-        "fileType": "pdf",
-        "report_params": {
-          "params": []
-        },
-        "data_operation": Constants.DataOperation.DOWNLOAD_BLOB
-      } as Constants.Dct);
+    const dialogRef = this.dialogService.open(SumReportDateIntervalDialogComponent, { context: {} });
+    dialogRef.onClose.subscribe(res => {
+      if (res) {
+        this.sts.pushProcessStatus(Constants.DownloadReportStatuses[Constants.DownloadReportProcessPhases.PROC_CMD]);
+        this.utS.execute(Constants.CommandType.PRINT_POC_GRADES, Constants.FileExtensions.PDF,
+          {
+            "section": "OsszegFokozatos",
+            "fileType": "pdf",
+            "report_params": {
+              "params": []
+            },
+            "data_operation": Constants.DataOperation.DOWNLOAD_BLOB
+          } as Constants.Dct);
+      }
+    });
   }
 
 }
