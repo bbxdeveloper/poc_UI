@@ -6,7 +6,7 @@
         <form [formGroup]="dateForm" (keydown.enter)="$event.preventDefault()" #formDirective="ngForm">
             <nb-form-field>
                 <label>Kezdődátum</label>
-                <input nbInput type="datetime" id="sum-report-date-dialog-from" formControlName="dateFrom"
+                <input nbInput type="datetime" id="sum-report-date-dialog-from" formControlName="dateFrom" (keydown.enter)="handleFormEnter($event, true)"
                     mask="0000-00-00" [dropSpecialCharacters]="false" [showMaskTyped]="true">
                 <!-- [nbDatepicker]="datepickerFrom" -->
                 <!-- <nb-datepicker #datepickerFrom></nb-datepicker> -->
@@ -14,7 +14,7 @@
 
             <nb-form-field>
                 <label>Végdátum</label>
-                <input nbInput type="datetime" id="sum-report-date-dialog-to" formControlName="dateTo" mask="0000-00-00"
+                <input nbInput type="datetime" id="sum-report-date-dialog-to" formControlName="dateTo" mask="0000-00-00" (keydown.enter)="handleFormEnter($event, false)"
                     [dropSpecialCharacters]="false" [showMaskTyped]="true">
                 <!-- [nbDatepicker]="datepickerTo" -->
                 <!-- <nb-datepicker #datepickerTo></nb-datepicker> -->

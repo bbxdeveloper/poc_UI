@@ -21,6 +21,10 @@ export class SumReportDateIntervalDialogComponent implements AfterContentInit, A
   
   closedManually = false;
 
+  get isEditModeOff() {
+    return this.kbS.currentKeyboardMode !== KeyboardModes.EDIT;
+  }
+
   constructor(
     private fS: FooterService,
     protected dialogRef: NbDialogRef<SumReportDateIntervalDialogComponent>,
@@ -69,6 +73,28 @@ export class SumReportDateIntervalDialogComponent implements AfterContentInit, A
         break;
       }
       default: { }
+    }
+  }
+
+  handleFormEnter(event: Event, jumpNext: boolean = true, toggleEditMode: boolean = true): void {
+    console.log("FORM HANDLING KEYBOARD ACTION");
+    if (toggleEditMode) {
+      this.kbS.toggleEdit();
+    }
+    if (jumpNext) {
+      let oldMy = this.kbS.matrixPos.Y;
+      this.kbS.moveNextInForm();
+      // TODO: navigációs mátrixhoz típust rendelni, pl. "táblázat"
+      if (oldMy < this.kbS.matrixPos.Y) {
+        console.log(this.kbS.getCurrentTile());
+        this.kbS.setEditMode(KeyboardModes.NAVIGATION);
+        // this.gridNavHandler.handleGridEnter(this.productsData[0], 0, this.colDefs[0].objectKey, 0);
+      } else {
+        this.kbS.clickCurrentTile();
+        if (this.isEditModeOff) {
+          this.kbS.toggleEdit();
+        }
+      }
     }
   }
 }
